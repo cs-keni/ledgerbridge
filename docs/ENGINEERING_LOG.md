@@ -78,3 +78,16 @@ Phase 1 is unblocked. Execute T1–T9: Spring Boot init, Docker Compose,
 Flyway/SpringDoc/Logback config, then the V1 schema migration (apply the
 `ledger_transaction` rename + D18 composite indexes here — cheapest point to
 do it), JPA entities with JSONB mapping, and the Testcontainers scaffold.
+
+### Commit
+`79912dc` — "Set up project scaffolding and lock architecture via /plan-eng-review"
+(root commit — project brief, CLAUDE.md, PHASES.md, TODOS.md, docs/ scaffolding,
+all 18 locked architecture decisions).
+
+> Note: gbrain write attempts for this session's decisions hit an internal
+> Postgres I/O error (`could not read blocks... read only 0 of 8192 bytes`)
+> on its storage backend — both a full write and a minimal probe page failed.
+> This looks like an infrastructure issue on gbrain's side, not a content
+> problem. Cross-session continuity is preserved locally in this log,
+> AI_CONTEXT.md, PHASES.md, and TODOS.md; retry the gbrain write once its
+> health check passes.
