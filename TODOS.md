@@ -101,15 +101,32 @@
   behavioral checks all depend on relative timestamps. For each of the 5 Swagger
   fraud scenarios, define INSERT timestamps relative to `NOW() - interval` so
   that the velocity window and baseline are primed correctly when a recruiter
-  executes the scenario. Also define demo admin user credentials (e.g.
-  `demo@ledgerbridge.io`) and ensure the React admin dashboard is pre-populated
-  with existing alerts (so the first page view shows something, not an empty state).
+  executes the scenario. Seed goes in `resources/db/demo/` (profile-gated to
+  `SPRING_PROFILES_ACTIVE=demo` — D5). Demo user: `demo@ledgerbridge.io` with
+  `DEMO_ACTOR` role (POST transactions + GET admin alerts — D6). Seed uses fixed
+  UUID anchor IDs. `DemoDataRefreshComponent` (D4) refreshes timestamps at boot
+  so velocity windows never go stale on a long-running Railway deploy.
   - Priority: P1
   - Effort: S (~20 min to design, ~30 min CC to implement)
   - Depends on: Phase 4 TODOS gate "Fraud-scenario validation matrix" — the
     timestamp design mirrors the test scenario matrix structure
   - Source: Codex outside-voice finding "30+ transactions is hand-wavy — needs
-    ordering and timestamps for velocity/behavioral rules to fire correctly"
+    ordering and timestamps for velocity/behavioral rules to fire correctly" +
+    Codex/plan-eng-review 2026-06-10: D4 (timestamp refresh), D5 (profile-gating),
+    D6 (DEMO_ACTOR role)
+
+- [ ] **Upstash Kafka SASL/PLAIN connectivity spike** — Before Phase 7.5 builds
+  the Railway deploy around Upstash Kafka, validate the actual SASL/PLAIN
+  connection. Create an Upstash account and topic, produce 1 message and consume
+  it from a minimal Spring Kafka config (bootstrap server, SASL config, TLS).
+  Verify: topic creation works, Spring Kafka SASL config matches Upstash
+  requirements, retry topics (via @RetryableTopic naming convention) can be
+  created on Upstash, DLT behavior is as expected. Free-tier: 10K msg/day limit —
+  confirm no per-message cost concerns with normal demo traffic.
+  - Priority: P2
+  - Effort: S (~20 min)
+  - Source: Codex outside-voice finding (plan-eng-review 2026-06-10): "Railway +
+    Upstash Kafka is assumed feasible but not proven"
 
 ## Alongside Phase 7 (observability)
 

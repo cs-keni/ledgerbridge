@@ -1,25 +1,22 @@
 # CURRENT_TASK.md — LedgerBridge
 
 > Reflects the single active task. Update when starting or finishing a task.
-> Last updated: 2026-06-05
+> Last updated: 2026-06-10
 
 ## Active Task
 
 **Phase 0 — Setup**
 
-Completing the project scaffolding before any implementation begins.
-`/plan-eng-review` is now COMPLETE — architecture locked (see AI_CONTEXT.md),
-TODOS.md written, Phase 1 unblocked. Remaining Phase 0 work is pure scaffolding.
+All 3 planning gates cleared. Beginning Phase 0 implementation.
 
 ### Done
 - [x] Git initialized, remote connected (`git@github.com:cs-keni/ledgerbridge.git`)
 - [x] PHASES.md created
 - [x] docs/ scaffolding created (AI_CONTEXT, HANDOFF, ENGINEERING_LOG, CURRENT_TASK)
 - [x] gbrain project context stored
-- [x] `/plan-eng-review` complete — 18 decisions locked (D2–D18), outside-voice
-      review run (Codex), 4 cross-model tensions resolved (1 reversal: SSE →
-      servlet `SseEmitter`), 6 TODOs written to `TODOS.md`, failure-mode audit
-      complete (2 critical gaps + 1 underspecified item flagged)
+- [x] `/plan-eng-review` complete (2026-06-05) — 18 decisions locked (D2–D18), outside-voice review run, 6 TODOs written
+- [x] `/plan-ceo-review` complete (2026-06-10) — SELECTIVE EXPANSION, 4 scope additions accepted, Codex outside voice, 3 new TODOs
+- [x] `/plan-eng-review` fresh pass (2026-06-10) — CEO additions locked (D1–D10), Codex outside voice, 10 decisions resolved, 1 critical gap addressed (DemoDataRefreshComponent)
 
 ### In Progress (T1–T9 in `tasks-eng-review-20260606-030335.jsonl`)
 - [ ] Spring Boot 3.x Maven project initialization (T1)
@@ -29,7 +26,7 @@ TODOS.md written, Phase 1 unblocked. Remaining Phase 0 work is pure scaffolding.
 - [ ] Logback structured JSON logging + correlation-ID MDC scaffold (T5)
 
 ### Blocked On
-- Nothing. Architecture review cleared — proceed with T1–T9.
+- Nothing. All planning gates cleared — proceed with T1–T9.
 
 ## Next Task
 

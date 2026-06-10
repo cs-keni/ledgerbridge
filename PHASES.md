@@ -53,7 +53,13 @@
 - [ ] Implement TransactionRiskConsumer (Kafka consumer → RiskEngine, `@RetryableTopic` per D7, idempotency-key dedupe per D2)
 - [ ] Unit tests for each rule with edge cases — assert against the labeled scenario matrix from the Phase 1 fraud-validation gate
 - [ ] Integration test: transaction → Kafka → risk consumer → alert created
-- [ ] **Fraud scenario tests (per-scenario quality gate):** for each of the 5 Swagger fraud scenarios (Normal deposit, Velocity spike, Large amount to new counterparty, Fan-out pattern, Round-trip), write a Testcontainers integration test asserting the exact scenario payload produces score ≥ 0.4 and correct alert severity (MEDIUM/HIGH/CRITICAL) — these tests back the OpenAPI example claims
+- [ ] **Fraud scenario tests (per-scenario quality gate):** write a Testcontainers integration test for each of the 5 Swagger fraud scenarios:
+  - Normal deposit: assert score **< 0.4** and **no alert created** (negative control — proves false-positive resistance)
+  - Velocity spike: assert score ≥ 0.4, severity MEDIUM+
+  - Large amount to new counterparty: assert score ≥ 0.4, severity HIGH
+  - Fan-out pattern: assert score ≥ 0.4, severity HIGH
+  - Round-trip: assert score ≥ 0.4, severity CRITICAL
+  — (D3, /plan-eng-review 2026-06-10: NormalDeposit is a precision test, not a sensitivity test)
 - [ ] Add 5 labeled fraud-scenario examples to OpenAPI spec via `@Operation`/`@ApiResponse` on transaction endpoint (Normal deposit, Velocity spike, Large amount to new counterparty, Fan-out pattern, Round-trip)
 - [ ] Run `/plan-eng-review` again (per ledgerbridge.md gate) — by now the TODOS-gated items above need concrete designs
 - [ ] Run `/review` before marking Phase 4 complete
@@ -92,12 +98,14 @@
 - [ ] **TODOS gate:** validate JVM memory flags locally before deploying (-Xmx200m -Xms64m -XX:+UseSerialGC — see TODOS.md)
 - [ ] **TODOS gate:** design V8__demo_seed.sql timestamp matrix for 5 fraud scenarios (see TODOS.md)
 - [ ] Write Dockerfile (multi-stage: Maven build → eclipse-temurin:21-jre-alpine) with JVM flag ENV
-- [ ] Write V8__demo_seed.sql — demo admin user (demo@ledgerbridge.io), demo accounts with known IDs, 30+ timestamped prior transactions per scenario
+- [ ] Write `resources/db/demo/V8__demo_seed.sql` (profile-gated: only loads when `SPRING_PROFILES_ACTIVE=demo` via `application-demo.properties` — D5) — demo admin user (demo@ledgerbridge.io, role: DEMO_ACTOR per D6), demo accounts with known fixed UUIDs, 30+ anchor-timestamped prior transactions per scenario
+- [ ] Implement `DemoDataRefreshComponent` (@Component, @Profile("demo"), runs on ApplicationReadyEvent) — updates V8 seed transaction timestamps to NOW() + fixed offsets so velocity windows never go stale (D4)
 - [ ] Configure Upstash Kafka free tier (SASL/PLAIN) — Spring Kafka SASL config via env vars
 - [ ] Set up Railway project: web service (GitHub auto-deploy) + managed PostgreSQL
 - [ ] Set all Railway env vars: SPRING_DATASOURCE_*, JWT_SECRET, UPSTASH_KAFKA_* credentials
-- [ ] Configure railway.toml with health check: /actuator/health
-- [ ] Build React SPA and serve from Spring Boot classpath:/static/ (or configure reverse proxy)
+- [ ] Configure `railway.toml` health check: `/actuator/health/liveness` (NOT `/actuator/health` — DB/Kafka readiness causes Railway deploy flapping; enable probes with `management.endpoint.health.probes.enabled=true` — D7)
+- [ ] Configure Maven Frontend Plugin (frontend-maven-plugin) in pom.xml to compile React SPA as part of `mvn package`, output to `src/main/resources/static/` (D1, /plan-eng-review 2026-06-10: keeps Railway Dockerfile to a single Java stage)
+- [ ] Add `SpaFallbackController` — catches `/**` (excluding `/api/**`, `/actuator/**`, `/swagger-ui/**`, `/swagger-ui.html`, `/v3/api-docs/**`, `/webjars/**`) and serves `classpath:static/index.html` (D2 + D8, /plan-eng-review 2026-06-10 — Swagger paths excluded or Swagger UI breaks)
 - [ ] Verify demo: visit live URL → log in with demo credentials (from README) → see pre-loaded alerts → trigger fraud scenario in Swagger → alert appears in React admin dashboard
 - [ ] Add live URL to README "Live Demo" section with demo credentials and screenshot
 

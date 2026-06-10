@@ -51,7 +51,7 @@ domain gap              ADRs, live Railway             LedgerBridge as the
 
 ## The Milestone Rule
 
-The day Phase 4 ships (risk engine complete, Testcontainers tests passing — including one integration test per Swagger fraud scenario verifying expected score ≥ 0.4 and correct alert severity, interactive Swagger fraud scenarios working, README risk engine section updated):
+The day Phase 4 ships (risk engine complete, Testcontainers tests passing — including one integration test per Swagger fraud scenario: Normal deposit asserts score < 0.4 and no alert (negative control); Velocity spike, Large amount, Fan-out, Round-trip each assert score ≥ 0.4 and correct severity — interactive Swagger fraud scenarios working, README risk engine section updated):
 
 **Submit applications to Wells Fargo, Capital One, Citi, and JPMorgan.** Do not wait for Phase 8.
 
@@ -81,10 +81,11 @@ Continue building phases 5-8 while interviewing. If an offer arrives before Phas
 | Review | Trigger | Why | Runs | Status | Findings |
 |--------|---------|-----|------|--------|----------|
 | CEO Review | `/plan-ceo-review` | Scope & strategy | 1 | CLEAN | 4 proposals, 4 accepted, 0 deferred |
-| Outside Voice | Codex (gpt-5.5) | Independent 2nd opinion | 1 | issues_found | 2 cross-model tensions resolved (blog timing → Phase 7.5; demo auth → seeded credentials) |
-| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 1 | issues_open (PLAN) | 18 decisions locked, 6 open TODOs (not unresolved arch questions) |
+| Outside Voice | Codex (gpt-5.5) | Independent 2nd opinion | 2 | issues_found | CEO: 2 tensions (blog timing, demo auth). Eng: 7 tensions (seed staleness, profile-gating, DEMO_ACTOR role, liveness probe, Swagger fallback exclusions, Milestone Rule, ADR count) — all resolved |
+| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 2 | CLEAR (PLAN) | 9 issues found, 0 unresolved, 1 critical gap resolved (DemoDataRefreshComponent DB startup guard). Decisions locked: D1–D10 (Maven Frontend Plugin, SPA fallback, NormalDeposit negative test, timestamp refresh, profile-gating, DEMO_ACTOR, liveness probe, Swagger exclusions, Milestone Rule held, ADR count held) |
 | Design Review | `/plan-design-review` | UI/UX gaps | 0 | — | not yet run — TODOS gate before Phase 6 |
 | DX Review | `/plan-devex-review` | Developer experience gaps | 0 | — | — |
 
-**UNRESOLVED:** 0 across all reviews.
 **VERDICT:** CEO + ENG CLEARED — ready to implement Phase 0 → Phase 1.
+
+NO UNRESOLVED DECISIONS

@@ -122,3 +122,29 @@ all 18 locked architecture decisions).
 
 ### Next
 Run `/plan-eng-review` fresh pass to pick up the 4 CEO review scope additions (Swagger scenarios, Railway deploy, ADRs, blog post) into the engineering architecture review. Then proceed with Phase 0 T1–T9 (Spring Boot init, Docker Compose, Flyway, SpringDoc, Logback).
+
+---
+
+### Session 4 — `/plan-eng-review` fresh pass (CEO additions lock)
+- **Agent**: Claude Code
+- **Task**: Run /plan-eng-review focused on 4 CEO cherry-picks: Swagger fraud scenarios, Phase 7.5 Railway deploy, Phase 8 ADRs, Phase 8 blog post
+
+### Changes
+- Walked all 4 review sections; outside voice (Codex gpt-5.5) run. **10 decisions locked (D1–D10 of this session):**
+  - **D1**: Maven Frontend Plugin — `mvn package` compiles React + Java, Railway Dockerfile stays a single Java stage
+  - **D2+D8**: `SpaFallbackController` — catches `/**` except `/api/**`, `/actuator/**`, `/swagger-ui/**`, `/swagger-ui.html`, `/v3/api-docs/**`, `/webjars/**`
+  - **D3**: NormalDeposit scenario test = negative control (assert score < 0.4 + no alert)
+  - **D4**: `DemoDataRefreshComponent` (@Profile("demo"), ApplicationReadyEvent + DB retry) — refreshes seed timestamps so velocity windows never go stale
+  - **D5**: V8 demo seed profile-gated to `demo` Spring profile (`resources/db/demo/`, `application-demo.properties`)
+  - **D6**: Demo user role = `DEMO_ACTOR` (POST `/api/transactions` + GET `/api/admin/**`, no management access)
+  - **D7**: Railway health check = `/actuator/health/liveness` (NOT `/actuator/health` — prevents Kafka readiness flapping)
+  - **D8**: SPA fallback Swagger path exclusion already captured above
+  - **D9**: Milestone Rule confirmed at Phase 4 ship day (risk engine is the differentiator)
+  - **D10**: ADR count confirmed 10-15 (each must be substantive — alternatives + consequences)
+- **1 critical gap resolved**: `DemoDataRefreshComponent` must guard against DB not ready on `ApplicationReadyEvent` (retry or @DependsOn)
+- **1 new TODOS item**: Upstash Kafka SASL/PLAIN connectivity spike (P2, before Phase 7.5)
+- **Updated**: PHASES.md (D1-D8 folded into Phase 7.5 + D3 corrected in Phase 4), TODOS.md (+Upstash spike + V8 seed spec updated with D4-D6), docs/designs/portfolio-strategy.md (GSTACK REVIEW REPORT updated to run 2), HANDOFF.md, AI_CONTEXT.md note in HANDOFF
+- **Tasks file**: `tasks-eng-review-20260610-162510.jsonl` (T1–T6) — Maven Frontend Plugin, SpaFallbackController, NormalDepositScenarioIT, DemoDataRefreshComponent, profile-gating + DEMO_ACTOR role, Railway liveness config
+
+### Next
+Phase 0 coding (T1–T9): Spring Boot 3.x Maven init, Docker Compose (PostgreSQL 16 + Kafka Bitnami), Flyway config, SpringDoc, Logback + correlation-ID MDC scaffold. Then V1 schema migration (`ledger_transaction` rename + D18 composite indexes), JPA entities (Hypersistence Utils JSONB), Testcontainers scaffold.
