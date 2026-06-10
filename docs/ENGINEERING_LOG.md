@@ -117,5 +117,8 @@ all 18 locked architecture decisions).
 - Generated `tasks-ceo-review-20260610-144616.jsonl` (T1–T6) covering deploy, seed, and test tasks
 - CEO plan at `~/.gstack/projects/cs-keni-ledgerbridge/ceo-plans/2026-06-10-ledgerbridge-portfolio.md` (status: PROMOTED)
 
+### Commit
+`b9389a6` — "Lock portfolio strategy via /plan-ceo-review (SELECTIVE EXPANSION)"
+
 ### Next
 Run `/plan-eng-review` fresh pass to pick up the 4 CEO review scope additions (Swagger scenarios, Railway deploy, ADRs, blog post) into the engineering architecture review. Then proceed with Phase 0 T1–T9 (Spring Boot init, Docker Compose, Flyway, SpringDoc, Logback).
