@@ -146,5 +146,8 @@ Run `/plan-eng-review` fresh pass to pick up the 4 CEO review scope additions (S
 - **Updated**: PHASES.md (D1-D8 folded into Phase 7.5 + D3 corrected in Phase 4), TODOS.md (+Upstash spike + V8 seed spec updated with D4-D6), docs/designs/portfolio-strategy.md (GSTACK REVIEW REPORT updated to run 2), HANDOFF.md, AI_CONTEXT.md note in HANDOFF
 - **Tasks file**: `tasks-eng-review-20260610-162510.jsonl` (T1–T6) — Maven Frontend Plugin, SpaFallbackController, NormalDepositScenarioIT, DemoDataRefreshComponent, profile-gating + DEMO_ACTOR role, Railway liveness config
 
+### Commit
+`90030ac` — "Lock CEO additions via /plan-eng-review (D1–D10)"
+
 ### Next
 Phase 0 coding (T1–T9): Spring Boot 3.x Maven init, Docker Compose (PostgreSQL 16 + Kafka Bitnami), Flyway config, SpringDoc, Logback + correlation-ID MDC scaffold. Then V1 schema migration (`ledger_transaction` rename + D18 composite indexes), JPA entities (Hypersistence Utils JSONB), Testcontainers scaffold.
