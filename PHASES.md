@@ -53,8 +53,11 @@
 - [ ] Implement TransactionRiskConsumer (Kafka consumer → RiskEngine, `@RetryableTopic` per D7, idempotency-key dedupe per D2)
 - [ ] Unit tests for each rule with edge cases — assert against the labeled scenario matrix from the Phase 1 fraud-validation gate
 - [ ] Integration test: transaction → Kafka → risk consumer → alert created
+- [ ] **Fraud scenario tests (per-scenario quality gate):** for each of the 5 Swagger fraud scenarios (Normal deposit, Velocity spike, Large amount to new counterparty, Fan-out pattern, Round-trip), write a Testcontainers integration test asserting the exact scenario payload produces score ≥ 0.4 and correct alert severity (MEDIUM/HIGH/CRITICAL) — these tests back the OpenAPI example claims
+- [ ] Add 5 labeled fraud-scenario examples to OpenAPI spec via `@Operation`/`@ApiResponse` on transaction endpoint (Normal deposit, Velocity spike, Large amount to new counterparty, Fan-out pattern, Round-trip)
 - [ ] Run `/plan-eng-review` again (per ledgerbridge.md gate) — by now the TODOS-gated items above need concrete designs
 - [ ] Run `/review` before marking Phase 4 complete
+- [ ] **MILESTONE RULE: submit applications to Wells Fargo, Capital One, Citi, and JPMorgan the day this phase ships**
 
 ## Phase 5 — Admin + Audit
 - [ ] Implement AuditAspect (AOP auto-logging with `@AuditLog` — renamed from `@Audited` to avoid a Hibernate Envers collision per D11; always logs, including failures, with an `outcome` field per D15)
@@ -64,6 +67,7 @@
 - [ ] Write tests for audit logging
 
 ## Phase 6 — Frontend
+- [ ] **TODOS gate:** run `/plan-design-review` before starting frontend implementation (lock design system, interaction states, risk score gauge visual design — see TODOS.md)
 - [ ] Set up React 18 + TypeScript + Tailwind + React Query + Zustand
 - [ ] Build auth pages (login/register)
 - [ ] Build Dashboard (account overview, recent transactions)
@@ -84,10 +88,25 @@
 - [ ] Add Prometheus + Grafana with at least one dashboard panel for the risk-engine metrics above
 - [ ] Write .env.example with all variables documented
 
+## Phase 7.5 — Live Demo Deploy (Railway)
+- [ ] **TODOS gate:** validate JVM memory flags locally before deploying (-Xmx200m -Xms64m -XX:+UseSerialGC — see TODOS.md)
+- [ ] **TODOS gate:** design V8__demo_seed.sql timestamp matrix for 5 fraud scenarios (see TODOS.md)
+- [ ] Write Dockerfile (multi-stage: Maven build → eclipse-temurin:21-jre-alpine) with JVM flag ENV
+- [ ] Write V8__demo_seed.sql — demo admin user (demo@ledgerbridge.io), demo accounts with known IDs, 30+ timestamped prior transactions per scenario
+- [ ] Configure Upstash Kafka free tier (SASL/PLAIN) — Spring Kafka SASL config via env vars
+- [ ] Set up Railway project: web service (GitHub auto-deploy) + managed PostgreSQL
+- [ ] Set all Railway env vars: SPRING_DATASOURCE_*, JWT_SECRET, UPSTASH_KAFKA_* credentials
+- [ ] Configure railway.toml with health check: /actuator/health
+- [ ] Build React SPA and serve from Spring Boot classpath:/static/ (or configure reverse proxy)
+- [ ] Verify demo: visit live URL → log in with demo credentials (from README) → see pre-loaded alerts → trigger fraud scenario in Swagger → alert appears in React admin dashboard
+- [ ] Add live URL to README "Live Demo" section with demo credentials and screenshot
+
 ## Phase 8 — Testing + Portfolio Integration
 - [ ] Testcontainers integration tests: full transaction→risk flow
 - [ ] Verify test coverage on all four risk engine rules
-- [ ] Write polished README with Mermaid architecture diagram
-- [ ] Take screenshots of key pages (seed data)
+- [ ] Write polished README with Mermaid architecture diagram, live demo URL, demo credentials, risk engine explanation, architecture decisions overview
+- [ ] Take screenshots of key pages (risk alert feed, risk score gauge, Swagger fraud scenario — use demo seed data)
+- [ ] Write 10-15 Architecture Decision Records in `docs/adr/` covering: UUID PKs, NUMERIC(19,4), Flyway, Kafka userId keying, @TransactionalEventListener, Welford's algorithm, @RetryableTopic, SseEmitter, pessimistic locking + fixed ordering, idempotency keys, correlation IDs, JSONB + Hypersistence, RiskRuleResult record, @AuditLog naming, composite indexes
+- [ ] Draft technical blog post (CC drafts from AI_CONTEXT.md, Kenny edits — publish to dev.to after Phase 7.5 live URL exists, share on LinkedIn with live demo URL)
 - [ ] Add project to ePortfolio (`src/data/projects.js`)
 - [ ] Final `/review` + `/qa` pass

@@ -91,3 +91,31 @@ all 18 locked architecture decisions).
 > problem. Cross-session continuity is preserved locally in this log,
 > AI_CONTEXT.md, PHASES.md, and TODOS.md; retry the gbrain write once its
 > health check passes.
+
+---
+
+## 2026-06-10
+
+### Session 3 — `/plan-ceo-review` (portfolio strategy lock)
+- **Agent**: Claude Code
+- **Task**: Run /plan-ceo-review in SELECTIVE EXPANSION mode on the full project
+
+### Changes
+- Ran `/office-hours` first (design doc created at `~/.gstack/projects/cs-keni-ledgerbridge/keni-main-design-20260610-131720.md`, status APPROVED) — validated demand evidence, confirmed Phase 4 Milestone Rule strategy
+- Ran full `/plan-ceo-review` SELECTIVE EXPANSION mode — 11 review sections, Codex outside voice, 21 AskUserQuestion decisions
+- **4 scope expansions accepted:** Phase 4 Swagger fraud scenarios (5 examples with per-scenario integration tests), Phase 7.5 Railway deploy (full-stack: React dashboard + Spring Boot + Railway PostgreSQL + Upstash Kafka), Phase 8 ADRs (10-15 docs/adr/ covering all 18 locked decisions), Phase 8 blog post (draft Phase 4, publish after Phase 7.5 ships)
+- **Key decisions locked in this review:**
+  - Upstash Kafka free tier for Railway deploy (SASL/PLAIN, Spring Kafka env vars) — Railway manages only Spring Boot + PostgreSQL
+  - Demo seed data: V8__demo_seed.sql with timestamped scenario matrix (not count-based)
+  - Demo auth: seeded demo@ledgerbridge.io credentials in README, no account creation required
+  - Blog publish timing: after Phase 7.5 ships (live URL + screenshots), not Phase 4 day
+  - Full-stack Railway: React admin dashboard + Spring Boot on one Railway service (classpath:/static/)
+  - Per-scenario Testcontainers tests required as Phase 4 quality gate
+- **3 new TODOS.md items:** JVM flag validation (P2, before Phase 7.5), /plan-design-review gate (P2, before Phase 6), demo seed timestamp matrix (P1, before Phase 7.5)
+- **Updated:** PHASES.md (Phase 4 per-scenario tests, Phase 7.5 new phase, Phase 8 ADRs + blog), TODOS.md (+3 items), docs/designs/portfolio-strategy.md (promoted CEO plan to repo)
+- **Codex outside voice:** 2 cross-model tensions — blog timing (resolved: Phase 7.5) and demo auth (resolved: seeded credentials)
+- Generated `tasks-ceo-review-20260610-144616.jsonl` (T1–T6) covering deploy, seed, and test tasks
+- CEO plan at `~/.gstack/projects/cs-keni-ledgerbridge/ceo-plans/2026-06-10-ledgerbridge-portfolio.md` (status: PROMOTED)
+
+### Next
+Run `/plan-eng-review` fresh pass to pick up the 4 CEO review scope additions (Swagger scenarios, Railway deploy, ADRs, blog post) into the engineering architecture review. Then proceed with Phase 0 T1–T9 (Spring Boot init, Docker Compose, Flyway, SpringDoc, Logback).

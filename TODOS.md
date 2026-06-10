@@ -68,6 +68,49 @@
   - Source: Codex outside-voice review, finding "behavioral baseline has no
     poisoning resistance — adversarial transactions normalize the profile"
 
+## Before Phase 6 (frontend)
+
+- [ ] **Run `/plan-design-review` before Phase 6** — The React admin dashboard (risk
+  score gauge, SSE alert feed, transaction table with score column) is the live
+  demo's visual centerpiece and the portfolio screenshot that goes on LinkedIn.
+  Design system, interaction states (loading/empty/error/success/partial for each
+  feature), animation direction, and the risk score gauge visual design should be
+  locked before implementation begins. A senior engineer reviewing a polished UI
+  demo reacts differently than one reviewing a functional but generic dashboard.
+  - Priority: P2
+  - Effort: S (~30 min gstack review)
+  - Source: CEO review Section 11 — /plan-design-review recommendation for UI-heavy
+    phases per SELECTIVE EXPANSION guidelines
+
+## Before Phase 7.5 (Railway deploy)
+
+- [ ] **Validate JVM memory flags for Railway free tier** — Confirm that
+  `-Xmx200m -Xms64m -XX:+UseSerialGC` is sufficient for Spring Boot + Upstash
+  Kafka consumer + PostgreSQL connection pool + Flyway + Spring Actuator to start
+  and handle 5 concurrent fraud-scenario requests without OOM on Railway's ~512MB
+  container. Run locally with those JVM flags before deploying. Adjust flag values
+  in Dockerfile if needed. An OOM-crashing demo URL is worse than no demo URL.
+  - Priority: P2
+  - Effort: S (~15 min)
+  - Source: CEO review Section 7 / Codex outside-voice finding on unproven JVM
+    constraint
+
+- [ ] **Design V8__demo_seed.sql timestamp matrix** — The demo seed migration
+  cannot simply insert 30 transactions at the same timestamp. Welford's bounded
+  recent-N window, velocity sliding windows (1h, 24h, 7d), and time-of-day
+  behavioral checks all depend on relative timestamps. For each of the 5 Swagger
+  fraud scenarios, define INSERT timestamps relative to `NOW() - interval` so
+  that the velocity window and baseline are primed correctly when a recruiter
+  executes the scenario. Also define demo admin user credentials (e.g.
+  `demo@ledgerbridge.io`) and ensure the React admin dashboard is pre-populated
+  with existing alerts (so the first page view shows something, not an empty state).
+  - Priority: P1
+  - Effort: S (~20 min to design, ~30 min CC to implement)
+  - Depends on: Phase 4 TODOS gate "Fraud-scenario validation matrix" — the
+    timestamp design mirrors the test scenario matrix structure
+  - Source: Codex outside-voice finding "30+ transactions is hand-wavy — needs
+    ordering and timestamps for velocity/behavioral rules to fire correctly"
+
 ## Alongside Phase 7 (observability)
 
 - [ ] **Risk-engine-specific Prometheus metrics** — Beyond generic Spring Boot
