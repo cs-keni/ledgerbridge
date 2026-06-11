@@ -5,28 +5,29 @@
 
 ## Active Task
 
-**Phase 4 — Risk Engine** (not yet started)
+**Phase 4 — Risk Engine COMPLETE ✅**
 
-### Phase 3 Complete ✅
-- [x] **TODOS gate:** API-level idempotency keys — done 2026-06-11
-- [x] **TODOS gate:** correlation-ID / trace propagation — done 2026-06-11
-- [x] V9 migration — `idempotency_key` table + `correlation_id` on `ledger_transaction`
-- [x] `IdempotencyService` (Stripe pattern, REQUIRES_NEW, 24h TTL)
-- [x] `TransactionService` (deposit, withdraw, transfer with D13 pessimistic locking)
-- [x] `TransactionEventProducer` (@TransactionalEventListener AFTER_COMMIT, userId key, X-Correlation-ID header)
-- [x] `TransactionController` (POST deposit/withdraw/transfer + Idempotency-Key header; GET /{id} + paged list)
-- [x] Unit tests: 15/15 TransactionServiceTest passing
-- [x] Integration tests: 2/2 TransactionIntegrationTest passing (embedded Kafka)
-- [x] **Total tests: 38/38 passing**
+### Phase 4 Complete ✅
+- [x] `RiskRule` interface + `RiskRuleResult` record
+- [x] `AmountAnomalyRule` (Welford's z-score, MIN_HISTORY_COUNT=2)
+- [x] `VelocityRule` (1h/1d/7d conditional-aggregation query, native SQL)
+- [x] `BehavioralBaselineRule` (hour, MCC, new-counterparty signals)
+- [x] `GraphPatternRule` (fan-out ≥5, fan-in ≥5, round-trip 2h, native SQL)
+- [x] `RiskEngine` (weighted scoring 0.25/0.30/0.20/0.25, tier-1/tier-2 escalation)
+- [x] `CustomerRiskProfileService` (Welford's update, D19 score-conditional baseline)
+- [x] `AlertService` + `RiskAlertResponse` DTO
+- [x] `TransactionRiskConsumer` (@RetryableTopic, @DltHandler, D2 idempotency, D19)
+- [x] Unit tests: 36/36 passing (AmountAnomaly 7, Velocity 6, Behavioral 9, GraphPattern 7, RiskEngine 7)
+- [x] Integration tests: 5/5 fraud scenarios passing (S1–S5)
+- [x] **Total tests: 84/84 passing**
+- [x] PHASES.md + ENGINEERING_LOG.md + HANDOFF.md updated
+- [x] Commit: `a1b04a9`
 
-### Phase 4 — TODOS Gates Cleared ✅
-- [x] **TODOS gate:** baseline-poisoning mitigation — done 2026-06-11 (D19)
-- [x] **TODOS gate:** GraphPatternRule traversal bounds — done 2026-06-11 (D20)
-- [ ] Implement CustomerRiskProfile update logic (Welford's algorithm, D6/D19)
-- [ ] Implement AmountAnomalyRule, VelocityRule, BehavioralBaselineRule, GraphPatternRule (D20)
-- [ ] Implement RiskEngine (weighted score aggregation, D9/D14)
-- [ ] Implement TransactionRiskConsumer (Kafka consumer, @RetryableTopic D7, idempotency D2, score-conditional baseline update D19)
-- [ ] Unit + integration tests per fraud scenario matrix (S1–S5)
+### Phase 4 Remaining
+- [ ] Add 5 labeled fraud-scenario examples to OpenAPI spec via `@Operation`/`@ApiResponse`
+- [ ] Run `/plan-eng-review` (architecture review gate)
+- [ ] Run `/review` before marking Phase 4 fully complete
+- [ ] **MILESTONE: submit applications to Wells Fargo, Capital One, Citi, JPMorgan**
 
-### Blocked On
-- Nothing. Ready to implement Phase 4.
+### Up Next
+Phase 5 — Admin + Audit (AuditAspect, AuditService, SSE alerts dashboard)

@@ -13,6 +13,7 @@
 
 ### Test results
 - **84/84 tests passing** (full suite: unit + all integration tests including both `RiskScenarioIntegrationTest` 5/5 and `SchemaIntegrationTest` 4/4)
+- Commit hash: `a1b04a9`
 - S2 velocity (0.46 MEDIUM) ✓, S5 round-trip (0.80 CRITICAL) ✓
 
 ### Root cause retrospective

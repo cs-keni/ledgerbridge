@@ -5,7 +5,7 @@
 
 ## Current Status
 
-**Phase: 3 — Transaction Module + Kafka COMPLETE — Phase 4 is next**
+**Phase: 4 — Risk Engine COMPLETE — Phase 5 (Admin + Audit) is next**
 
 All 4 planning gates cleared:
 - `/plan-eng-review` ✅ Done 2026-06-05: 18 decisions locked (D2–D18), Codex outside voice, 6 TODOs
@@ -16,9 +16,22 @@ All 4 planning gates cleared:
 **Portfolio strategy locked** — see `docs/designs/portfolio-strategy.md` for the full CEO plan.
 **Design system locked** — see `DESIGN.md` for all Phase 6 component specs.
 
-Phase 3 complete: transaction endpoints (deposit/withdraw/transfer), idempotency keys (Stripe pattern), correlation IDs, Kafka publish via @TransactionalEventListener(AFTER_COMMIT), 38/38 tests passing.
+Phase 4 complete: Risk Engine with 4 rules (AmountAnomaly/Velocity/Behavioral/GraphPattern), weighted scoring + tier-1/tier-2 escalation, Kafka consumer with @RetryableTopic + DLT, D19 score-conditional baseline update, 84/84 tests passing (5/5 fraud scenarios).
 
 ## Last Agent Action
+
+Claude Code (2026-06-11): Completed Phase 4. New files:
+- `risk/rules/{RiskRule, RiskRuleResult, AmountAnomalyRule, VelocityRule, BehavioralBaselineRule, GraphPatternRule}.java` — 4-rule detection with Welford's z-score, velocity windows, behavioral signals, fan-out/fan-in/round-trip graph patterns
+- `risk/engine/{RiskEngine, RiskScoringResult}.java` — weighted sum (0.25/0.30/0.20/0.25), tier-1 (any raw ≥0.8 → floor 0.65), tier-2 (≥3 rules ≥0.6 → floor 0.80)
+- `risk/service/{AlertService, CustomerRiskProfileService}.java` — alert persistence, Welford's update, LRU counterparty list (max 50), D19 score-conditional update
+- `risk/consumer/TransactionRiskConsumer.java` — @RetryableTopic (3 attempts, 2x backoff), @DltHandler, D2 idempotency via existsByTransactionId
+- `risk/dto/RiskAlertResponse.java` — REST response DTO
+- `test/risk/{AmountAnomalyRuleTest, VelocityRuleTest, BehavioralBaselineRuleTest, GraphPatternRuleTest, RiskEngineTest, RiskScenarioIntegrationTest}.java` — 84/84 passing
+- Edits: `RiskAlertRepository.java` (existsByTransactionId), `TransactionRepository.java` (native SQL for velocity/round-trip queries), `pom.xml` (Surefire -Duser.timezone=UTC)
+- **Key infrastructure fix:** `hibernate.jdbc.time_zone=UTC` shifts LocalDateTime JPQL/native params by JVM-to-UTC offset. Fix: test JVM runs in UTC (Surefire argLine) — production-correct and eliminates all offset skew.
+- **84/84 tests passing**
+
+## Previous Agent Action
 
 Claude Code (2026-06-11): Completed Phase 3. New files:
 - `V9__phase3_idempotency_and_correlation.sql` — `idempotency_key` table + `correlation_id` on `ledger_transaction`
