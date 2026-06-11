@@ -21,7 +21,7 @@
 - **`TransactionServiceTest.java`**: 15 Mockito unit tests (deposit 4, withdraw 3, transfer 5, getTransaction 1, getTransactionsByAccount 2)
 - **`TransactionIntegrationTest.java`**: 2 integration tests (deposit + withdraw) — full DB + embedded Kafka; consumer uses `auto.offset.reset=latest` + pre-produce partition-assignment poll
 - **Tests: 38/38 passing** (AuthServiceTest 12, AccountServiceTest 9, TransactionServiceTest 15, TransactionIntegrationTest 2)
-- Commit hash: `TBD`
+- Commit hash: `19e71ed`
 
 ### Phase 3 status: COMPLETE
 
