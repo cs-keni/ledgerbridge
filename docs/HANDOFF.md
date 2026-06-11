@@ -94,7 +94,7 @@ All architecture questions from the three plan reviews are resolved. What remain
 |---|---|---|
 | `ledger_transaction` rename | ~~Before Phase 1~~ | ✅ **Done 2026-06-11** — entity `LedgerTransaction`, migration `V3__create_ledger_transaction.sql` |
 | Fraud-scenario validation matrix | ~~Before Phase 1~~ | ✅ **Done 2026-06-11** — `docs/RISK_ENGINE_TEST_MATRIX.md`; multi-rule escalation locked |
-| Refresh-token reuse/rotation policy | Before Phase 2 | D4 picked storage; replay-detection behavior undecided |
+| Refresh-token reuse/rotation policy | ~~Before Phase 2~~ | ✅ **Done 2026-06-11** — token family rotation; `family_id UUID` on table; replay = revoke family + log event; TTL 7 days |
 | API-level idempotency keys | Before Phase 3 | `Idempotency-Key` header on POST /transactions; different from D2 (consumer dedupe) |
 | Correlation IDs / trace propagation | Before Phase 3 | CorrelationIdFilter is wired; MDC propagation through Kafka headers needs Phase 3 work |
 | Baseline poisoning mitigation | Before Phase 4 | Exclude alerted txns from Welford's update? Hold until review? |

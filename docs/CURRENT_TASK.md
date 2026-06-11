@@ -17,7 +17,7 @@
 - [x] Add Testcontainers scaffold (`SchemaIntegrationTest`, `BaseIntegrationTest`) — 4/4 tests passing
 
 ### Phase 2 — Not Yet Started
-- [ ] **TODOS gate:** decide refresh-token reuse/rotation policy (replay-detection behavior — see HANDOFF.md)
+- [x] **TODOS gate:** refresh-token rotation policy — **done 2026-06-11**: token family rotation; `family_id UUID`; replay = revoke entire family + log security event; TTL 7 days
 - [ ] Implement User entity, Spring Security config, JWT service
 - [ ] Implement AuthController: register, login, refresh, logout
 - [ ] Implement AccountService + AccountController

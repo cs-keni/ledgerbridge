@@ -7,7 +7,7 @@
 
 ## Project State
 
-**Phase 0 COMPLETE. Phase 1 is next.**
+**Phase 1 COMPLETE. Phase 2 is next.**
 
 | Gate | Status | Date |
 |---|---|---|
@@ -16,6 +16,8 @@
 | `/plan-eng-review` (CEO additions) | ✅ CLEAR | 2026-06-10 |
 | `/plan-design-review` | ✅ CLEAR | 2026-06-10 |
 | Phase 0 implementation | ✅ SHIPPED | 2026-06-10 |
+| Phase 1 implementation | ✅ SHIPPED | 2026-06-11 |
+| Phase 2 TODOS gate (refresh-token rotation) | ✅ CLEAR | 2026-06-11 |
 
 Portfolio strategy: `docs/designs/portfolio-strategy.md`
 Design system: `DESIGN.md`
@@ -134,7 +136,7 @@ User → TransactionService → [DB commit] → @TransactionalEventListener(AFTE
 
 1. **D2 — Kafka consumer idempotency keys**: Dedupes redelivered messages. Does NOT cover the DB-commit-succeeds-but-Kafka-publish-fails window (no Outbox — see TODOS.md). Accepted gap.
 2. **D3 — Kafka messages keyed by `userId`**: Keeps one customer's events ordered for risk-profile consistency. Ordering is approximate during `@RetryableTopic` retries (retry may land on a different partition).
-3. **D4 — DB-backed refresh token table**: 7-day TTL, revocable. Reuse-detection policy: TBD (before Phase 2 — see TODOS.md).
+3. **D4 — DB-backed refresh token table**: 7-day TTL. **Token family rotation** (locked 2026-06-11): tokens share a `family_id UUID` (one family per login). On normal refresh: revoke old token, issue new token in same family. On replay (revoked token presented): revoke ALL tokens in that family → forced re-login for both attacker and any stolen-token holder → log security event. This is the Auth0 / OAuth 2.0 Security BCP standard. Schema addition: `family_id UUID NOT NULL` on `refresh_token` table.
 4. **D5 — PostgreSQL JSONB + Hypersistence Utils**: For `CustomerRiskProfile`'s typed JSON fields (typicalTransactionHours, typicalMerchantCategories, typicalCounterparties).
 5. **D6 — Welford's online algorithm over a bounded recent-N window**: Numerically stable rolling mean/variance. Replaced originally-considered EWMA. Resists drift from old data. Bounded window mitigates (but does not eliminate) baseline poisoning — see TODOS.md for the open mitigation decision.
 6. **D7 — `@RetryableTopic`**: 4 retries with backoff, then dead-letter topic. For Kafka consumer error handling.

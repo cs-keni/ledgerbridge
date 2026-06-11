@@ -26,7 +26,7 @@
 - [x] Confirm migrations run clean — **complete 2026-06-11**: SchemaIntegrationTest (4 tests) passes; V1–V7 applied, Hibernate validate OK, seed data assertions pass
 
 ## Phase 2 — Auth + Account Module
-- [ ] **TODOS gate:** decide refresh-token reuse/rotation policy (revoke whole token family on replay-detection? — flagged as underspecified in D4 during failure-mode review)
+- [x] **TODOS gate:** decide refresh-token reuse/rotation policy — **complete 2026-06-11**: token family rotation locked. `family_id UUID` on refresh_token; replay = revoke entire family + log security event. TTL: 7 days. See D4 in `AI_CONTEXT.md`.
 - [ ] Implement User entity, Spring Security config, JWT service
 - [ ] Implement AuthController: register, login, refresh (DB-backed refresh token table per D4), logout
 - [ ] Implement AccountService + AccountController

@@ -4,6 +4,21 @@
 
 ---
 
+## 2026-06-11 — Session 9 (Phase 2 TODOS gate: refresh-token rotation policy)
+
+### Changes
+- **Locked refresh-token rotation policy (D4 completion)**: Token family rotation — `family_id UUID NOT NULL` on `refresh_token` table. Normal refresh: revoke old token, issue new token in same family. Replay (revoked token presented): revoke ALL tokens in that family + log security event + force re-login. TTL: 7 days. Auth0 / OAuth 2.0 Security BCP standard.
+- `TODOS.md`: new "Before Phase 2" section added, gate marked `[x]` complete
+- `PHASES.md`: Phase 2 TODOS gate checkbox marked `[x]` complete
+- `docs/AI_CONTEXT.md`: D4 updated with full rotation policy + schema addition; project state updated to Phase 1 COMPLETE, Phase 2 TODOS gate CLEAR
+- `docs/HANDOFF.md`: open design work table entry updated
+- `docs/CURRENT_TASK.md`: TODOS gate marked done
+- Commit hash: TBD
+
+### Phase 2 status: TODOS gate cleared — implementation ready to start
+
+---
+
 ## 2026-06-11 — Session 8 (Phase 1 verification + fixes)
 
 ### Changes

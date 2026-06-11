@@ -30,6 +30,18 @@
   - Source: Codex outside-voice review, finding "`transaction` is a SQL
     reserved word"
 
+## Before Phase 2 (auth)
+
+- [x] **Refresh-token reuse/rotation policy** — **complete 2026-06-11**: Token
+  family rotation locked. Tokens share a `family_id UUID` (generated per login).
+  Normal refresh: revoke old token, issue new token in same family. Replay
+  detection (revoked token presented): revoke ALL tokens in that family → forced
+  re-login + security event logged. TTL: 7 days. Schema addition: `family_id UUID
+  NOT NULL` on `refresh_token` table. This is the Auth0 / OAuth 2.0 Security BCP
+  standard; appropriate for a fintech portfolio targeting Wells Fargo/Citi/JPMorgan.
+  - Source: D4 from original `/plan-eng-review` — storage mechanism locked, replay
+    policy flagged as underspecified
+
 ## Before Phase 3 (transaction/transfer endpoints)
 
 - [ ] **API-level idempotency keys** — Require an `Idempotency-Key` header
