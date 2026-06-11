@@ -42,8 +42,8 @@
 - [x] Write integration test: full deposit flow → Kafka event published — **complete 2026-06-11**: 2 tests (deposit + withdraw) via embedded Kafka (@EmbeddedKafka), 38/38 total tests passing
 
 ## Phase 4 — Risk Engine (Core Differentiator)
-- [ ] **TODOS gate:** decide baseline-poisoning mitigation (e.g. exclude alert-triggering transactions from Welford's baseline updates — see TODOS.md)
-- [ ] **TODOS gate:** define `GraphPatternRule` traversal bounds explicitly (max hops, time window, counterparty-count ceiling) — flagged in failure-mode review as a critical gap; treat as its own mini-design before writing the rule
+- [x] **TODOS gate:** decide baseline-poisoning mitigation — **complete 2026-06-11**: score-first evaluation; skip profile update if score ≥ 0.4 (D19). Known counterparty = first non-alerted appearance. typicalCounterparties max 50 entries (LRU eviction). See TODOS.md.
+- [x] **TODOS gate:** define `GraphPatternRule` traversal bounds — **complete 2026-06-11**: 1 hop only; fan-out/fan-in ≥5 new counterparties in 24h; round-trip exact-amount match within 2h; query cap 100; "new" = NOT IN typicalCounterparties (D20). See TODOS.md.
 - [ ] Implement CustomerRiskProfile update logic (Welford's online algorithm over a bounded recent-N window per D6/Tension 1 — replaces originally-considered EWMA)
 - [ ] Implement AmountAnomalyRule (Z-score)
 - [ ] Implement VelocityRule (sliding window counts, single conditional-aggregation query per D17)

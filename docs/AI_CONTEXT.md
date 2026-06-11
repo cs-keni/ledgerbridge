@@ -126,9 +126,8 @@ User → TransactionService → [DB commit] → @TransactionalEventListener(AFTE
                                                                     RiskEngine
                                                             (4 rules, weighted score)
                                                                          ↓
-                                                    [score ≥ 0.4] → RiskAlert → SSE registry → Admin
-                                                    [score < 0.4, not alerted] → update CustomerRiskProfile baseline
-                                                    [alerted txns] → skip baseline update (poisoning guard — see TODOS.md)
+                                                    [score ≥ 0.4] → RiskAlert → SSE registry → Admin → SKIP profile update (D19)
+                                                    [score < 0.4] → update CustomerRiskProfile (Welford's + typicalCounterparties) (D19)
 ```
 
 ---
@@ -153,6 +152,18 @@ User → TransactionService → [DB commit] → @TransactionalEventListener(AFTE
 14. **D16 — `profile.typicalCounterparties` reuse**: BehavioralBaselineRule reuses the same JSONB field (no separate counterparty-tracking structure).
 15. **D17 — Single conditional-aggregation query for velocity**: Batch the 1h/24h/7d window counts in one query.
 16. **D18 — Composite indexes via explicit Flyway migration**: Not via JPA @Index. Added in the same migration as the entity DDL.
+
+### From Phase 4 TODOS gates (2026-06-11) — D19–D20
+
+17. **D19 — Baseline poisoning mitigation (score-conditional update)**: `TransactionRiskConsumer` evaluates in this order: (1) compute score, (2) if score ≥ 0.4 → create alert, SKIP `CustomerRiskProfile` update; if score < 0.4 → no alert, UPDATE profile (Welford's stats + `typicalCounterparties`). "Known counterparty" = first appearance in a non-alerted transaction (immediate add to `typicalCounterparties`). `typicalCounterparties` max size = **50 entries**; evict the oldest entry on overflow. Tradeoff accepted: adversary staying below 0.4 can still slowly poison baseline; mitigated by Welford's bounded recent-N window.
+
+18. **D20 — GraphPatternRule traversal bounds (1-hop, 3-pattern, bounded)**: Max hops = 1 (direct counterparty only; multi-hop deferred). Patterns and windows formally locked:
+    - **Fan-out**: ≥5 distinct new recipients within 24h → raw 0.8
+    - **Fan-in**: ≥5 distinct new senders within 24h → raw 0.7
+    - **Round-trip**: same amount TRANSFER_DEBIT sent to account X + TRANSFER_CREDIT received from same X within 2h → raw 0.6. Amount match: exact (NUMERIC(19,4)). No minimum amount.
+    - **"New" counterparty**: NOT IN `CustomerRiskProfile.typicalCounterparties` at the time of scoring.
+    - **Query cap**: 100 counterparties per window per query (prevents full table scan on high-volume accounts).
+    - `typicalCounterparties` max 50 (shared with D19).
 
 ### From `/plan-ceo-review` (2026-06-10) — Scope expansions accepted
 

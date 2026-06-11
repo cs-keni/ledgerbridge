@@ -19,14 +19,14 @@
 - [x] Integration tests: 2/2 TransactionIntegrationTest passing (embedded Kafka)
 - [x] **Total tests: 38/38 passing**
 
-### Phase 4 — Not Yet Started
-- [ ] **TODOS gate:** baseline-poisoning mitigation for BehavioralBaselineRule
-- [ ] **TODOS gate:** GraphPatternRule traversal bounds (max hops, time window, counterparty ceiling)
-- [ ] Implement CustomerRiskProfile update logic (Welford's algorithm)
-- [ ] Implement AmountAnomalyRule, VelocityRule, BehavioralBaselineRule, GraphPatternRule
-- [ ] Implement RiskEngine (weighted score aggregation, alert creation)
-- [ ] Implement TransactionRiskConsumer (Kafka consumer, @RetryableTopic)
-- [ ] Unit + integration tests per fraud scenario matrix
+### Phase 4 — TODOS Gates Cleared ✅
+- [x] **TODOS gate:** baseline-poisoning mitigation — done 2026-06-11 (D19)
+- [x] **TODOS gate:** GraphPatternRule traversal bounds — done 2026-06-11 (D20)
+- [ ] Implement CustomerRiskProfile update logic (Welford's algorithm, D6/D19)
+- [ ] Implement AmountAnomalyRule, VelocityRule, BehavioralBaselineRule, GraphPatternRule (D20)
+- [ ] Implement RiskEngine (weighted score aggregation, D9/D14)
+- [ ] Implement TransactionRiskConsumer (Kafka consumer, @RetryableTopic D7, idempotency D2, score-conditional baseline update D19)
+- [ ] Unit + integration tests per fraud scenario matrix (S1–S5)
 
 ### Blocked On
-- Nothing. Phase 4 TODOS gates need to be resolved first.
+- Nothing. Ready to implement Phase 4.

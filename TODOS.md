@@ -50,17 +50,28 @@
 
 ## Before Phase 4 (risk engine implementation)
 
-- [ ] **Baseline poisoning mitigation** — Decide and document a policy so a
-  fraudster's early transactions don't get folded into BehavioralBaselineRule's
-  "normal" profile via Welford's update, silently raising the bar for what
-  counts as suspicious for that customer. Leading option: exclude
-  alert-triggering transactions (score ≥ 0.4) from baseline updates, or hold
-  baseline updates until a transaction clears review. Affects the Kafka
-  consumer's evaluation order (score first, conditionally update baseline vs.
-  always update then re-score). Settle alongside D6 (Welford's bounded-window
-  decision).
-  - Source: Codex outside-voice review, finding "behavioral baseline has no
-    poisoning resistance — adversarial transactions normalize the profile"
+- [x] **Baseline poisoning mitigation** — **complete 2026-06-11**: Score-conditional
+  update (D19). Evaluation order in `TransactionRiskConsumer`: compute score first →
+  if score ≥ 0.4, create alert + SKIP `CustomerRiskProfile` update; if score < 0.4,
+  no alert + UPDATE profile (Welford's stats + typicalCounterparties). "Known
+  counterparty" threshold: **first appearance** (one non-alerted transaction adds the
+  counterparty to typicalCounterparties). `typicalCounterparties` max: **50 entries**;
+  evict oldest on overflow. Tradeoff accepted: adversary staying below 0.4 can still
+  slowly poison the baseline; mitigated by Welford's bounded recent-N window (damage is
+  limited to the sliding window, not all-time history).
+
+- [x] **GraphPatternRule traversal bounds** — **complete 2026-06-11** (D20). Formally
+  locked from test-matrix definitions:
+  - **Max hops**: 1 (direct counterparty only). Multi-hop deferred — needs recursive
+    CTEs or graph DB, out of scope for Phase 4.
+  - **Fan-out**: ≥5 distinct new recipients in 24h → raw 0.8
+  - **Fan-in**: ≥5 distinct new senders in 24h → raw 0.7
+  - **Round-trip**: same amount TRANSFER sent to counterparty X and returned from X
+    within 2h → raw 0.6. Amount match is exact (NUMERIC(19,4), no floating point).
+  - **"New" = NOT IN** `CustomerRiskProfile.typicalCounterparties` at scoring time.
+  - **Query cap**: 100 counterparties per window (prevents pathological scan on
+    high-volume accounts).
+  - `typicalCounterparties` max size: **50 entries** (shared with D19).
 
 ## Before Phase 6 (frontend)
 

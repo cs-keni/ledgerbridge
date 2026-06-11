@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-06-11 — Session 12 (Phase 4 TODOS gates: D19 + D20)
+
+### Changes
+- **TODOS.md**: Phase 4 gates marked `[x]` complete — baseline poisoning mitigation (D19) and GraphPatternRule traversal bounds (D20)
+- **PHASES.md**: Phase 4 gate checkboxes updated
+- **docs/AI_CONTEXT.md**: D19 and D20 added to architecture decisions; event flow updated to reflect score-conditional baseline update
+- Commit hash: `TBD`
+
+### Decisions locked
+- **D19 — Baseline poisoning (score-conditional update):** score first → if ≥0.4 alert + skip profile update; if <0.4 update profile. Known counterparty = first non-alerted appearance. typicalCounterparties max 50 entries (LRU eviction).
+- **D20 — GraphPatternRule bounds:** 1 hop only. Fan-out ≥5 recipients/24h (0.8), fan-in ≥5 senders/24h (0.7), round-trip exact-amount within 2h (0.6). "New" = NOT IN typicalCounterparties. Query cap 100.
+
+### Phase 4 status: TODOS gates cleared — implementation ready to start
+
+---
+
 ## 2026-06-11 — Session 11 (Phase 3 implementation)
 
 ### Changes
