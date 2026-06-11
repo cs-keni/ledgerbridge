@@ -64,7 +64,7 @@ row added — 1 run, CLEAR, 11 decisions).
 
 ## Module Ownership / Status
 
-| Module | Status | Owner |
+| Module | Status | Files |
 |---|---|---|
 | auth | Not started | — |
 | account | Not started | — |
@@ -72,23 +72,31 @@ row added — 1 run, CLEAR, 11 decisions).
 | risk | Not started | — |
 | audit | Not started | — |
 | notification | Not started | — |
-| common | Not started | — |
+| common | **Scaffold only** | `filter/CorrelationIdFilter.java`, `config/OpenApiConfig.java` |
 | frontend | Not started | — |
 
 ## Architecture Notes
 
-Modular monolith. Package: `com.ledgerbridge`. See AI_CONTEXT.md for full architecture.
+Modular monolith. Package: `com.ledgerbridge`. See `AI_CONTEXT.md` for full architecture + all locked decisions.
 
-## Open Questions / Decisions Pending
+**Critical naming**: the transaction table is `ledger_transaction` (not `transaction` — SQL reserved word). Entity annotation: `@Table(name = "ledger_transaction")`. Migration: `V3__create_ledger_transaction.sql`.
 
-- All 22 architecture/code-quality/test/performance/tension questions from
-  `/plan-eng-review` are resolved (see AI_CONTEXT.md). Nothing is dangling.
-- 6 design items deferred to specific later phases — tracked in `TODOS.md`,
-  not open architecture questions: fraud-validation strategy & `ledger_transaction`
-  rename (before Phase 1), API idempotency keys & correlation IDs (before
-  Phase 3), baseline-poisoning mitigation (before Phase 4), risk-engine
-  Prometheus metrics (alongside Phase 7).
-- Two failure-mode gaps flagged but not yet designed: refresh-token
-  reuse/rotation policy (decide before Phase 2), and `GraphPatternRule`
-  traversal bounds (decide before Phase 4 — same root issue Codex flagged
-  as "needs to be its own mini-system").
+## Open Design Work (Decisions Pending)
+
+All architecture questions from the three plan reviews are resolved. What remains are **design-work TODOS** gated to specific phases — not unresolved architecture:
+
+| Item | Gate | Notes |
+|---|---|---|
+| `ledger_transaction` rename | Before Phase 1 | Free to do now (no schema yet); costly later |
+| Fraud-scenario validation matrix | Before Phase 1 | Expected score ranges per scenario; backbone of Phase 4 tests |
+| Refresh-token reuse/rotation policy | Before Phase 2 | D4 picked storage; replay-detection behavior undecided |
+| API-level idempotency keys | Before Phase 3 | `Idempotency-Key` header on POST /transactions; different from D2 (consumer dedupe) |
+| Correlation IDs / trace propagation | Before Phase 3 | CorrelationIdFilter is wired; MDC propagation through Kafka headers needs Phase 3 work |
+| Baseline poisoning mitigation | Before Phase 4 | Exclude alerted txns from Welford's update? Hold until review? |
+| `GraphPatternRule` traversal bounds | Before Phase 4 | Max hops, time window, counterparty-count ceiling — must be its own mini-design |
+| Risk-engine Prometheus metrics | Alongside Phase 7 | Instrument during Phase 4 so metrics land with the rule code |
+| JVM flag validation | Before Phase 7.5 | Confirm -Xmx200m -Xms64m -XX:+UseSerialGC fits Railway 512MB |
+| V8 demo seed timestamp matrix | Before Phase 7.5 | Depends on Phase 4 fraud-scenario validation matrix |
+| Upstash Kafka SASL/PLAIN spike | Before Phase 7.5 | Prove connectivity before building Railway deploy around it |
+
+See `TODOS.md` for full detail on each item.
