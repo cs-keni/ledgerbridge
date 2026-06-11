@@ -350,13 +350,15 @@ These UUIDs are used in `V7__seed_demo_data.sql` and referenced in Phase 4
 test constants:
 
 ```java
-public class TestScenarioIds {
-    public static final UUID ALICE_NORMAL    = UUID.fromString("a1ice000-0000-0000-0000-000000000001");
-    public static final UUID BOB_VELOCITY    = UUID.fromString("b0bve100-0000-0000-0000-000000000002");
-    public static final UUID CAROL_HIGHAMOUNT = UUID.fromString("ca0h1am0-0000-0000-0000-000000000003");
-    public static final UUID DAVE_FANOUT     = UUID.fromString("da0efa00-0000-0000-0000-000000000004");
-    public static final UUID EVE_ROUNDTRIP   = UUID.fromString("e0er0und-0000-0000-0000-000000000005");
-}
+// Full constants in src/test/.../common/TestScenarioIds.java
+public static final UUID ALICE_USER_ID = UUID.fromString("a0000001-0000-0000-0000-000000000001");
+public static final UUID BOB_USER_ID   = UUID.fromString("b0000002-0000-0000-0000-000000000002");
+public static final UUID CAROL_USER_ID = UUID.fromString("c0000003-0000-0000-0000-000000000003");
+public static final UUID DAVE_USER_ID  = UUID.fromString("d0000004-0000-0000-0000-000000000004");
+public static final UUID EVE_USER_ID   = UUID.fromString("e0000005-0000-0000-0000-000000000005");
+
+public static final UUID ALICE_ACCOUNT = UUID.fromString("a0000001-0001-0000-0000-000000000001");
+// ... (see TestScenarioIds.java for full set including account and profile IDs)
 ```
 
 ---

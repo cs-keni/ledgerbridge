@@ -4,6 +4,20 @@
 
 ---
 
+## 2026-06-11 — Session 8 (Phase 1 verification + fixes)
+
+### Changes
+- **Upgraded Testcontainers BOM `1.20.1` → `1.21.4`** (`pom.xml`): resolved docker-java `3.4.0` → `3.4.2`; fixed Docker API version negotiation failure that blocked all integration tests against native Docker daemon (Engine 29.x, min API v1.44)
+- **Fixed V7 seed SQL — UUID cast bug** (`V7__seed_demo_data.sql`): `CASE WHEN ... THEN 'uuid-string' END` expressions in `INSERT ... SELECT` context resolve to `text` type; PostgreSQL won't auto-cast `text → uuid`; added `::uuid` to all 5 account-ID and counterparty-ID literals in `generate_series` SELECTs
+- **Fixed `CustomerRiskProfile.amountM2` column name** (`CustomerRiskProfile.java`): Hibernate 6 `CamelCaseToUnderscoresNamingStrategy` only inserts underscore before uppercase when the *next* char is also lowercase; `amountM2` → `M` followed by digit `2` (not lowercase) → produced `amountm2` instead of `amount_m2`; fixed with `@Column(name = "amount_m2")`
+- **SchemaIntegrationTest passes — 4/4** (`SchemaIntegrationTest.java`): migrations V1–V7 all apply clean, Hibernate schema validation passes, seed data assertions pass (5 users, 5 accounts, 5 profiles with correct Welford stats)
+- **PHASES.md**: Phase 1 marked ✅ Complete
+- Commit hash: TBD (recorded after commit)
+
+### Phase 1 status: COMPLETE
+
+---
+
 ## 2026-06-05
 
 ### Session Start

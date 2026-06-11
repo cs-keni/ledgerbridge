@@ -5,7 +5,7 @@
 
 ## Current Status
 
-**Phase: 0 — Setup COMPLETE — Phase 1 is next**
+**Phase: 1 — Domain + Database COMPLETE — Phase 2 is next**
 
 All 4 planning gates cleared:
 - `/plan-eng-review` ✅ Done 2026-06-05: 18 decisions locked (D2–D18), Codex outside voice, 6 TODOs
@@ -16,9 +16,13 @@ All 4 planning gates cleared:
 **Portfolio strategy locked** — see `docs/designs/portfolio-strategy.md` for the full CEO plan.
 **Design system locked** — see `DESIGN.md` for all Phase 6 component specs.
 
-Spring Boot project initialized. Docker Compose live. Flyway configured. Phase 0 fully shipped.
+Phase 1 complete: 11 JPA entities, Flyway migrations V1–V7, seed data (5 scenario users + 80 transactions), SchemaIntegrationTest 4/4 passing.
 
 ## Last Agent Action
+
+Claude Code (2026-06-11): Completed Phase 1. All entities, migrations, and integration tests written and passing. See ENGINEERING_LOG.md Session 8 for full detail.
+
+## Previous Agent Action
 
 Claude Code (2026-06-10): Completed Phase 0 implementation. Created all scaffold files:
 - `pom.xml`: Spring Boot 3.3.5, Java 21, all declared deps (JPA, Security, Kafka, JWT/JJWT, Flyway, SpringDoc, Hypersistence, logstash-logback-encoder, Testcontainers)
@@ -52,15 +56,16 @@ row added — 1 run, CLEAR, 11 decisions).
 
 ## What's Next
 
-**Phase 1 — Domain + Database**
+**Phase 2 — Auth + Account Module**
 
-1. TODOS gate: rename `transaction` table → `ledger_transaction` (TODOS.md — avoids SQL reserved-word collision)
-2. TODOS gate: design fraud-scenario validation matrix (TODOS.md — drives Phase 4 test assertions)
-3. Write Flyway migrations V1–V6 (users/auth, accounts, ledger_transaction, risk tables, audit_log, notifications + composite indexes per D18)
-4. Define all JPA entities with proper types (NUMERIC(19,4), UUID PKs, JSONB + Hypersistence for CustomerRiskProfile — D5)
-5. Write seed data migration V7 (labeled scenario data — high-velocity, unusual-amount, fan-out, normal baseline)
-6. Switch `spring.jpa.hibernate.ddl-auto=validate` and verify migrations run clean
-7. Add Testcontainers scaffold (`@Testcontainers` base class for future integration tests)
+Before starting Phase 2, resolve the TODOS gate:
+- **Refresh-token reuse/rotation policy** — D4 picked the storage mechanism (DB-backed table); replay-detection behavior (revoke whole token family on replay?) is still undecided. This must be locked before implementing `AuthController`'s refresh endpoint.
+
+Then implement in order:
+1. User entity + Spring Security config + JWT service
+2. `AuthController`: register, login, refresh (DB-backed refresh token per D4), logout
+3. `AccountService` + `AccountController`
+4. Unit tests for auth and account services
 
 ## Module Ownership / Status
 

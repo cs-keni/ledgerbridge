@@ -1,30 +1,27 @@
 # CURRENT_TASK.md — LedgerBridge
 
 > Reflects the single active task. Update when starting or finishing a task.
-> Last updated: 2026-06-10
+> Last updated: 2026-06-11
 
 ## Active Task
 
-**Phase 1 — Domain + Database**
+**Phase 2 — Auth + Account Module** (not yet started)
 
-Phase 0 is complete. Starting Phase 1.
-
-### Phase 0 Complete ✅
-- [x] Spring Boot 3.3.5 Maven project initialized
-- [x] Docker Compose: PostgreSQL 16 + Bitnami Kafka 3.7 KRaft
-- [x] Flyway configured (enabled, location `classpath:db/migration`)
-- [x] SpringDoc OpenAPI (Swagger UI with JWT Bearer auth scheme)
-- [x] Logback structured JSON (logstash-logback-encoder) + CorrelationIdFilter MDC
-- [x] All 4 planning gates cleared
-
-### Phase 1 — In Progress
+### Phase 1 Complete ✅
 - [x] **TODOS gate:** rename `transaction` → `ledger_transaction` — done 2026-06-11
 - [x] **TODOS gate:** design fraud-scenario validation matrix — done 2026-06-11 (`docs/RISK_ENGINE_TEST_MATRIX.md`)
-- [ ] Write Flyway migrations V1–V6 + composite indexes (D18)
-- [ ] Define JPA entities (NUMERIC(19,4), UUID PKs, JSONB + Hypersistence D5)
-- [ ] Write V7 seed data migration (labeled scenario patterns)
-- [ ] Switch `ddl-auto=validate`, verify migrations run clean
-- [ ] Add Testcontainers scaffold for Phase 2+ integration tests
+- [x] Write Flyway migrations V1–V6 + composite indexes (D18)
+- [x] Define JPA entities (NUMERIC(19,4), UUID PKs, JSONB + Hypersistence D5) — 11 entities + 7 enums
+- [x] Write V7 seed data migration (5 scenario users, 80 transactions, 5 CustomerRiskProfiles)
+- [x] Switch `ddl-auto=validate`, verify migrations run clean
+- [x] Add Testcontainers scaffold (`SchemaIntegrationTest`, `BaseIntegrationTest`) — 4/4 tests passing
+
+### Phase 2 — Not Yet Started
+- [ ] **TODOS gate:** decide refresh-token reuse/rotation policy (replay-detection behavior — see HANDOFF.md)
+- [ ] Implement User entity, Spring Security config, JWT service
+- [ ] Implement AuthController: register, login, refresh, logout
+- [ ] Implement AccountService + AccountController
+- [ ] Write unit tests for auth and account services
 
 ### Blocked On
-- Nothing. All gates cleared.
+- Nothing. Phase 2 is ready to start. Resolve TODOS gate (refresh-token rotation policy) first.
