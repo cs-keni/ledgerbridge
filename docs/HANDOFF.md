@@ -87,8 +87,8 @@ All architecture questions from the three plan reviews are resolved. What remain
 
 | Item | Gate | Notes |
 |---|---|---|
-| `ledger_transaction` rename | Before Phase 1 | Free to do now (no schema yet); costly later |
-| Fraud-scenario validation matrix | Before Phase 1 | Expected score ranges per scenario; backbone of Phase 4 tests |
+| `ledger_transaction` rename | ~~Before Phase 1~~ | ✅ **Done 2026-06-11** — entity `LedgerTransaction`, migration `V3__create_ledger_transaction.sql` |
+| Fraud-scenario validation matrix | ~~Before Phase 1~~ | ✅ **Done 2026-06-11** — `docs/RISK_ENGINE_TEST_MATRIX.md`; multi-rule escalation locked |
 | Refresh-token reuse/rotation policy | Before Phase 2 | D4 picked storage; replay-detection behavior undecided |
 | API-level idempotency keys | Before Phase 3 | `Idempotency-Key` header on POST /transactions; different from D2 (consumer dedupe) |
 | Correlation IDs / trace propagation | Before Phase 3 | CorrelationIdFilter is wired; MDC propagation through Kafka headers needs Phase 3 work |

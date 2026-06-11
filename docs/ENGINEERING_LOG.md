@@ -210,3 +210,40 @@ Phase 0 coding (T1–T9): Spring Boot 3.x Maven init, Docker Compose, Flyway, Sp
 
 ### Next
 Phase 1: Flyway migrations V1–V6, JPA entities (NUMERIC(19,4), UUID PKs, JSONB + Hypersistence), V7 seed data, switch ddl-auto to validate, Testcontainers scaffold. First: resolve TODOS gate items (ledger_transaction rename + fraud validation matrix design).
+
+---
+
+## 2026-06-11
+
+### Session 7 — Phase 1 TODOS gates (rename + validation matrix)
+- **Agent**: Claude Code
+- **Task**: Knock out both Phase 1 TODOS gates before beginning Phase 1 implementation
+
+### Changes
+
+**Gate 1: `transaction` → `ledger_transaction` rename (design lock)**
+- Confirmed `AI_CONTEXT.md` already had this correct (entity `LedgerTransaction`, migration `V3__create_ledger_transaction.sql`)
+- Updated `ledgerbridge.md`: entity block renamed `Transaction` → `LedgerTransaction` with `@Table(name = "ledger_transaction")` annotation; module structure updated `Transaction.java` → `LedgerTransaction.java`; Flyway migration list updated `V3__create_transactions.sql` → `V3__create_ledger_transaction.sql`
+- No code changes needed yet (table doesn't exist until Phase 1 migration runs)
+
+**Gate 2: fraud-scenario validation matrix (new design document)**
+- Created `docs/RISK_ENGINE_TEST_MATRIX.md` — full matrix with 5 scenarios:
+  - S1 Normal deposit: score < 0.10, no alert (precision/negative-control)
+  - S2 Velocity spike: score 0.40–0.60, MEDIUM (combined velocity + amount elevation + behavioral)
+  - S3 Large amount to new counterparty: score 0.60–0.80, HIGH (single-rule escalation via AmountAnomaly 0.9)
+  - S4 Fan-out pattern: score 0.60–0.80, HIGH (single-rule escalation via GraphPattern 0.8)
+  - S5 Round-trip: score ≥ 0.75, CRITICAL (multi-rule escalation — 3 rules ≥ 0.6 simultaneously)
+- **New design decision locked: multi-rule escalation tier** — if ≥3 rules each score ≥0.6 raw, floor total at 0.80 (CRITICAL). This is *distinct* from the existing single-rule escalation (any rule ≥0.8 → floor 0.65). Required because: (a) pure velocity can't reach 0.4 alone under these weights, so S5 needs all 4 signals converging; (b) multi-signal convergence is qualitatively stronger confidence than any single extreme signal.
+- Each scenario includes: seed customer UUID, exact seed data description, per-rule raw score with calculation, full score math with escalation trace, and Java assertion code for Phase 4 Testcontainers tests
+- Fixed-UUID seed customers defined: alice-normal, bob-velocity, carol-highamount, dave-fanout, eve-roundtrip
+
+**Doc updates**
+- `TODOS.md`: both Phase 1 gates marked `[x]` complete
+- `PHASES.md`: both Phase 1 TODOS gate checkboxes marked `[x]` complete
+- `AI_CONTEXT.md`: risk engine section updated with multi-rule escalation tier + rationale; Open Design Work table updated
+- `docs/HANDOFF.md`: open design work table updated
+- `docs/CURRENT_TASK.md`: both gates marked done
+- Updated `ledgerbridge.md` RiskEngine pseudocode to include tier-2 escalation
+
+### Next
+Phase 1 implementation is now fully unblocked. Write Flyway migrations V1–V6, define JPA entities, write V7 seed data migration with the 5 labeled scenario customers, switch ddl-auto to validate, add Testcontainers scaffold.

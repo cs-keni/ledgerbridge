@@ -7,24 +7,26 @@
 
 ## Before Phase 1 (seed data)
 
-- [ ] **Fraud-scenario validation strategy** — Design a labeled synthetic-scenario
-  test matrix: each seed-data pattern (high-velocity, unusual-amount, fan-out,
-  normal baseline) gets an *expected score range*, not just "a pattern that
-  exists." Phase 4 tests assert against these expected outcomes. This is what
-  makes the 0.25/0.30/0.20/0.25 weights and 0.4 alert threshold defensible
-  rather than arbitrary — and becomes the backbone of the Phase 8 README
-  "Risk Engine Explanation" section.
+- [x] **Fraud-scenario validation strategy** — **complete 2026-06-11**: see
+  `docs/RISK_ENGINE_TEST_MATRIX.md`. 5 scenarios (S1 Normal, S2 Velocity spike,
+  S3 Large+new counterparty, S4 Fan-out, S5 Round-trip) with full score math,
+  seed customer UUIDs, and per-scenario Phase 4 test assertions. New design
+  decision locked: multi-rule escalation tier (≥3 rules raw ≥0.6 → floor 0.80
+  CRITICAL). This is distinct from the existing single-rule escalation (≥0.8 →
+  floor 0.65 HIGH). See `ledgerbridge.md` RiskEngine section and
+  `AI_CONTEXT.md` for updated scoring spec.
   - Source: Codex outside-voice review, finding "no validation strategy for
     risk engine accuracy"
 
 ## Before Phase 1 (schema)
 
-- [ ] **Rename `transaction` table to `ledger_transaction`** — Avoid the SQL
-  reserved/contextual keyword collision (`START TRANSACTION`, isolation-level
-  syntax). Free to do now (table doesn't exist yet); costly after Phase 1
-  ships (migration + entity + every raw query + every doc reference). Update
-  `@Table(name = "ledger_transaction")` on the entity and all references in
-  `ledgerbridge.md`'s domain model description for consistency.
+- [x] **Rename `transaction` table to `ledger_transaction`** — **complete
+  2026-06-11**: decision locked and propagated to all docs. Entity is
+  `LedgerTransaction.java` with `@Table(name = "ledger_transaction")`.
+  Migration file is `V3__create_ledger_transaction.sql`. Updated in:
+  `ledgerbridge.md` (entity name, module structure, Flyway migration list),
+  `AI_CONTEXT.md` (already had it — confirmed consistent). No schema changes
+  needed yet (table doesn't exist until Phase 1 migration runs).
   - Source: Codex outside-voice review, finding "`transaction` is a SQL
     reserved word"
 

@@ -17,8 +17,8 @@
 - [x] Run `/plan-eng-review` before proceeding to Phase 1 — **complete 2026-06-05**: 18 decisions locked (D2–D18, see AI_CONTEXT.md), Codex outside-voice review run, 6 follow-up items written to `TODOS.md`
 
 ## Phase 1 — Domain + Database
-- [ ] **TODOS gate:** rename `transaction` table → `ledger_transaction` (avoids SQL reserved-word collision; free now, costly after migrations ship — see TODOS.md)
-- [ ] **TODOS gate:** design fraud-scenario validation matrix — labeled seed-data scenarios with *expected score ranges*, not just "patterns that exist" (drives Phase 4 test assertions; see TODOS.md and `docs/RISK_ENGINE_TEST_MATRIX.md`)
+- [x] **TODOS gate:** rename `transaction` table → `ledger_transaction` — **complete 2026-06-11**: entity `LedgerTransaction.java`, migration `V3__create_ledger_transaction.sql`, all docs updated
+- [x] **TODOS gate:** design fraud-scenario validation matrix — **complete 2026-06-11**: `docs/RISK_ENGINE_TEST_MATRIX.md` created; 5 scenarios with full score math, seed UUIDs, Phase 4 test assertions, multi-rule escalation decision locked
 - [ ] Define all JPA entities with proper types (NUMERIC for money, UUID for IDs, JSONB + Hypersistence Utils for CustomerRiskProfile per D5)
 - [ ] Write Flyway migrations V1–V6, including composite indexes per D18
 - [ ] Write seed data migration V7 (5 users, 10 accounts, 50+ transactions across various patterns)

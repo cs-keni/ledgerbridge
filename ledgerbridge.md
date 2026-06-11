@@ -83,7 +83,7 @@ ledgerbridge/
 │   │   ├── repository/          TransactionRepository.java, TransactionEventRepository.java
 │   │   ├── kafka/               TransactionEventProducer.java
 │   │   ├── dto/
-│   │   └── model/               Transaction.java, TransactionEvent.java
+│   │   └── model/               LedgerTransaction.java, TransactionEvent.java
 │   ├── risk/
 │   │   ├── consumer/            TransactionRiskConsumer.java  — Kafka consumer
 │   │   ├── engine/              RiskEngine.java               — core detection logic
@@ -162,9 +162,10 @@ Account {
   LocalDateTime closedAt
 }
 
-// Transaction
+// LedgerTransaction  (table: ledger_transaction — NOT "transaction"; SQL reserved word)
 @Entity
-Transaction {
+@Table(name = "ledger_transaction")
+LedgerTransaction {
   UUID id
   String transactionNumber  // TXN-YYYYMMDD-XXXXXXXX
   UUID accountId
@@ -348,8 +349,16 @@ double graphScore = graphPatternRule.evaluate(transaction, profile);
 // Weighted sum (weights reflect severity of each signal type)
 totalScore = (amountScore * 0.25) + (velocityScore * 0.30) + (behavioralScore * 0.20) + (graphScore * 0.25);
 
-// Escalation: if any single rule fires at 0.8+, minimum total score is 0.65
+// Escalation tier 1: any single rule ≥ 0.8 → floor 0.65 (HIGH)
 totalScore = Math.max(totalScore, maxSingleRuleScore >= 0.8 ? 0.65 : totalScore);
+
+// Escalation tier 2: ≥ 3 rules each scoring ≥ 0.6 simultaneously → floor 0.80 (CRITICAL)
+// Rationale: multi-signal convergence across independent fraud typologies is qualitatively
+// stronger than any single extreme signal. Required to reach CRITICAL on round-trip scenario.
+// See docs/RISK_ENGINE_TEST_MATRIX.md for full derivation.
+long convergingRules = Stream.of(amountScore, velocityScore, behavioralScore, graphScore)
+    .filter(s -> s >= 0.6).count();
+totalScore = Math.max(totalScore, convergingRules >= 3 ? 0.80 : totalScore);
 
 if (totalScore >= 0.4) {
     // Create RiskAlert
@@ -377,7 +386,7 @@ profileService.updateBaseline(userId, transaction);
 src/main/resources/db/migration/
   V1__create_users_and_auth.sql
   V2__create_accounts.sql
-  V3__create_transactions.sql
+  V3__create_ledger_transaction.sql   ← NOT "transactions" — SQL reserved word
   V4__create_risk_tables.sql
   V5__create_audit_log.sql
   V6__create_notifications.sql

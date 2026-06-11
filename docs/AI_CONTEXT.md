@@ -184,14 +184,22 @@ User → TransactionService → [DB commit] → @TransactionalEventListener(AFTE
 
 ### Weights + Threshold
 ```
-AmountAnomalyRule    × 0.25
-VelocityRule         × 0.30
+AmountAnomalyRule      × 0.25
+VelocityRule           × 0.30
 BehavioralBaselineRule × 0.20
-GraphPatternRule     × 0.25
+GraphPatternRule       × 0.25
 
-Escalation: if any single rule ≥ 0.8 → minimum total score = 0.65
+Escalation tier 1 (single-rule):  any rule raw ≥ 0.8  → floor 0.65 (HIGH)
+Escalation tier 2 (multi-rule):   ≥ 3 rules raw ≥ 0.6 → floor 0.80 (CRITICAL)
 Alert threshold: total ≥ 0.4
 ```
+
+**Multi-rule escalation rationale (locked 2026-06-11):** pure velocity cannot
+reach 0.4 alone (max contribution: 0.7 × 0.30 = 0.21). The tier-2 escalation
+is required to guarantee CRITICAL on the round-trip scenario (S5), where 3
+independent signal types converge simultaneously. It does NOT fire on the
+velocity-spike scenario (S2: only 2 rules reach ≥ 0.6). Full derivation in
+`docs/RISK_ENGINE_TEST_MATRIX.md`.
 
 ### Severity Mapping
 ```
@@ -292,8 +300,8 @@ curl http://localhost:8080/actuator/health/liveness
 
 | Item | Gate | Status |
 |---|---|---|
-| `ledger_transaction` rename decision | Before Phase 1 | ⬜ Needs design |
-| Fraud-scenario validation matrix | Before Phase 1 | ⬜ Needs design |
+| `ledger_transaction` rename decision | Before Phase 1 | ✅ Locked 2026-06-11 |
+| Fraud-scenario validation matrix | Before Phase 1 | ✅ Locked 2026-06-11 — `docs/RISK_ENGINE_TEST_MATRIX.md` |
 | Refresh-token reuse/rotation policy | Before Phase 2 | ⬜ Needs design |
 | API-level idempotency keys | Before Phase 3 | ⬜ Needs design |
 | Correlation IDs / trace propagation | Before Phase 3 | ⬜ Needs design |

@@ -18,8 +18,8 @@ Phase 0 is complete. Starting Phase 1.
 - [x] All 4 planning gates cleared
 
 ### Phase 1 — In Progress
-- [ ] **TODOS gate:** rename `transaction` → `ledger_transaction` (TODOS.md)
-- [ ] **TODOS gate:** design fraud-scenario validation matrix (TODOS.md)
+- [x] **TODOS gate:** rename `transaction` → `ledger_transaction` — done 2026-06-11
+- [x] **TODOS gate:** design fraud-scenario validation matrix — done 2026-06-11 (`docs/RISK_ENGINE_TEST_MATRIX.md`)
 - [ ] Write Flyway migrations V1–V6 + composite indexes (D18)
 - [ ] Define JPA entities (NUMERIC(19,4), UUID PKs, JSONB + Hypersistence D5)
 - [ ] Write V7 seed data migration (labeled scenario patterns)
