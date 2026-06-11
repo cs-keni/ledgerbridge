@@ -10,7 +10,7 @@
 - **TODOS.md**: Phase 4 gates marked `[x]` complete — baseline poisoning mitigation (D19) and GraphPatternRule traversal bounds (D20)
 - **PHASES.md**: Phase 4 gate checkboxes updated
 - **docs/AI_CONTEXT.md**: D19 and D20 added to architecture decisions; event flow updated to reflect score-conditional baseline update
-- Commit hash: `TBD`
+- Commit hash: `0bddc9f`
 
 ### Decisions locked
 - **D19 — Baseline poisoning (score-conditional update):** score first → if ≥0.4 alert + skip profile update; if <0.4 update profile. Known counterparty = first non-alerted appearance. typicalCounterparties max 50 entries (LRU eviction).
