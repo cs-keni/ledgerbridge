@@ -1,13 +1,13 @@
 # AI_CONTEXT.md — LedgerBridge
 
 > **Read this first.** All architectural and implementation decisions live here.
-> Last updated: 2026-06-10 (Phase 0 complete)
+> Last updated: 2026-06-11 (Phase 3 complete)
 
 ---
 
 ## Project State
 
-**Phase 1 COMPLETE. Phase 2 is next.**
+**Phase 3 COMPLETE. Phase 4 (Risk Engine) is next.**
 
 | Gate | Status | Date |
 |---|---|---|
@@ -18,6 +18,9 @@
 | Phase 0 implementation | ✅ SHIPPED | 2026-06-10 |
 | Phase 1 implementation | ✅ SHIPPED | 2026-06-11 |
 | Phase 2 TODOS gate (refresh-token rotation) | ✅ CLEAR | 2026-06-11 |
+| Phase 2 implementation | ✅ SHIPPED | 2026-06-11 |
+| Phase 3 TODOS gates (idempotency + correlation IDs) | ✅ CLEAR | 2026-06-11 |
+| Phase 3 implementation | ✅ SHIPPED | 2026-06-11 |
 
 Portfolio strategy: `docs/designs/portfolio-strategy.md`
 Design system: `DESIGN.md`

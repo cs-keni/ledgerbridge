@@ -55,6 +55,9 @@ public class LedgerTransaction {
     @Column
     private LocalDateTime completedAt;
 
+    @Column(length = 36)
+    private String correlationId;
+
     @Column(length = 45)
     private String ipAddress;
 

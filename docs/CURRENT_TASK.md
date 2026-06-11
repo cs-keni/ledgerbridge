@@ -5,23 +5,28 @@
 
 ## Active Task
 
-**Phase 3 — Transaction Module + Kafka** (not yet started)
+**Phase 4 — Risk Engine** (not yet started)
 
-### Phase 2 Complete ✅
-- [x] **TODOS gate:** refresh-token rotation policy — done 2026-06-11
-- [x] `JwtService`, `UserPrincipal`, `UserDetailsServiceImpl`, `JwtAuthenticationFilter`, `SecurityConfig`
-- [x] `AuthService` + `AuthController` (register, login, refresh with family rotation, logout)
-- [x] `AccountService` + `AccountController` (create, list, get, close)
-- [x] V8 migration — `family_id UUID` on `refresh_token`
-- [x] Unit tests: 21/21 passing (AuthServiceTest 12, AccountServiceTest 9)
+### Phase 3 Complete ✅
+- [x] **TODOS gate:** API-level idempotency keys — done 2026-06-11
+- [x] **TODOS gate:** correlation-ID / trace propagation — done 2026-06-11
+- [x] V9 migration — `idempotency_key` table + `correlation_id` on `ledger_transaction`
+- [x] `IdempotencyService` (Stripe pattern, REQUIRES_NEW, 24h TTL)
+- [x] `TransactionService` (deposit, withdraw, transfer with D13 pessimistic locking)
+- [x] `TransactionEventProducer` (@TransactionalEventListener AFTER_COMMIT, userId key, X-Correlation-ID header)
+- [x] `TransactionController` (POST deposit/withdraw/transfer + Idempotency-Key header; GET /{id} + paged list)
+- [x] Unit tests: 15/15 TransactionServiceTest passing
+- [x] Integration tests: 2/2 TransactionIntegrationTest passing (embedded Kafka)
+- [x] **Total tests: 38/38 passing**
 
-### Phase 3 — Not Yet Started
-- [ ] **TODOS gate:** API-level idempotency keys on POST /transactions + /transfers
-- [ ] **TODOS gate:** correlation-ID / trace propagation through Kafka headers + MDC
-- [ ] Implement TransactionService (deposit, withdrawal, transfer)
-- [ ] Implement TransactionEventProducer (@TransactionalEventListener AFTER_COMMIT)
-- [ ] Implement TransactionController
-- [ ] Unit tests for TransactionService; integration test: deposit → Kafka event
+### Phase 4 — Not Yet Started
+- [ ] **TODOS gate:** baseline-poisoning mitigation for BehavioralBaselineRule
+- [ ] **TODOS gate:** GraphPatternRule traversal bounds (max hops, time window, counterparty ceiling)
+- [ ] Implement CustomerRiskProfile update logic (Welford's algorithm)
+- [ ] Implement AmountAnomalyRule, VelocityRule, BehavioralBaselineRule, GraphPatternRule
+- [ ] Implement RiskEngine (weighted score aggregation, alert creation)
+- [ ] Implement TransactionRiskConsumer (Kafka consumer, @RetryableTopic)
+- [ ] Unit + integration tests per fraud scenario matrix
 
 ### Blocked On
-- Nothing. Phase 3 TODOS gates need to be resolved first before implementation.
+- Nothing. Phase 4 TODOS gates need to be resolved first.

@@ -32,14 +32,14 @@
 - [x] Implement AccountService + AccountController — **complete 2026-06-11**: full CRUD (create, list, get, close); ownership enforced on get/close; V8 migration adds `family_id`
 - [x] Write unit tests for auth and account services — **complete 2026-06-11**: 21/21 passing (AuthServiceTest 12, AccountServiceTest 9)
 
-## Phase 3 — Transaction Module + Kafka
-- [ ] **TODOS gate:** API-level idempotency keys on POST /transactions and /transfers (`Idempotency-Key` header — distinct from D2's consumer-side dedupe; prevents double-submission from double-clicks/client retries)
-- [ ] **TODOS gate:** correlation-ID / trace propagation — generate at submission boundary, thread through Kafka headers + MDC, into risk/audit/SSE/structured logs (must start here — retrofitting later is expensive)
-- [ ] Implement TransactionService (deposit, withdrawal, transfer with balance validation, pessimistic locking + fixed lock ordering per D13)
-- [ ] Implement TransactionEventProducer (publish to Kafka via `@TransactionalEventListener(AFTER_COMMIT)` per D10, keyed by userId per D3)
-- [ ] Implement TransactionController
-- [ ] Write unit tests for TransactionService (mock Kafka producer)
-- [ ] Write integration test: full deposit flow → Kafka event published
+## Phase 3 — Transaction Module + Kafka ✅ Complete
+- [x] **TODOS gate:** API-level idempotency keys on POST /transactions and /transfers — **complete 2026-06-11**: Stripe pattern, 24h TTL, SHA-256 request hash, 422 on mismatch; `IdempotencyKey` entity + `IdempotencyService` (REQUIRES_NEW propagation), V9 migration
+- [x] **TODOS gate:** correlation-ID / trace propagation — **complete 2026-06-11**: `correlation_id VARCHAR(36)` on `ledger_transaction` via V9; propagated from MDC (`X-Correlation-ID` request header → `CorrelationIdFilter`) → service → `TransactionEvent.correlationId` → Kafka header `X-Correlation-ID`
+- [x] Implement TransactionService (deposit, withdrawal, transfer with balance validation, pessimistic locking + fixed lock ordering per D13) — **complete 2026-06-11**
+- [x] Implement TransactionEventProducer (publish to Kafka via `@TransactionalEventListener(AFTER_COMMIT)` per D10, keyed by userId per D3) — **complete 2026-06-11**
+- [x] Implement TransactionController (deposit, withdraw, transfer with `Idempotency-Key` header support; GET /{id} and paged list) — **complete 2026-06-11**
+- [x] Write unit tests for TransactionService (mock Kafka producer) — **complete 2026-06-11**: 15 tests passing
+- [x] Write integration test: full deposit flow → Kafka event published — **complete 2026-06-11**: 2 tests (deposit + withdraw) via embedded Kafka (@EmbeddedKafka), 38/38 total tests passing
 
 ## Phase 4 — Risk Engine (Core Differentiator)
 - [ ] **TODOS gate:** decide baseline-poisoning mitigation (e.g. exclude alert-triggering transactions from Welford's baseline updates — see TODOS.md)

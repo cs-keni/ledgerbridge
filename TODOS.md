@@ -44,29 +44,9 @@
 
 ## Before Phase 3 (transaction/transfer endpoints)
 
-- [ ] **API-level idempotency keys** — Require an `Idempotency-Key` header
-  (client-generated UUID) on `POST /transactions` and `POST /transfers`;
-  server stores `(key, request_hash, response_body, expiry)` and returns the
-  cached response on retry instead of re-executing the transfer. This is
-  DISTINCT from D2 (Kafka consumer-side idempotency, which prevents duplicate
-  *alerts* from redelivery) — this prevents duplicate *transfers* from
-  double-clicks or client-side network retries, the textbook payments-API
-  pattern (Stripe/Square). Needs a small supporting table + TTL/cleanup
-  decision; pairs naturally with D13's pessimistic-locking transaction
-  boundary.
-  - Source: Codex outside-voice review, finding "no idempotency at the
-    API/command layer (separate from consumer-side dedup)"
+- [x] **API-level idempotency keys** — **complete 2026-06-11**: `IdempotencyKey` entity + `IdempotencyKeyRepository` + `IdempotencyService`. Stripe pattern: `(idem_key, user_id)` unique index; SHA-256 hash of JSON-serialized request; 422 on hash mismatch; 24h TTL; `REQUIRES_NEW` propagation prevents idempotency store from rolling back with the caller; silent on duplicate-key race. V9 migration creates `idempotency_key` table. `TransactionController` accepts optional `Idempotency-Key` header on all 3 write endpoints.
 
-- [ ] **Correlation IDs / trace propagation** — Generate a correlation ID at
-  the transaction-submission boundary, propagate via Kafka message headers
-  and MDC (Mapped Diagnostic Context), and carry it into risk-engine
-  evaluation, alert creation, audit-log entries, and structured JSON log
-  output (Logback). Must land starting Phase 3 — retrofitting across
-  transaction/risk/audit/notification modules later is a much bigger lift.
-  Makes the async event-driven pipeline (after-commit publish, retry/DLT)
-  debuggable with one grep instead of manual reconstruction.
-  - Source: Codex outside-voice review, finding "no correlation ID across
-    the async transaction → risk → alert → audit chain"
+- [x] **Correlation IDs / trace propagation** — **complete 2026-06-11**: `correlation_id VARCHAR(36)` added to `ledger_transaction` via V9; `LedgerTransaction.correlationId` field; `TransactionService` reads from MDC (`CorrelationIdFilter` sets `correlationId` key from `X-Correlation-ID` header on every request); `TransactionEvent` carries `correlationId`; `TransactionEventProducer` sets `X-Correlation-ID` Kafka message header.
 
 ## Before Phase 4 (risk engine implementation)
 

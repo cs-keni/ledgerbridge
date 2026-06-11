@@ -4,6 +4,29 @@
 
 ---
 
+## 2026-06-11 — Session 11 (Phase 3 implementation)
+
+### Changes
+- **V9__phase3_idempotency_and_correlation.sql**: creates `idempotency_key` table (unique on `(idem_key, user_id)`), adds `correlation_id VARCHAR(36)` to `ledger_transaction` with partial index
+- **`LedgerTransaction.java`** (edit): added `correlationId` field
+- **`AccountRepository.java`** (edit): added `findByIdWithLock` (`@Lock(PESSIMISTIC_WRITE)`) for transfer deadlock prevention (D13)
+- **`TransactionRequest.java` / `TransferRequest.java` / `TransactionResponse.java`**: request/response DTOs
+- **`TransactionEvent.java` / `TransactionCompletedEvent.java`**: Spring application event carrying Kafka payload
+- **`KafkaConfig.java`**: `transaction-events` topic declaration (3 partitions, 1 replica)
+- **`IdempotencyKey.java` / `IdempotencyKeyRepository.java` / `IdempotencyService.java`**: Stripe-pattern idempotency — SHA-256 request hash, 24h TTL, 422 on hash mismatch, `REQUIRES_NEW` propagation, silent on duplicate-key race
+- **`TransactionEventProducer.java`**: `@TransactionalEventListener(AFTER_COMMIT)` → `kafkaTemplate.send()` keyed by `userId` (D3), sets `X-Correlation-ID` header (D10)
+- **`TransactionService.java`**: deposit, withdraw, transfer (pessimistic lock + fixed UUID ordering per D13, insufficient-funds 422, ownership enforcement), getTransaction, getTransactionsByAccount (paged); publishes `TransactionCompletedEvent` after DB commit
+- **`TransactionController.java`**: POST /api/transactions/{deposit,withdraw,transfer} with optional `Idempotency-Key` header; GET /{id} and GET ?accountId (paged)
+- **`KafkaIntegrationTest.java`**: base class with PostgreSQL Testcontainer + `@EmbeddedKafka` (in-process, no Docker for Kafka)
+- **`TransactionServiceTest.java`**: 15 Mockito unit tests (deposit 4, withdraw 3, transfer 5, getTransaction 1, getTransactionsByAccount 2)
+- **`TransactionIntegrationTest.java`**: 2 integration tests (deposit + withdraw) — full DB + embedded Kafka; consumer uses `auto.offset.reset=latest` + pre-produce partition-assignment poll
+- **Tests: 38/38 passing** (AuthServiceTest 12, AccountServiceTest 9, TransactionServiceTest 15, TransactionIntegrationTest 2)
+- Commit hash: `TBD`
+
+### Phase 3 status: COMPLETE
+
+---
+
 ## 2026-06-11 — Session 10 (Phase 2 implementation)
 
 ### Changes
