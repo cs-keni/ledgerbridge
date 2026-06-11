@@ -12,7 +12,7 @@
 - **Fixed `CustomerRiskProfile.amountM2` column name** (`CustomerRiskProfile.java`): Hibernate 6 `CamelCaseToUnderscoresNamingStrategy` only inserts underscore before uppercase when the *next* char is also lowercase; `amountM2` → `M` followed by digit `2` (not lowercase) → produced `amountm2` instead of `amount_m2`; fixed with `@Column(name = "amount_m2")`
 - **SchemaIntegrationTest passes — 4/4** (`SchemaIntegrationTest.java`): migrations V1–V7 all apply clean, Hibernate schema validation passes, seed data assertions pass (5 users, 5 accounts, 5 profiles with correct Welford stats)
 - **PHASES.md**: Phase 1 marked ✅ Complete
-- Commit hash: TBD (recorded after commit)
+- Commit hash: `77bf21d`
 
 ### Phase 1 status: COMPLETE
 
