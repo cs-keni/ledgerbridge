@@ -70,17 +70,13 @@
 
 ## Before Phase 6 (frontend)
 
-- [ ] **Run `/plan-design-review` before Phase 6** — The React admin dashboard (risk
-  score gauge, SSE alert feed, transaction table with score column) is the live
-  demo's visual centerpiece and the portfolio screenshot that goes on LinkedIn.
+- [x] **Run `/plan-design-review` before Phase 6** — **complete 2026-06-10**: `DESIGN.md` created, 11 decisions locked. See `DESIGN.md` for full design system.
   Design system, interaction states (loading/empty/error/success/partial for each
-  feature), animation direction, and the risk score gauge visual design should be
-  locked before implementation begins. A senior engineer reviewing a polished UI
-  demo reacts differently than one reviewing a functional but generic dashboard.
-  - Priority: P2
-  - Effort: S (~30 min gstack review)
-  - Source: CEO review Section 11 — /plan-design-review recommendation for UI-heavy
-    phases per SELECTIVE EXPANSION guidelines
+  feature), animation direction, and the risk score gauge visual design locked.
+  Key decisions: sidebar + workspace layout, Risk Alerts as DEMO_ACTOR default route,
+  radial arc risk gauge with 0.4 threshold marker + rule contribution bars, filled dark
+  chip severity badges, WCAG 2.1 AA a11y standard, demo-aware empty state with Swagger
+  link, SSE reconnecting indicator, 'Try a Demo Scenario →' in-app Swagger CTA.
 
 ## Before Phase 7.5 (Railway deploy)
 

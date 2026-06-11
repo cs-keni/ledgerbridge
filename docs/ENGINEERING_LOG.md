@@ -151,3 +151,34 @@ Run `/plan-eng-review` fresh pass to pick up the 4 CEO review scope additions (S
 
 ### Next
 Phase 0 coding (T1–T9): Spring Boot 3.x Maven init, Docker Compose (PostgreSQL 16 + Kafka Bitnami), Flyway config, SpringDoc, Logback + correlation-ID MDC scaffold. Then V1 schema migration (`ledger_transaction` rename + D18 composite indexes), JPA entities (Hypersistence Utils JSONB), Testcontainers scaffold.
+
+---
+
+### Session 5 — `/plan-design-review` (design system lock)
+- **Agent**: Claude Code
+- **Task**: Run /plan-design-review — lock all design decisions before Phase 6 frontend implementation
+
+### Changes
+- Ran full 7-pass design review (classifier, hierarchy, motion/animation, layout, color/type, interaction states, accessibility)
+- Ran Codex (gpt-5.5) as independent outside design voice — surfaced 7 findings (no first-screen contract, wrong center of gravity, missing CTA, unearned cards, gauge underspecified, motion undefined, no design system) — all resolved
+- **11 decisions locked (D1–D11):** full review pass, outside voices, layout (D3), default route (D4), demo empty state (D5), SSE indicator (D6), gauge loading/null states (D7), demo CTA (D8), severity badge pattern (D9), accessibility standard (D10), risk gauge spec (D11)
+- **Score raised: 2/10 → 8/10** across 7 dimensions
+- **Created `DESIGN.md`** — comprehensive design system:
+  - Color tokens (`--color-bg: #111111`, `--color-surface: #1a1a1a`, sidebar `#161616`, accent `#6366f1`)
+  - Severity tokens (critical `#dc2626`, high `#ea580c`, medium `#d97706`, low `#16a34a`)
+  - Typography: Inter (body), Geist Mono (numeric/amounts/IDs)
+  - Animation system: 150ms route fades, 40ms/Y-8px stagger, 600ms spring gauge
+  - Global layout: 160px sidebar + main content
+  - Full component specs: Alert Queue table (44px rows, sortable), RiskGauge (270° radial arc, 0.4 threshold), SeverityBadge (dark chip + semantic dot), SSE connection badge
+  - Interaction state table: 6 features × 4 states (loading/empty/error/SSE-disconnected)
+  - WCAG 2.1 AA requirements (muted token `#888888` only at ≥14px/uppercase)
+- **Updated PHASES.md**: Phase 6 DESIGN gate marked done; all 9 build tasks rewritten with component specs from DESIGN.md
+- **Updated TODOS.md**: `/plan-design-review` gate marked `[x]` complete
+- **Updated docs/designs/portfolio-strategy.md**: GSTACK REVIEW REPORT Design Review row added (1 run, CLEAR, 11 decisions, score 2→8)
+- Generated `tasks-design-review-20260610-172401.jsonl` (T1–T7) covering Phase 6 components
+
+### Commit
+(pending — this session)
+
+### Next
+Phase 0 coding (T1–T9): Spring Boot 3.x Maven init, Docker Compose, Flyway, SpringDoc, Logback. All 4 planning gates now cleared — implementation can begin.

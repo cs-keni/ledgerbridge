@@ -81,11 +81,11 @@ Continue building phases 5-8 while interviewing. If an offer arrives before Phas
 | Review | Trigger | Why | Runs | Status | Findings |
 |--------|---------|-----|------|--------|----------|
 | CEO Review | `/plan-ceo-review` | Scope & strategy | 1 | CLEAN | 4 proposals, 4 accepted, 0 deferred |
-| Outside Voice | Codex (gpt-5.5) | Independent 2nd opinion | 2 | issues_found | CEO: 2 tensions (blog timing, demo auth). Eng: 7 tensions (seed staleness, profile-gating, DEMO_ACTOR role, liveness probe, Swagger fallback exclusions, Milestone Rule, ADR count) — all resolved |
+| Outside Voice | Codex (gpt-5.5) | Independent 2nd opinion | 3 | issues_found | CEO: 2 tensions (blog timing, demo auth). Eng: 7 tensions (all resolved). Design: 7 findings (no first-screen contract, wrong center of gravity, missing CTA, unearned cards, gauge underspecified, motion undefined, no design system) — all resolved via 11 decisions |
 | Eng Review | `/plan-eng-review` | Architecture & tests (required) | 2 | CLEAR (PLAN) | 9 issues found, 0 unresolved, 1 critical gap resolved (DemoDataRefreshComponent DB startup guard). Decisions locked: D1–D10 (Maven Frontend Plugin, SPA fallback, NormalDeposit negative test, timestamp refresh, profile-gating, DEMO_ACTOR, liveness probe, Swagger exclusions, Milestone Rule held, ADR count held) |
-| Design Review | `/plan-design-review` | UI/UX gaps | 0 | — | not yet run — TODOS gate before Phase 6 |
+| Design Review | `/plan-design-review` | UI/UX gaps | 1 | CLEAR (PLAN) | score: 2/10 → 8/10, 11 decisions locked. DESIGN.md created. Key: sidebar layout, Risk Alerts default route, radial arc gauge with 0.4 threshold + rule bars, dark chip severity badges, WCAG 2.1 AA, demo empty state + Swagger CTA, SSE reconnecting indicator |
 | DX Review | `/plan-devex-review` | Developer experience gaps | 0 | — | — |
 
-**VERDICT:** CEO + ENG CLEARED — ready to implement Phase 0 → Phase 1.
+**VERDICT:** CEO + ENG + DESIGN CLEARED — ready to implement Phase 0 → Phase 6.
 
 NO UNRESOLVED DECISIONS

@@ -73,16 +73,34 @@
 - [ ] Write tests for audit logging
 
 ## Phase 6 — Frontend
-- [ ] **TODOS gate:** run `/plan-design-review` before starting frontend implementation (lock design system, interaction states, risk score gauge visual design — see TODOS.md)
+- [x] **DESIGN gate:** run `/plan-design-review` — **complete 2026-06-10**: `DESIGN.md` created, 11 decisions locked (sidebar layout, demo default route → `/admin/alerts`, risk gauge spec, interaction states, severity badges, WCAG 2.1 AA). All design decisions in `DESIGN.md`.
 - [ ] Set up React 18 + TypeScript + Tailwind + React Query + Zustand
+  - Configure Tailwind with tokens from `DESIGN.md` (CSS variables; `fontFamily: { sans: ['Inter'], mono: ['Geist Mono'] }`)
+  - Import Inter from `@fontsource/inter`, Geist Mono from `@fontsource/geist-mono`
 - [ ] Build auth pages (login/register)
-- [ ] Build Dashboard (account overview, recent transactions)
+  - Login: centered card (#1a1a1a), LedgerBridge wordmark + tagline ("Real-time transaction risk monitoring"), WCAG 2.1 AA form with always-visible labels
+- [ ] Build Admin: Alert queue — **DEMO_ACTOR default route** `/admin/alerts` (post-login redirect)
+  - Sidebar (160px, #161616): nav order Risk Alerts → Audit Log → Transactions → Accounts → Dashboard; active state indigo accent
+  - Stat row: 4 chips (Total Alerts, Critical, High, Pending Review)
+  - Alert queue: sortable table (44px rows); Score column = mini arc chip color-coded by severity; Severity = filled dark chip + semantic dot per `DESIGN.md`; Amount/ID columns = `font-mono`
+  - Alert queue header right: `Try a Demo Scenario →` button → opens `/swagger-ui.html` in new tab
+  - Empty state: "No risk alerts yet. Trigger a fraud scenario in Swagger UI →" [link button] with 150ms fade-in (per D5)
+  - Row click: slide-in alert detail panel from right (300ms ease-out) — NOT a new route
+  - SSE badge: green connected dot; orange pulsing dot + "Reconnecting..." tooltip on disconnect (per D6)
+- [ ] Build `RiskGauge` component (alert detail panel) — **visual portfolio centerpiece**
+  - Radial arc, 270°, scale 0.0–1.0, decimal score display (e.g. `0.73`, never `73%`)
+  - Color gradient: #34d399 (0–0.3) → #d97706 (0.3–0.6) → #dc2626 (0.6–1.0)
+  - Dotted threshold marker at 0.4 labeled "Alert threshold" (per D11)
+  - Center: score value (28px font-mono) + severity label below
+  - Below arc: 4 mini bars for rule contributions (AmountAnomaly 0.25, Velocity 0.30, BehavioralBaseline 0.20, GraphPattern 0.25)
+  - Mount animation: spring 600ms from 0 to score; SSE update: spring 600ms re-animate; Loading: skeleton shimmer arc; Null: `—` + tooltip "Insufficient transaction history"
+- [ ] Build Admin: Alert detail slide-in panel (RiskGauge + rule breakdown + transaction details + Review/Dismiss actions)
+- [ ] Build Admin: Audit log
+- [ ] Build Dashboard (account overview, recent transactions) — secondary screen for demo
 - [ ] Build Account list + detail with transaction history
 - [ ] Build Transfer form
-- [ ] Build Admin: Alert queue with risk score visualization
-- [ ] Build Admin: Alert detail with rule breakdown display
-- [ ] Build Admin: Audit log
-- [ ] Connect SSE for real-time alert badge
+- [ ] Connect SSE for real-time alert badge (green/orange state per D6)
+- [ ] WCAG 2.1 AA verification: contrast check muted tokens (#888888 only for uppercase/≥14px, else #999999), keyboard nav on alert table (Tab/Enter/Escape), ARIA landmarks (`<nav>`, `<main>`, `role="table"`)
 - [ ] Run `/qa` to verify all flows end-to-end
 
 ## Phase 7 — Observability + DevOps

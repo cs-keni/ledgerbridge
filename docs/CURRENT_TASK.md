@@ -7,7 +7,7 @@
 
 **Phase 0 — Setup**
 
-All 3 planning gates cleared. Beginning Phase 0 implementation.
+All 4 planning gates cleared. Beginning Phase 0 implementation.
 
 ### Done
 - [x] Git initialized, remote connected (`git@github.com:cs-keni/ledgerbridge.git`)
@@ -17,6 +17,7 @@ All 3 planning gates cleared. Beginning Phase 0 implementation.
 - [x] `/plan-eng-review` complete (2026-06-05) — 18 decisions locked (D2–D18), outside-voice review run, 6 TODOs written
 - [x] `/plan-ceo-review` complete (2026-06-10) — SELECTIVE EXPANSION, 4 scope additions accepted, Codex outside voice, 3 new TODOs
 - [x] `/plan-eng-review` fresh pass (2026-06-10) — CEO additions locked (D1–D10), Codex outside voice, 10 decisions resolved, 1 critical gap addressed (DemoDataRefreshComponent)
+- [x] `/plan-design-review` complete (2026-06-10) — `DESIGN.md` created, 11 decisions locked, score 2/10 → 8/10
 
 ### In Progress (T1–T9 in `tasks-eng-review-20260606-030335.jsonl`)
 - [ ] Spring Boot 3.x Maven project initialization (T1)
