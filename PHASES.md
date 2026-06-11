@@ -5,13 +5,13 @@
 
 ---
 
-## Phase 0 — Setup
+## Phase 0 — Setup ✅ Complete
 - [x] Create GitHub repo `ledgerbridge`
-- [ ] Initialize Spring Boot 3.x project with all dependencies (Maven)
-- [ ] Set up Docker Compose with PostgreSQL + Kafka
-- [ ] Configure Flyway for migrations
-- [ ] Set up SpringDoc OpenAPI (Swagger UI)
-- [ ] Configure Logback for structured JSON logging
+- [x] Initialize Spring Boot 3.x project with all dependencies (Maven) — **complete 2026-06-10**: `pom.xml` (Spring Boot 3.3.5, Java 21, all deps), `LedgerBridgeApplication.java`, Maven wrapper generated, smoke test
+- [x] Set up Docker Compose with PostgreSQL + Kafka — **complete 2026-06-10**: `docker-compose.yml` (PostgreSQL 16-alpine + Bitnami Kafka 3.7 KRaft, dual-listener external:9094/internal:9092, health checks)
+- [x] Configure Flyway for migrations — **complete 2026-06-10**: enabled, `classpath:db/migration` location, `db/demo` added by `application-demo.properties`, migration dir created
+- [x] Set up SpringDoc OpenAPI (Swagger UI) — **complete 2026-06-10**: `OpenApiConfig.java` (Bearer JWT auth scheme, all endpoints unlock with Authorize button), paths configured
+- [x] Configure Logback for structured JSON logging — **complete 2026-06-10**: `logback-spring.xml` (JSON via logstash-logback-encoder in prod, human-readable in dev), `CorrelationIdFilter.java` (X-Correlation-ID → MDC on every request)
 - [x] Create docs/: AI_CONTEXT.md, HANDOFF.md, ENGINEERING_LOG.md, CURRENT_TASK.md
 - [x] Create PHASES.md
 - [x] Run `/plan-eng-review` before proceeding to Phase 1 — **complete 2026-06-05**: 18 decisions locked (D2–D18, see AI_CONTEXT.md), Codex outside-voice review run, 6 follow-up items written to `TODOS.md`

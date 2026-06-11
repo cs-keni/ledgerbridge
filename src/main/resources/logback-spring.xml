@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <!--
+    Structured JSON logging via logstash-logback-encoder.
+    Every log line is a JSON object with at minimum:
+      @timestamp, level, logger_name, message, correlationId (MDC), userId (MDC)
+
+    Two profiles:
+      dev  → human-readable console output (colour, DEBUG for com.ledgerbridge)
+      else → JSON to stdout (Railway, Docker, CI)
+  -->
+
+  <springProfile name="dev">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+        <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level [%X{correlationId:-no-id}] %logger{36} - %msg%n</pattern>
+      </encoder>
+    </appender>
+    <logger name="com.ledgerbridge" level="DEBUG"/>
+    <logger name="org.springframework.security" level="DEBUG"/>
+    <root level="INFO">
+      <appender-ref ref="STDOUT"/>
+    </root>
+  </springProfile>
+
+  <springProfile name="!dev">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+        <!-- Static field added to every JSON log line -->
+        <customFields>{"service":"ledgerbridge"}</customFields>
+        <!-- MDC fields promoted to top-level JSON keys -->
+        <includeMdcKeyName>correlationId</includeMdcKeyName>
+        <includeMdcKeyName>userId</includeMdcKeyName>
+        <includeMdcKeyName>transactionId</includeMdcKeyName>
+        <includeMdcKeyName>traceId</includeMdcKeyName>
+        <!-- Omit stack traces from the message field — they appear under stack_trace -->
+        <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+          <maxDepthPerCause>20</maxDepthPerCause>
+          <shortenedClassNameLength>40</shortenedClassNameLength>
+          <rootCauseFirst>true</rootCauseFirst>
+        </throwableConverter>
+      </encoder>
+    </appender>
+    <root level="INFO">
+      <appender-ref ref="STDOUT"/>
+    </root>
+  </springProfile>
+
+</configuration>

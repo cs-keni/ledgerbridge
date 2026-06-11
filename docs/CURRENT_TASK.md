@@ -5,33 +5,26 @@
 
 ## Active Task
 
-**Phase 0 — Setup**
+**Phase 1 — Domain + Database**
 
-All 4 planning gates cleared. Beginning Phase 0 implementation.
+Phase 0 is complete. Starting Phase 1.
 
-### Done
-- [x] Git initialized, remote connected (`git@github.com:cs-keni/ledgerbridge.git`)
-- [x] PHASES.md created
-- [x] docs/ scaffolding created (AI_CONTEXT, HANDOFF, ENGINEERING_LOG, CURRENT_TASK)
-- [x] gbrain project context stored
-- [x] `/plan-eng-review` complete (2026-06-05) — 18 decisions locked (D2–D18), outside-voice review run, 6 TODOs written
-- [x] `/plan-ceo-review` complete (2026-06-10) — SELECTIVE EXPANSION, 4 scope additions accepted, Codex outside voice, 3 new TODOs
-- [x] `/plan-eng-review` fresh pass (2026-06-10) — CEO additions locked (D1–D10), Codex outside voice, 10 decisions resolved, 1 critical gap addressed (DemoDataRefreshComponent)
-- [x] `/plan-design-review` complete (2026-06-10) — `DESIGN.md` created, 11 decisions locked, score 2/10 → 8/10
+### Phase 0 Complete ✅
+- [x] Spring Boot 3.3.5 Maven project initialized
+- [x] Docker Compose: PostgreSQL 16 + Bitnami Kafka 3.7 KRaft
+- [x] Flyway configured (enabled, location `classpath:db/migration`)
+- [x] SpringDoc OpenAPI (Swagger UI with JWT Bearer auth scheme)
+- [x] Logback structured JSON (logstash-logback-encoder) + CorrelationIdFilter MDC
+- [x] All 4 planning gates cleared
 
-### In Progress (T1–T9 in `tasks-eng-review-20260606-030335.jsonl`)
-- [ ] Spring Boot 3.x Maven project initialization (T1)
-- [ ] Docker Compose (PostgreSQL 16 + Kafka Bitnami) (T2)
-- [ ] Flyway configuration (T3)
-- [ ] SpringDoc OpenAPI (Swagger UI) (T4)
-- [ ] Logback structured JSON logging + correlation-ID MDC scaffold (T5)
+### Phase 1 — In Progress
+- [ ] **TODOS gate:** rename `transaction` → `ledger_transaction` (TODOS.md)
+- [ ] **TODOS gate:** design fraud-scenario validation matrix (TODOS.md)
+- [ ] Write Flyway migrations V1–V6 + composite indexes (D18)
+- [ ] Define JPA entities (NUMERIC(19,4), UUID PKs, JSONB + Hypersistence D5)
+- [ ] Write V7 seed data migration (labeled scenario patterns)
+- [ ] Switch `ddl-auto=validate`, verify migrations run clean
+- [ ] Add Testcontainers scaffold for Phase 2+ integration tests
 
 ### Blocked On
-- Nothing. All planning gates cleared — proceed with T1–T9.
-
-## Next Task
-
-Phase 1 — Domain + Database: V1 schema migration (remember the
-`transaction` → `ledger_transaction` rename from TODOS.md, plus D18 composite
-indexes), JPA entities with Hypersistence Utils JSONB mapping (D5), and
-Testcontainers scaffold (T6–T9).
+- Nothing. All gates cleared.

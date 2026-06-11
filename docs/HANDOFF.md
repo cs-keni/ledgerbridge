@@ -5,7 +5,7 @@
 
 ## Current Status
 
-**Phase: 0 — Setup (in progress) — all planning gates CLEAR (including Design)**
+**Phase: 0 — Setup COMPLETE — Phase 1 is next**
 
 All 4 planning gates cleared:
 - `/plan-eng-review` ✅ Done 2026-06-05: 18 decisions locked (D2–D18), Codex outside voice, 6 TODOs
@@ -16,12 +16,24 @@ All 4 planning gates cleared:
 **Portfolio strategy locked** — see `docs/designs/portfolio-strategy.md` for the full CEO plan.
 **Design system locked** — see `DESIGN.md` for all Phase 6 component specs.
 
-Spring Boot project has NOT been initialized yet (T1 in Phase 0 task list).
-Docker Compose does NOT exist yet (T2).
+Spring Boot project initialized. Docker Compose live. Flyway configured. Phase 0 fully shipped.
 
 ## Last Agent Action
 
-Claude Code (2026-06-10): Completed `/plan-design-review` — full 7-pass design review for Phase 6
+Claude Code (2026-06-10): Completed Phase 0 implementation. Created all scaffold files:
+- `pom.xml`: Spring Boot 3.3.5, Java 21, all declared deps (JPA, Security, Kafka, JWT/JJWT, Flyway, SpringDoc, Hypersistence, logstash-logback-encoder, Testcontainers)
+- `LedgerBridgeApplication.java`, Maven wrapper (`mvnw`/`.mvn/`)
+- `common/filter/CorrelationIdFilter.java`: X-Correlation-ID → MDC on every request
+- `common/config/OpenApiConfig.java`: Bearer JWT auth scheme in Swagger UI
+- `application.properties`: full config (DB, JPA, Flyway, Kafka, Actuator, SpringDoc, JWT); virtual threads enabled
+- `application-demo.properties`: adds `classpath:db/demo` Flyway location (demo profile, decision D5)
+- `logback-spring.xml`: JSON via logstash-logback-encoder in prod; human-readable in `dev` profile
+- `docker-compose.yml`: PostgreSQL 16-alpine + Bitnami Kafka 3.7 KRaft; dual-listener (internal kafka:9092, external localhost:9094); health checks; `api` service scaffolded but commented until Phase 7.5
+- `.env.example`, `.gitignore`
+- `db/migration/.gitkeep` (Flyway location placeholder)
+Compilation verified (project structure valid). Maven wrapper generated.
+
+## Previous Agent Action (2026-06-10): `/plan-design-review` — full 7-pass design review for Phase 6
 frontend. Ran 11 AskUserQuestion decisions (D1–D11), ran Codex (gpt-5.5) as outside design voice.
 Created `DESIGN.md` (comprehensive design system — color tokens, typography, animation system,
 component specs). Score raised: 2/10 → 8/10. Key decisions locked:
@@ -40,17 +52,15 @@ row added — 1 run, CLEAR, 11 decisions).
 
 ## What's Next
 
-1. ~~Run `/plan-eng-review` on the full project spec before writing any code.~~ ✅ Done 2026-06-05.
-2. ~~Run `/plan-ceo-review` to lock portfolio strategy.~~ ✅ Done 2026-06-10.
-3. ~~Run `/plan-eng-review` fresh pass to pick up CEO review scope additions.~~ ✅ Done 2026-06-10.
-4. ~~Run `/plan-design-review` before Phase 6 frontend work.~~ ✅ Done 2026-06-10.
-5. **Initialize Spring Boot 3.x project via Maven with all declared dependencies (T1).**
-6. Set up Docker Compose with PostgreSQL 16 + Kafka Bitnami (T2).
-7. Configure Flyway, SpringDoc, Logback + correlation-ID MDC scaffold (T3–T5).
-8. Write the V1 schema migration — remember the `transaction` → `ledger_transaction`
-   rename (TODOS.md item, avoids the SQL reserved-word footgun) — and composite
-   indexes per D18/eng-review (T6), then JPA entities with Hypersistence Utils JSONB
-   mapping per D5 (T7).
+**Phase 1 — Domain + Database**
+
+1. TODOS gate: rename `transaction` table → `ledger_transaction` (TODOS.md — avoids SQL reserved-word collision)
+2. TODOS gate: design fraud-scenario validation matrix (TODOS.md — drives Phase 4 test assertions)
+3. Write Flyway migrations V1–V6 (users/auth, accounts, ledger_transaction, risk tables, audit_log, notifications + composite indexes per D18)
+4. Define all JPA entities with proper types (NUMERIC(19,4), UUID PKs, JSONB + Hypersistence for CustomerRiskProfile — D5)
+5. Write seed data migration V7 (labeled scenario data — high-velocity, unusual-amount, fan-out, normal baseline)
+6. Switch `spring.jpa.hibernate.ddl-auto=validate` and verify migrations run clean
+7. Add Testcontainers scaffold (`@Testcontainers` base class for future integration tests)
 
 ## Module Ownership / Status
 

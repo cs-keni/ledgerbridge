@@ -182,3 +182,31 @@ Phase 0 coding (T1–T9): Spring Boot 3.x Maven init, Docker Compose (PostgreSQL
 
 ### Next
 Phase 0 coding (T1–T9): Spring Boot 3.x Maven init, Docker Compose, Flyway, SpringDoc, Logback. All 4 planning gates now cleared — implementation can begin.
+
+---
+
+### Session 6 — Phase 0 implementation
+- **Agent**: Claude Code
+- **Task**: Initialize Spring Boot project scaffold — all Phase 0 tasks
+
+### Changes
+- `pom.xml`: Spring Boot 3.3.5, Java 21, all declared dependencies (Spring Web, Data JPA, Security, Validation, Actuator, Kafka, PostgreSQL, Flyway + flyway-database-postgresql, JJWT 0.12.5, SpringDoc 2.5.0, Hypersistence 3.7.7, logstash-logback-encoder 7.4, Testcontainers 1.19.8 BOM)
+- `LedgerBridgeApplication.java`: main entry point, `@SpringBootApplication`
+- `LedgerBridgeApplicationTests.java`: smoke test (full @SpringBootTest context load deferred to Phase 1 with Testcontainers)
+- `common/filter/CorrelationIdFilter.java`: reads/generates X-Correlation-ID, stores in MDC as `correlationId`, echoes back in response header. `@Order(1)` ensures it runs before all other filters
+- `common/config/OpenApiConfig.java`: SpringDoc `OpenAPI` bean — Bearer JWT security scheme applied globally; all endpoints show lock icon and Accept the Authorize button JWT
+- `application.properties`: full environment-variable-driven configuration (datasource, JPA, Flyway, Kafka, Actuator, SpringDoc, JWT). Virtual threads enabled. JWT_SECRET falls back to a dev-only unsafe value — must be overridden in prod
+- `application-demo.properties`: adds `classpath:db/demo` Flyway location for demo seed data (D5)
+- `logback-spring.xml`: JSON via `LogstashEncoder` in prod (correlationId, userId, transactionId as top-level JSON keys); human-readable pattern in `dev` profile; `ShortenedThrowableConverter` for compact stack traces
+- `docker-compose.yml`: PostgreSQL 16-alpine + Bitnami Kafka 3.7 KRaft. Kafka dual-listener: PLAINTEXT on 9092 (container) + EXTERNAL on 9094 (host). Both have health checks. `api` service scaffolded but commented until Phase 7.5 Dockerfile
+- `.env.example`: documented DB_PASSWORD, JWT_SECRET, SPRING_PROFILES_ACTIVE, Upstash Kafka env vars (Phase 7.5)
+- `.gitignore`: target/, .env, IDE files, node_modules/, frontend/dist/, src/main/resources/static/
+- `db/migration/.gitkeep`: Flyway migration directory placeholder
+- Maven wrapper generated via `mvn wrapper:wrapper` — `mvnw` / `mvnw.cmd` / `.mvn/`
+- Compilation verified with Java 17 (structure valid; Java 21 target requires JDK 21 on dev machine)
+
+### Commit
+(pending — this session)
+
+### Next
+Phase 1: Flyway migrations V1–V6, JPA entities (NUMERIC(19,4), UUID PKs, JSONB + Hypersistence), V7 seed data, switch ddl-auto to validate, Testcontainers scaffold. First: resolve TODOS gate items (ledger_transaction rename + fraud validation matrix design).
