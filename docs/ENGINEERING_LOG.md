@@ -23,7 +23,7 @@
 - **`AuthServiceTest.java`**: 12 tests — register (success, email conflict), login (success, not found, wrong password, disabled), refresh (success with family rotation assertion, not found, expired, replay attack), logout (found, unknown)
 - **`AccountServiceTest.java`**: 9 tests — create (success, custom currency), list, get (success, not found, wrong owner), close (success, already closed, wrong owner)
 - **Unit tests: 21/21 passing**
-- Commit hash: TBD
+- Commit hash: `7a66217`
 
 ### Phase 2 status: COMPLETE
 
