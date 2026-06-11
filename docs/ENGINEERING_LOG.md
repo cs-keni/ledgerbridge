@@ -13,7 +13,7 @@
 - `docs/AI_CONTEXT.md`: D4 updated with full rotation policy + schema addition; project state updated to Phase 1 COMPLETE, Phase 2 TODOS gate CLEAR
 - `docs/HANDOFF.md`: open design work table entry updated
 - `docs/CURRENT_TASK.md`: TODOS gate marked done
-- Commit hash: TBD
+- Commit hash: `3640ae9`
 
 ### Phase 2 status: TODOS gate cleared — implementation ready to start
 
