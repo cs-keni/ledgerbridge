@@ -206,7 +206,7 @@ Phase 0 coding (T1–T9): Spring Boot 3.x Maven init, Docker Compose, Flyway, Sp
 - Compilation verified with Java 17 (structure valid; Java 21 target requires JDK 21 on dev machine)
 
 ### Commit
-(pending — this session)
+`3758ff0` — "Add Phase 0: Spring Boot scaffold, Docker Compose, Logback, Flyway config"
 
 ### Next
 Phase 1: Flyway migrations V1–V6, JPA entities (NUMERIC(19,4), UUID PKs, JSONB + Hypersistence), V7 seed data, switch ddl-auto to validate, Testcontainers scaffold. First: resolve TODOS gate items (ledger_transaction rename + fraud validation matrix design).
