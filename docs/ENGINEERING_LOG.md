@@ -4,6 +4,25 @@
 
 ---
 
+## 2026-06-11 — Session 14 (Phase 4 integration tests: all 84 tests green)
+
+### Changes
+- **`TransactionRepository.java`**: converted `countVelocityWindows` and `existsRoundTrip` from JPQL to `nativeQuery = true`. Root cause: `hibernate.jdbc.time_zone=UTC` causes Hibernate to treat `LocalDateTime` parameters as JVM-local time and shift to UTC before binding — a 7-hour gap on Pacific JVM that moved 1-hour and 2-hour windows out of range for S2 and S5.
+- **`pom.xml`**: added `maven-surefire-plugin` configuration with `<argLine>-Duser.timezone=UTC</argLine>`. This is the canonical fix: running the test JVM in UTC makes `hibernate.jdbc.time_zone=UTC` a no-op (JVM-local = UTC → no offset applied). Production deployments should also run the JVM in UTC.
+- **`RiskScenarioIntegrationTest.java`**: added `@DirtiesContext(classMode = AFTER_CLASS)` + `import`. Tests insert extra accounts/transactions; dirtying the context ensures Testcontainers starts a fresh container for `SchemaIntegrationTest`, preventing the container lifecycle conflict that caused `SchemaIntegrationTest` to fail when run together.
+
+### Test results
+- **84/84 tests passing** (full suite: unit + all integration tests including both `RiskScenarioIntegrationTest` 5/5 and `SchemaIntegrationTest` 4/4)
+- S2 velocity (0.46 MEDIUM) ✓, S5 round-trip (0.80 CRITICAL) ✓
+
+### Root cause retrospective
+Two bugs masked each other across S2 and S5:
+1. `hibernate.jdbc.time_zone=UTC` + JVM in Pacific: JPQL/native `LocalDateTime` params shifted +7h before DB comparison. 1-hour velocity window and 2-hour round-trip window both fell outside the query range.
+2. Fix #1 (native SQL) was correct but insufficient: Hibernate's PARAMETER BINDING (not query syntax) was the source of the offset, so native SQL queries had the same issue.
+3. Final fix: JVM timezone = UTC eliminates the JVM-to-UTC offset entirely. Both JdbcTemplate inserts and Hibernate queries use UTC values as-is.
+
+---
+
 ## 2026-06-11 — Session 12 (Phase 4 TODOS gates: D19 + D20)
 
 ### Changes

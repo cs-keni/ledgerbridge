@@ -53,12 +53,12 @@
 - [ ] Implement TransactionRiskConsumer (Kafka consumer → RiskEngine, `@RetryableTopic` per D7, idempotency-key dedupe per D2)
 - [ ] Unit tests for each rule with edge cases — assert against the labeled scenario matrix from the Phase 1 fraud-validation gate
 - [ ] Integration test: transaction → Kafka → risk consumer → alert created
-- [ ] **Fraud scenario tests (per-scenario quality gate):** write a Testcontainers integration test for each of the 5 Swagger fraud scenarios:
-  - Normal deposit: assert score **< 0.4** and **no alert created** (negative control — proves false-positive resistance)
-  - Velocity spike: assert score ≥ 0.4, severity MEDIUM+
-  - Large amount to new counterparty: assert score ≥ 0.4, severity HIGH
-  - Fan-out pattern: assert score ≥ 0.4, severity HIGH
-  - Round-trip: assert score ≥ 0.4, severity CRITICAL
+- [x] **Fraud scenario tests (per-scenario quality gate):** write a Testcontainers integration test for each of the 5 Swagger fraud scenarios — **complete 2026-06-11**: 5/5 passing (S1–S5). Fixed: Hibernate `LocalDateTime` UTC conversion bug via `-Duser.timezone=UTC` in Surefire + native SQL queries for 1h/2h windows; `@DirtiesContext` fixes SchemaIntegrationTest container lifecycle conflict. **84/84 total tests passing.**
+  - Normal deposit: assert score **< 0.4** and **no alert created** (negative control — proves false-positive resistance) ✓
+  - Velocity spike: assert score ≥ 0.4, severity MEDIUM+ ✓ (0.46)
+  - Large amount to new counterparty: assert score ≥ 0.4, severity HIGH ✓
+  - Fan-out pattern: assert score ≥ 0.4, severity HIGH ✓
+  - Round-trip: assert score ≥ 0.4, severity CRITICAL ✓ (0.80 via tier-2 escalation)
   — (D3, /plan-eng-review 2026-06-10: NormalDeposit is a precision test, not a sensitivity test)
 - [ ] Add 5 labeled fraud-scenario examples to OpenAPI spec via `@Operation`/`@ApiResponse` on transaction endpoint (Normal deposit, Velocity spike, Large amount to new counterparty, Fan-out pattern, Round-trip)
 - [ ] Run `/plan-eng-review` again (per ledgerbridge.md gate) — by now the TODOS-gated items above need concrete designs

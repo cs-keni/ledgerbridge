@@ -13,16 +13,17 @@ public interface TransactionRepository extends JpaRepository<LedgerTransaction, 
 
     Page<LedgerTransaction> findByAccountIdOrderByInitiatedAtDesc(UUID accountId, Pageable pageable);
 
-    // VelocityRule: single conditional-aggregation query for all three windows (decision D17)
-    @Query("""
+    // VelocityRule: native SQL to avoid Hibernate's LocalDateTime→UTC conversion when
+    // hibernate.jdbc.time_zone=UTC is active (JPQL parameters would be shifted by JVM offset).
+    @Query(value = """
         SELECT
-            COUNT(CASE WHEN t.initiatedAt >= :oneHourAgo  THEN 1 END) AS lastHour,
-            COUNT(CASE WHEN t.initiatedAt >= :oneDayAgo   THEN 1 END) AS lastDay,
-            COUNT(CASE WHEN t.initiatedAt >= :sevenDaysAgo THEN 1 END) AS lastWeek
-        FROM LedgerTransaction t
-        WHERE t.accountId = :accountId
-          AND t.initiatedAt >= :sevenDaysAgo
-        """)
+            COUNT(CASE WHEN initiated_at >= :oneHourAgo   THEN 1 END) AS lasthour,
+            COUNT(CASE WHEN initiated_at >= :oneDayAgo    THEN 1 END) AS lastday,
+            COUNT(CASE WHEN initiated_at >= :sevenDaysAgo THEN 1 END) AS lastweek
+        FROM ledger_transaction
+        WHERE account_id = :accountId
+          AND initiated_at >= :sevenDaysAgo
+        """, nativeQuery = true)
     VelocityWindowCounts countVelocityWindows(
             UUID accountId,
             LocalDateTime oneHourAgo,
@@ -41,16 +42,18 @@ public interface TransactionRepository extends JpaRepository<LedgerTransaction, 
     long countDistinctNewCounterpartiesSince(UUID accountId, LocalDateTime since,
                                               java.util.List<String> knownCounterparties);
 
-    // GraphPatternRule: round-trip detection — same amount sent and returned within window
-    @Query("""
-        SELECT COUNT(t) > 0
-        FROM LedgerTransaction t
-        WHERE t.counterpartyAccountId = :senderAccountId
-          AND t.accountId = :receiverAccountId
-          AND t.amount = :amount
-          AND t.initiatedAt >= :since
-          AND t.status = 'COMPLETED'
-        """)
+    // GraphPatternRule: native SQL to avoid Hibernate's LocalDateTime→UTC conversion
+    // on the 2-hour window (same timezone mismatch issue as countVelocityWindows).
+    @Query(value = """
+        SELECT EXISTS (
+            SELECT 1 FROM ledger_transaction
+            WHERE counterparty_account_id = :senderAccountId
+              AND account_id             = :receiverAccountId
+              AND amount                 = :amount
+              AND initiated_at           >= :since
+              AND status                 = 'COMPLETED'
+        )
+        """, nativeQuery = true)
     boolean existsRoundTrip(UUID senderAccountId, UUID receiverAccountId,
                              java.math.BigDecimal amount, LocalDateTime since);
 

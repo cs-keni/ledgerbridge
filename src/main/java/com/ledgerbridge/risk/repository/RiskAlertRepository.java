@@ -12,4 +12,5 @@ public interface RiskAlertRepository extends JpaRepository<RiskAlert, UUID> {
     Page<RiskAlert> findByStatusOrderByCreatedAtDesc(AlertStatus status, Pageable pageable);
     Page<RiskAlert> findByUserIdOrderByCreatedAtDesc(UUID userId, Pageable pageable);
     long countByStatus(AlertStatus status);
+    boolean existsByTransactionId(UUID transactionId);
 }
