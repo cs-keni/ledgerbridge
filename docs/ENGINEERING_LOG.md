@@ -178,7 +178,7 @@ Phase 0 coding (T1–T9): Spring Boot 3.x Maven init, Docker Compose (PostgreSQL
 - Generated `tasks-design-review-20260610-172401.jsonl` (T1–T7) covering Phase 6 components
 
 ### Commit
-(pending — this session)
+`d02bcd9` — "Lock Phase 6 design system via /plan-design-review (D1–D11)"
 
 ### Next
 Phase 0 coding (T1–T9): Spring Boot 3.x Maven init, Docker Compose, Flyway, SpringDoc, Logback. All 4 planning gates now cleared — implementation can begin.
