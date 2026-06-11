@@ -4,6 +4,31 @@
 
 ---
 
+## 2026-06-11 — Session 10 (Phase 2 implementation)
+
+### Changes
+- **V8__add_refresh_token_family.sql**: adds `family_id UUID NOT NULL` + index to `refresh_token`; default used for migration then dropped (safe because no seed rows in table)
+- **`RefreshToken.java`**: added `familyId UUID` field
+- **`RefreshTokenRepository.java`**: added `revokeAllByFamilyId(UUID familyId)` `@Modifying` query
+- **`JwtService.java`**: JJWT 0.12.5 access token generation/validation; constructor-injected `secret` pre-computed to `SecretKey` at startup (not per-call)
+- **`UserPrincipal.java` (record)**: `UserDetails` adapter for `User`; username = userId UUID string (matches JWT subject)
+- **`UserDetailsServiceImpl.java`**: `loadUserByUsername(userId)` → `UserPrincipal`
+- **`JwtAuthenticationFilter.java`**: `OncePerRequestFilter`; extracts Bearer token, sets `SecurityContext` on valid token; silently skips on invalid (no 401 thrown — filter chain continues unauthenticated)
+- **`SecurityConfig.java`**: stateless, JWT filter, `HttpStatusEntryPoint(401)`, permitAll: `/api/auth/**`, Swagger, `/actuator/health/**`
+- **`AuthService.java`**: register (email dedup, BCrypt), login (credentials check, disabled check), refresh (token family rotation, replay detection with `noRollbackFor = AppException.class` to ensure revocation commits), logout; opaque refresh tokens (32-byte SecureRandom → Base64Url, stored as SHA-256 hex hash)
+- **`AuthController.java`**: POST /api/auth/register (201), /login, /refresh, /logout (204)
+- **`AppException.java` + `ErrorResponse.java` + `GlobalExceptionHandler.java`**: D12 standard error contract; handles AppException, MethodArgumentNotValidException, fallback 500
+- **`AccountService.java`**: create (12-digit account number loop until unique), list (active only), get (ownership enforced), close (idempotency check); class-level `@Transactional(readOnly=true)`, write methods override
+- **`AccountController.java`**: POST /api/accounts (201), GET list, GET /{id}, DELETE /{id}
+- **`AuthServiceTest.java`**: 12 tests — register (success, email conflict), login (success, not found, wrong password, disabled), refresh (success with family rotation assertion, not found, expired, replay attack), logout (found, unknown)
+- **`AccountServiceTest.java`**: 9 tests — create (success, custom currency), list, get (success, not found, wrong owner), close (success, already closed, wrong owner)
+- **Unit tests: 21/21 passing**
+- Commit hash: TBD
+
+### Phase 2 status: COMPLETE
+
+---
+
 ## 2026-06-11 — Session 9 (Phase 2 TODOS gate: refresh-token rotation policy)
 
 ### Changes

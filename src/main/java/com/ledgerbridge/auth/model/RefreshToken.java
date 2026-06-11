@@ -27,6 +27,9 @@ public class RefreshToken {
     private String tokenHash;
 
     @Column(nullable = false)
+    private UUID familyId;
+
+    @Column(nullable = false)
     private LocalDateTime expiresAt;
 
     @Column(nullable = false)

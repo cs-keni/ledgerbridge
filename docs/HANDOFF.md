@@ -5,7 +5,7 @@
 
 ## Current Status
 
-**Phase: 1 — Domain + Database COMPLETE — Phase 2 is next**
+**Phase: 2 — Auth + Account Module COMPLETE — Phase 3 is next**
 
 All 4 planning gates cleared:
 - `/plan-eng-review` ✅ Done 2026-06-05: 18 decisions locked (D2–D18), Codex outside voice, 6 TODOs
@@ -16,13 +16,26 @@ All 4 planning gates cleared:
 **Portfolio strategy locked** — see `docs/designs/portfolio-strategy.md` for the full CEO plan.
 **Design system locked** — see `DESIGN.md` for all Phase 6 component specs.
 
-Phase 1 complete: 11 JPA entities, Flyway migrations V1–V7, seed data (5 scenario users + 80 transactions), SchemaIntegrationTest 4/4 passing.
+Phase 2 complete: JWT auth (token family rotation replay detection), Spring Security (stateless), AuthController, AccountService/AccountController, V8 migration, 21/21 unit tests passing.
 
 ## Last Agent Action
 
-Claude Code (2026-06-11): Completed Phase 1. All entities, migrations, and integration tests written and passing. See ENGINEERING_LOG.md Session 8 for full detail.
+Claude Code (2026-06-11): Completed Phase 2. New files:
+- `auth/service/JwtService.java` — JJWT 0.12.5, access token generation/validation, constructor-injected secret + TTL
+- `auth/service/AuthService.java` — register, login, refresh (token family rotation + replay detection), logout; SHA-256 opaque refresh tokens
+- `auth/service/UserDetailsServiceImpl.java` + `auth/model/UserPrincipal.java` — userId-as-username pattern
+- `auth/filter/JwtAuthenticationFilter.java` — `OncePerRequestFilter`, sets `SecurityContext` on valid Bearer token
+- `common/config/SecurityConfig.java` — stateless JWT, permitAll for `/api/auth/**`, Swagger, `/actuator/health/**`
+- `auth/controller/AuthController.java`, `account/service/AccountService.java`, `account/controller/AccountController.java`
+- `common/exception/AppException.java`, `ErrorResponse.java`, `GlobalExceptionHandler.java` (D12)
+- `V8__add_refresh_token_family.sql` + `RefreshToken.familyId` entity field
+- 21/21 unit tests passing (AuthServiceTest 12, AccountServiceTest 9)
 
 ## Previous Agent Action
+
+Claude Code (2026-06-11): Completed Phase 1. All entities, migrations, and integration tests written and passing. See ENGINEERING_LOG.md Session 8 for full detail.
+
+## Previous Agent Action (2026-06-10): Phase 0 scaffold
 
 Claude Code (2026-06-10): Completed Phase 0 implementation. Created all scaffold files:
 - `pom.xml`: Spring Boot 3.3.5, Java 21, all declared deps (JPA, Security, Kafka, JWT/JJWT, Flyway, SpringDoc, Hypersistence, logstash-logback-encoder, Testcontainers)
@@ -56,16 +69,17 @@ row added — 1 run, CLEAR, 11 decisions).
 
 ## What's Next
 
-**Phase 2 — Auth + Account Module**
+**Phase 3 — Transaction Module + Kafka**
 
-Before starting Phase 2, resolve the TODOS gate:
-- **Refresh-token reuse/rotation policy** — D4 picked the storage mechanism (DB-backed table); replay-detection behavior (revoke whole token family on replay?) is still undecided. This must be locked before implementing `AuthController`'s refresh endpoint.
+Two TODOS gates must be locked before implementation:
+1. **API-level idempotency keys** — `Idempotency-Key` header on POST /transactions and /transfers; store `(key, response, expiry)` to prevent double-submission on retries (distinct from D2 consumer-side dedupe)
+2. **Correlation-ID / trace propagation** — generate at transaction submission, carry through Kafka headers + MDC → risk/audit/SSE/logs. Must start here; retrofitting is expensive.
 
-Then implement in order:
-1. User entity + Spring Security config + JWT service
-2. `AuthController`: register, login, refresh (DB-backed refresh token per D4), logout
-3. `AccountService` + `AccountController`
-4. Unit tests for auth and account services
+Then implement:
+1. `TransactionService` (deposit, withdrawal, transfer with pessimistic locking + fixed ordering per D13)
+2. `TransactionEventProducer` (`@TransactionalEventListener(AFTER_COMMIT)` per D10, keyed by userId per D3)
+3. `TransactionController`
+4. Unit tests for TransactionService; integration test: deposit → Kafka event
 
 ## Module Ownership / Status
 

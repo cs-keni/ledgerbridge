@@ -25,12 +25,12 @@
 - [x] Seed data includes: high-velocity customer, unusual-amount customer, fan-out pattern, normal baselines — each labeled with expected risk-score range (see fraud-validation gate above)
 - [x] Confirm migrations run clean — **complete 2026-06-11**: SchemaIntegrationTest (4 tests) passes; V1–V7 applied, Hibernate validate OK, seed data assertions pass
 
-## Phase 2 — Auth + Account Module
+## Phase 2 — Auth + Account Module ✅ Complete
 - [x] **TODOS gate:** decide refresh-token reuse/rotation policy — **complete 2026-06-11**: token family rotation locked. `family_id UUID` on refresh_token; replay = revoke entire family + log security event. TTL: 7 days. See D4 in `AI_CONTEXT.md`.
-- [ ] Implement User entity, Spring Security config, JWT service
-- [ ] Implement AuthController: register, login, refresh (DB-backed refresh token table per D4), logout
-- [ ] Implement AccountService + AccountController
-- [ ] Write unit tests for auth and account services
+- [x] Implement User entity, Spring Security config, JWT service — **complete 2026-06-11**: `JwtService` (JJWT 0.12.5), `UserPrincipal`, `UserDetailsServiceImpl`, `JwtAuthenticationFilter`, `SecurityConfig` (stateless JWT, permitAll for auth/swagger/actuator-health)
+- [x] Implement AuthController: register, login, refresh (DB-backed refresh token per D4), logout — **complete 2026-06-11**: `AuthService` + `AuthController`; replay detection logs security event and revokes entire family (`noRollbackFor` ensures revocation commits on exception)
+- [x] Implement AccountService + AccountController — **complete 2026-06-11**: full CRUD (create, list, get, close); ownership enforced on get/close; V8 migration adds `family_id`
+- [x] Write unit tests for auth and account services — **complete 2026-06-11**: 21/21 passing (AuthServiceTest 12, AccountServiceTest 9)
 
 ## Phase 3 — Transaction Module + Kafka
 - [ ] **TODOS gate:** API-level idempotency keys on POST /transactions and /transfers (`Idempotency-Key` header — distinct from D2's consumer-side dedupe; prevents double-submission from double-clicks/client retries)
