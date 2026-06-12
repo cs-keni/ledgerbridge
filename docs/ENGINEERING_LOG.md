@@ -28,7 +28,7 @@
 - **Content max-width**: removed `max-w-5xl mx-auto` from AlertsPage, DashboardPage, AuditLogPage, AccountsPage. TransferPage keeps `max-w-lg` (form width constraint is intentional). Full-width content on large monitors.
 - **SSE invalidation**: `useAlertStream` callback now invalidates `['alert-stats']` in addition to `['alerts']` so count badge stays live.
 
-**Commit hash: [pending]**
+**Commit hash: `830d5e3`**
 
 ---
 
