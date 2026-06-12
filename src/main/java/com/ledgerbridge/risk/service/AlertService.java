@@ -1,5 +1,9 @@
 package com.ledgerbridge.risk.service;
 
+import com.ledgerbridge.audit.model.AuditAction;
+import com.ledgerbridge.common.audit.AuditLog;
+import com.ledgerbridge.common.exception.AppException;
+import com.ledgerbridge.risk.dto.AlertReviewRequest;
 import com.ledgerbridge.risk.dto.RiskAlertResponse;
 import com.ledgerbridge.risk.model.AlertSeverity;
 import com.ledgerbridge.risk.model.AlertStatus;
@@ -12,9 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -24,6 +30,7 @@ import java.util.UUID;
 public class AlertService {
 
     private final RiskAlertRepository riskAlertRepository;
+    private final SseAlertService sseAlertService;
 
     @Transactional
     public RiskAlert createAlert(TransactionEvent event, AlertType alertType,
@@ -38,13 +45,22 @@ public class AlertService {
             alert.setSeverity(severity);
             alert.setRiskScore(score);
             alert.setRuleDetails(ruleDetails);
-            return riskAlertRepository.save(alert);
+            RiskAlert saved = riskAlertRepository.save(alert);
+            sseAlertService.broadcast(RiskAlertResponse.from(saved));
+            return saved;
         } catch (DataIntegrityViolationException e) {
             // Concurrent Kafka retry created the alert before us — fetch and return it
             log.debug("Duplicate alert creation for txn={} — returning existing alert", event.transactionId());
             return riskAlertRepository.findByTransactionId(event.transactionId())
                     .orElseThrow(() -> new IllegalStateException("Alert missing after concurrent insert", e));
         }
+    }
+
+    @Transactional(readOnly = true)
+    public RiskAlertResponse getAlertById(UUID alertId) {
+        return riskAlertRepository.findById(alertId)
+                .map(RiskAlertResponse::from)
+                .orElseThrow(() -> new AppException("Alert not found: " + alertId, HttpStatus.NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
@@ -67,6 +83,18 @@ public class AlertService {
     @Transactional(readOnly = true)
     public long countOpenAlerts() {
         return riskAlertRepository.countByStatus(AlertStatus.OPEN);
+    }
+
+    @AuditLog(action = AuditAction.ALERT_REVIEWED, entityType = "RiskAlert")
+    @Transactional
+    public RiskAlertResponse reviewAlert(UUID alertId, AlertReviewRequest request, UUID adminId) {
+        RiskAlert alert = riskAlertRepository.findById(alertId)
+                .orElseThrow(() -> new AppException("Alert not found: " + alertId, HttpStatus.NOT_FOUND));
+        alert.setStatus(request.status());
+        alert.setReviewedByAdminId(adminId);
+        alert.setAdminNotes(request.notes());
+        alert.setReviewedAt(LocalDateTime.now());
+        return RiskAlertResponse.from(riskAlertRepository.save(alert));
     }
 
     private String generateAlertNumber() {

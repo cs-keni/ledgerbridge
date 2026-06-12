@@ -129,6 +129,10 @@
   - Source: Codex outside-voice finding (plan-eng-review 2026-06-10): "Railway +
     Upstash Kafka is assumed feasible but not proven"
 
+## Before Phase 5 (admin + audit)
+
+- [x] **Write currentRiskScore and riskTier after every evaluation** — **complete 2026-06-12**: `CustomerRiskProfileService.saveRiskScore()` writes `currentRiskScore` and `riskTier` (LOW/MEDIUM/HIGH/CRITICAL derived from 0.3/0.6/0.8 thresholds) after every evaluation regardless of alert outcome. `TransactionRiskConsumer` calls it after `riskEngine.evaluate()`.
+
 ## Alongside Phase 7 (observability)
 
 - [ ] **Risk-engine-specific Prometheus metrics** — Beyond generic Spring Boot
@@ -143,3 +147,13 @@
   - Source: Codex outside-voice review, finding "no risk-engine-specific
     observability plan — generic metrics won't show whether the
     differentiator works"
+
+- [ ] **Risk engine DB query caching** — 4 DB queries fire synchronously on every
+  risk evaluation (countVelocityWindows, countDistinctNewCounterpartiesSince×2,
+  existsRoundTrip). For Railway under load, these will serialize. Consider a
+  short-TTL Caffeine cache (5-30s) keyed on userId before the Phase 7.5 Upstash
+  Kafka integration. Run without caching first; Prometheus metrics will show
+  whether it's actually needed before investing.
+  - Priority: P3
+  - Effort: S (~30 min)
+  - Source: Architecture review finding (plan-eng-review 2026-06-11)

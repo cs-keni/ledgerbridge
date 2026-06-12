@@ -110,4 +110,22 @@ public class CustomerRiskProfileService {
 
         repository.save(profile);
     }
+
+    /**
+     * Writes the latest risk score and derived tier to the profile.
+     * Called after every evaluation regardless of alert status (TODOS.md Phase 5).
+     */
+    @Transactional
+    public void saveRiskScore(CustomerRiskProfile profile, double score) {
+        profile.setCurrentRiskScore(score);
+        profile.setRiskTier(deriveRiskTier(score));
+        repository.save(profile);
+    }
+
+    private String deriveRiskTier(double score) {
+        if (score >= 0.8) return "CRITICAL";
+        if (score >= 0.6) return "HIGH";
+        if (score >= 0.3) return "MEDIUM";
+        return "LOW";
+    }
 }

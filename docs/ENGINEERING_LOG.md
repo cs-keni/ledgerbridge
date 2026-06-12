@@ -4,6 +4,34 @@
 
 ---
 
+## 2026-06-12 — Session 17 (Phase 5: Admin + Audit)
+
+### Changes
+
+- **`pom.xml`**: added `spring-boot-starter-aop` dependency (aspectjweaver required for `@Aspect` proxy)
+- **`V11__add_audit_outcome.sql`** (NEW): adds `outcome VARCHAR(100)` column to `audit_log` (D15 — always-fire including failures)
+- **`audit/model/AuditLog.java`**: added `outcome` field + getter/setter via Lombok
+- **`common/audit/AuditLog.java`** (NEW): `@AuditLog` annotation (D11 — named to avoid Hibernate Envers collision). Carries `action` (AuditAction) and optional `entityType`.
+- **`common/audit/AuditAspect.java`** (NEW): `@Around` advice on `@AuditLog`-annotated methods. Fires always including exceptions (D15). Extracts entityId from first UUID arg; userId from SecurityContextHolder; IP from RequestContextHolder (null-safe for Kafka threads); correlationId from MDC. Calls `AuditService.record()` with `REQUIRES_NEW` propagation so failures in the calling tx don't suppress the log.
+- **`audit/service/AuditService.java`** (NEW): `record()` (REQUIRES_NEW), `getByEntity()`, `getByUser()` — thin service over `AuditLogRepository`.
+- **`audit/dto/AuditLogResponse.java`** (NEW): record DTO projecting all audit_log fields.
+- **`audit/controller/AuditController.java`** (NEW): `GET /api/admin/audit-log?entityType=&entityId=` + `GET /api/admin/audit-log/user/{userId}`.
+- **`risk/service/SseAlertService.java`** (NEW): D8 — `SseEmitter`-based broadcaster. `CopyOnWriteArrayList` registry with `onTimeout`/`onCompletion`/`onError` cleanup callbacks (D2 — no leaked emitters). 30s timeout. `broadcast()` called from `AlertService.createAlert()` after save.
+- **`risk/dto/AlertReviewRequest.java`** (NEW): `{status: AlertStatus, notes: String}` PATCH body.
+- **`risk/service/AlertService.java`**: added `SseAlertService` dep; `createAlert()` now broadcasts via SSE after save; new `getAlertById()` + `reviewAlert()` methods. `reviewAlert()` annotated `@AuditLog(action = ALERT_REVIEWED)` — writes to audit log on every admin review including failures.
+- **`risk/controller/AlertController.java`** (NEW): `GET /api/admin/alerts`, `GET /api/admin/alerts/{id}`, `PATCH /api/admin/alerts/{id}/review`, `GET /api/admin/alerts/stream` (SSE).
+- **`notification/dto/NotificationResponse.java`** (NEW): record DTO with `read` boolean derived from `readAt`.
+- **`notification/service/NotificationService.java`** (NEW): `getForUser()`, `countUnread()`, `markRead()` (ownership-enforced, idempotent re-mark).
+- **`notification/controller/NotificationController.java`** (NEW): `GET /api/user/notifications`, `GET /api/user/notifications/unread-count`, `PATCH /api/user/notifications/{id}/read`.
+- **`risk/service/CustomerRiskProfileService.java`**: TODOS.md Phase 5 — added `saveRiskScore()` method; writes `currentRiskScore` and `riskTier` (LOW/MEDIUM/HIGH/CRITICAL) derived from score thresholds (0.3/0.6/0.8).
+- **`risk/consumer/TransactionRiskConsumer.java`**: calls `profileService.saveRiskScore()` after every evaluation (TODOS.md Phase 5 — persists latest score+tier regardless of alert status).
+
+### Test results
+- **89/89 tests passing** (3 new AuditAspect tests added: success outcome, failure outcome, entityType attribute override)
+- Commit hash: TBD
+
+---
+
 ## 2026-06-12 — Session 16 (P2 fixes: T7/T8/T9 — velocity + fan-in correctness)
 
 ### Changes

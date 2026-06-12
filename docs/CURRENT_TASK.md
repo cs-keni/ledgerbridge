@@ -5,7 +5,23 @@
 
 ## Active Task
 
-**Phase 5 — Admin + Audit** (up next)
+**Phase 5 — Admin + Audit ✅ COMPLETE (2026-06-12)**
+
+### Shipped
+- [x] `@AuditLog` annotation + `AuditAspect` (service layer, fires always including failures, outcome field — D11/D15)
+- [x] `AuditService` (REQUIRES_NEW propagation) + `AuditController` (GET /api/admin/audit-log)
+- [x] `SseAlertService` (SseEmitter registry, onTimeout/onCompletion/onError cleanup — D8/D2)
+- [x] `AlertController` (GET list, GET by id, PATCH /review, GET /stream SSE)
+- [x] `AlertService.reviewAlert()` with `@AuditLog(ALERT_REVIEWED)` + `SseAlertService` broadcast on createAlert
+- [x] `NotificationService` + `NotificationController` (GET list, unread-count, PATCH read)
+- [x] `CustomerRiskProfileService.saveRiskScore()` — TODOS.md Phase 5 item (currentRiskScore + riskTier persisted after every evaluation)
+- [x] `TransactionRiskConsumer` calls saveRiskScore after every evaluation
+- [x] `V11__add_audit_outcome.sql` — outcome column on audit_log
+- [x] AuditAspect unit tests: 3 tests (success outcome, failure outcome, entityType attribute)
+- [x] **Total tests: 89/89 passing**
+
+### Up Next
+Phase 6 — Frontend (React 18 + TypeScript + Tailwind)
 
 ---
 

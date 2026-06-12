@@ -5,7 +5,7 @@
 
 ## Current Status
 
-**Phase: 4 — Risk Engine ✅ COMPLETE — Phase 5 (Admin + Audit) is next**
+**Phase: 5 — Admin + Audit ✅ COMPLETE — Phase 6 (Frontend) is next**
 
 All planning gates cleared:
 - `/plan-eng-review` ✅ Done 2026-06-05: 18 decisions locked (D2–D18), Codex outside voice, 6 TODOs
@@ -14,27 +14,26 @@ All planning gates cleared:
 - `/plan-design-review` ✅ Done 2026-06-10: `DESIGN.md` created, 11 decisions locked, score 2/10 → 8/10
 - `/plan-eng-review` (Phase 4) ✅ Done 2026-06-11: 11 issues (T1–T11), all P1 fixes approved
 - `/review` (Phase 4) ✅ Done 2026-06-12: 8 critical fixes shipped, 84/84 tests passing
+- `/plan-eng-review` (Phase 5) ✅ Done 2026-06-12: 3 decisions locked (D1/D2/D3), full scope implemented, 89/89 tests passing
 
 **Portfolio strategy locked** — see `docs/designs/portfolio-strategy.md` for the full CEO plan.
 **Design system locked** — see `DESIGN.md` for all Phase 6 component specs.
 
-Phase 4 complete: Risk Engine with 4 rules (AmountAnomaly/Velocity/Behavioral/GraphPattern), weighted scoring + tier-1/tier-2 escalation, Kafka consumer with @RetryableTopic + DLT, D19 score-conditional baseline update, full consumer idempotency via `ProcessedTransactionEvent`, 84/84 tests passing.
+Phase 5 complete: AuditAspect (AOP, service layer, always fires, outcome field), AuditService/Controller, SseAlertService (emitter registry with cleanup), AlertController (list/byId/review/SSE), NotificationService/Controller, TODOS.md risk score write. 89/89 tests passing.
 
 ## Last Agent Action
 
-Claude Code (2026-06-12): Phase 4 /review gate — 8 critical fixes. Edits + new files:
-- `TransactionRepository.java` — T1: `AND type = 'TRANSFER_DEBIT'` in `existsRoundTrip`; T2: `countDistinctNewCounterpartiesSince` → native SQL + LIMIT 100
-- `GraphPatternRule.java` — T6: sentinel UUID guard for empty `knownCounterparties` (prevents Hibernate 6 `IllegalArgumentException` on `NOT IN ()`)
-- `CustomerRiskProfileService.java` — T5: hour freq initial value `1.0` → `1.0/newCount`; T4: DIV catch + re-fetch in `getOrCreate()`
-- `AlertService.java` — T3: DIV catch + re-fetch in `createAlert()` via new `findByTransactionId()`
-- `RiskAlertRepository.java` — T3: added `Optional<RiskAlert> findByTransactionId(UUID)`
-- `risk/model/ProcessedTransactionEvent.java` (NEW) — T10: idempotency entity
-- `risk/repository/ProcessedTransactionEventRepository.java` (NEW) — T10: `existsByTransactionId()`
-- `TransactionRiskConsumer.java` — T10: rewrote to use `ProcessedTransactionEventRepository`; now guards ALL deliveries, not just alerted ones
-- `KafkaConfig.java` — NEW CRITICAL: added retry-0/retry-1/DLT topic beans (required when `autoCreateTopics=false`)
-- `V10__risk_alert_unique_txn_and_processed_events.sql` (NEW) — T3: UNIQUE on `risk_alert.transaction_id`; T10: `processed_transaction_event` table
-- `AmountAnomalyRuleTest.java` / `RiskEngineTest.java` — pinned `LocalDateTime` to deterministic values
-- **84/84 tests passing**
+Claude Code (2026-06-12): Phase 5 — Admin + Audit. New files:
+- `common/audit/AuditLog.java` (annotation, D11) + `common/audit/AuditAspect.java` — service-layer AOP, fires always including failures (D15), extracts entityId from first UUID arg, userId from SecurityContext, IP from RequestContextHolder (null-safe)
+- `audit/service/AuditService.java` — `record()` with `Propagation.REQUIRES_NEW`, query methods
+- `audit/dto/AuditLogResponse.java` + `audit/controller/AuditController.java` — GET /api/admin/audit-log
+- `risk/service/SseAlertService.java` — `CopyOnWriteArrayList` registry, onTimeout/onCompletion/onError cleanup, `broadcast()` called from `createAlert()`
+- `risk/dto/AlertReviewRequest.java` + `risk/controller/AlertController.java` — GET list/byId, PATCH /review, GET /stream
+- `notification/dto/NotificationResponse.java` + `notification/service/NotificationService.java` + `notification/controller/NotificationController.java`
+- `V11__add_audit_outcome.sql` — `outcome VARCHAR(100)` column on audit_log
+- `test/audit/AuditAspectTest.java` — 3 tests (success, failure, entityType attribute)
+- Edits: `audit/model/AuditLog.java` (outcome field), `risk/service/AlertService.java` (reviewAlert + getAlertById + SSE broadcast), `risk/service/CustomerRiskProfileService.java` (saveRiskScore), `risk/consumer/TransactionRiskConsumer.java` (calls saveRiskScore), `pom.xml` (spring-boot-starter-aop)
+- **89/89 tests passing**
 
 ## Previous Agent Action
 

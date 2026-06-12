@@ -65,12 +65,15 @@
 - [ ] Add 5 labeled fraud-scenario examples to OpenAPI spec via `@Operation`/`@ApiResponse` on transaction endpoint (Normal deposit, Velocity spike, Large amount to new counterparty, Fan-out pattern, Round-trip)
 - [ ] **MILESTONE RULE: submit applications to Wells Fargo, Capital One, Citi, and JPMorgan the day this phase ships**
 
-## Phase 5 — Admin + Audit
-- [ ] Implement AuditAspect (AOP auto-logging with `@AuditLog` — renamed from `@Audited` to avoid a Hibernate Envers collision per D11; always logs, including failures, with an `outcome` field per D15)
-- [ ] Implement AuditService + AuditController
-- [ ] Implement AlertService + admin alert review flow
-- [ ] Implement SSE endpoint via servlet `SseEmitter` + connection registry (per D8/Tension 3 — reversed from an initial WebFlux/Flux choice; needs explicit error/completion cleanup so dropped connections don't leak emitters)
-- [ ] Write tests for audit logging
+## Phase 5 — Admin + Audit ✅ Complete
+- [x] Implement AuditAspect (AOP auto-logging with `@AuditLog` — renamed from `@Audited` to avoid a Hibernate Envers collision per D11; always logs, including failures, with an `outcome` field per D15) — **complete 2026-06-12**
+- [x] Implement AuditService + AuditController — **complete 2026-06-12**
+- [x] Implement AlertController (GET list/byId, PATCH review, GET /stream SSE) — **complete 2026-06-12**
+- [x] Implement SSE endpoint via servlet `SseEmitter` + connection registry (per D8/Tension 3 — reversed from an initial WebFlux/Flux choice; needs explicit error/completion cleanup so dropped connections don't leak emitters) — **complete 2026-06-12**
+- [x] Implement NotificationService + NotificationController (GET list, unread-count, PATCH read) — **complete 2026-06-12**
+- [x] TODOS.md Phase 5: write `currentRiskScore`/`riskTier` after every evaluation — **complete 2026-06-12**
+- [x] Write tests for audit logging (3 tests: success outcome, failure outcome, entityType attribute) — **complete 2026-06-12**
+- [x] **89/89 tests passing**
 
 ## Phase 6 — Frontend
 - [x] **DESIGN gate:** run `/plan-design-review` — **complete 2026-06-10**: `DESIGN.md` created, 11 decisions locked (sidebar layout, demo default route → `/admin/alerts`, risk gauge spec, interaction states, severity badges, WCAG 2.1 AA). All design decisions in `DESIGN.md`.

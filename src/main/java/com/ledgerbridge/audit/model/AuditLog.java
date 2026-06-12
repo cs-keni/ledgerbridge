@@ -49,6 +49,9 @@ public class AuditLog {
     @Column(length = 100)
     private String correlationId;
 
+    @Column(length = 100)
+    private String outcome;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime occurredAt;
 

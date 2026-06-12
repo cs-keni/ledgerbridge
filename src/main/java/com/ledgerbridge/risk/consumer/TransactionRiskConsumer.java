@@ -55,6 +55,9 @@ public class TransactionRiskConsumer {
                 profileService.updateProfile(profile, event);
             }
 
+            // TODOS.md Phase 5: persist latest score/tier regardless of alert status
+            profileService.saveRiskScore(profile, result.finalScore());
+
             // Mark evaluated — idempotency guard for retries/redeliveries
             try {
                 processedRepo.save(new ProcessedTransactionEvent(event.transactionId()));

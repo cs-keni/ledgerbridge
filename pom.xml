@@ -111,6 +111,12 @@
       <version>${hypersistence.version}</version>
     </dependency>
 
+    <!-- ── AOP (AuditAspect requires aspectjweaver) ─────────────────────── -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+
     <!-- ── Structured Logging ─────────────────────────────────────────────── -->
     <dependency>
       <groupId>net.logstash.logback</groupId>
