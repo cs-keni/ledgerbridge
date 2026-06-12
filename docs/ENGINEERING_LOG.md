@@ -4,6 +4,25 @@
 
 ---
 
+## 2026-06-12 — Session 22 (/qa: 3 bugs fixed, 6→9/10 health score)
+
+### Changes
+
+**Frontend — 3 bugs fixed:**
+- **`TransferPage.tsx`**: Added `useEffect` to `SingleAccountForm` and `TransferForm` to sync `accountId`/`fromId` when `accounts` prop loads asynchronously. Root cause: `useState(accounts[0]?.id ?? '')` initializes to `''` on mount when React Query hasn't resolved yet; `<select value="">` visually shows the first option (browser fallback) but internal state stays `''`, causing `handleSubmit` guard to silently bail. Added `useEffect` dep on `[accounts, accountId]` to auto-select the first account when it arrives. (ISSUE-011)
+- **`AlertDetailPanel.tsx` + `AlertTable.tsx` + `DashboardPage.tsx`**: Normalized `riskScore / 100` at all 3 `RiskGauge`/`ScoreChip` call sites. Both components expect 0–1 range; API returns 0–100. (ISSUE-006)
+- **`vite.config.ts`**: Added `watch: { usePolling: true, interval: 300 }` under `server:` — fixes WSL2 inotify limitation on Windows filesystem, enabling Vite HMR to detect file changes.
+
+**Backend — 1 bug fixed:**
+- **`AlertController.java` + `AlertService.java`**: Fixed status filter — was hardcoded `if ("OPEN".equalsIgnoreCase(status))`. Added `getAlertsByStatus(String, Pageable)` to `AlertService` that parses any valid `AlertStatus` enum. `AlertController.list()` now routes any non-blank status to `getAlertsByStatus`, falling back to `getAlerts` on invalid enum value. (ISSUE-007)
+
+**QA artifacts:**
+- **`.gstack/qa-reports/qa-report-localhost-2026-06-12.md`** (NEW): Full QA report, health scores before/after, all issues documented.
+
+**Commit hash: (see below)**
+
+---
+
 ## 2026-06-12 — Session 21 (/plan-design-review: 10 design fixes, 6.5→9/10)
 
 ### Changes

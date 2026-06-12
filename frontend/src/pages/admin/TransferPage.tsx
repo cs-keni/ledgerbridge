@@ -1,4 +1,4 @@
-import { useState, useId } from 'react'
+import { useState, useId, useEffect } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { fetchAccounts } from '../../api/accounts'
 import { deposit, withdraw, transfer } from '../../api/transactions'
@@ -132,6 +132,13 @@ function SingleAccountForm({ label, accounts, isPending, error, onSubmit }: Sing
   const [accountId, setAccountId] = useState(accounts[0]?.id ?? '')
   const [amount, setAmount] = useState('')
   const [description, setDescription] = useState('')
+
+  // accounts may arrive after initial mount (async query); sync the default selection
+  useEffect(() => {
+    if (accounts.length > 0 && !accountId) {
+      setAccountId(accounts[0].id)
+    }
+  }, [accounts, accountId])
   const accountLabelId = useId()
   const amountLabelId = useId()
   const descLabelId = useId()
@@ -230,6 +237,12 @@ function TransferForm({ accounts, isPending, error, onSubmit }: TransferFormProp
   const [toId, setToId] = useState('')
   const [amount, setAmount] = useState('')
   const [description, setDescription] = useState('')
+
+  useEffect(() => {
+    if (accounts.length > 0 && !fromId) {
+      setFromId(accounts[0].id)
+    }
+  }, [accounts, fromId])
   const fromLabelId = useId()
   const toLabelId = useId()
   const amountLabelId = useId()

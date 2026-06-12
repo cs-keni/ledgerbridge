@@ -129,7 +129,7 @@ export function AlertDetailPanel({ alertId, onClose }: Props) {
               {/* Risk gauge */}
               <div className="px-5 py-5 border-b border-border">
                 <RiskGauge
-                  score={alert.riskScore}
+                  score={alert.riskScore / 100}
                   severity={alert.severity}
                   ruleDetails={alert.ruleDetails}
                 />

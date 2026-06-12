@@ -80,6 +80,17 @@ public class AlertService {
     }
 
     @Transactional(readOnly = true)
+    public Page<RiskAlertResponse> getAlertsByStatus(String statusStr, Pageable pageable) {
+        try {
+            AlertStatus status = AlertStatus.valueOf(statusStr.toUpperCase());
+            return riskAlertRepository.findByStatusOrderByCreatedAtDesc(status, pageable)
+                    .map(RiskAlertResponse::from);
+        } catch (IllegalArgumentException e) {
+            return getAlerts(pageable);
+        }
+    }
+
+    @Transactional(readOnly = true)
     public Page<RiskAlertResponse> getOpenAlerts(Pageable pageable) {
         return riskAlertRepository.findByStatusOrderByCreatedAtDesc(AlertStatus.OPEN, pageable)
                 .map(RiskAlertResponse::from);

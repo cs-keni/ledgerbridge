@@ -141,7 +141,7 @@ export function AlertTable({ alerts, selectedId, onSelect, loading }: Props) {
               >
                 <td className="px-3">
                   <div className="flex items-center gap-2">
-                    <ScoreChip score={alert.riskScore} severity={alert.severity} />
+                    <ScoreChip score={alert.riskScore / 100} severity={alert.severity} />
                     <span className="font-mono text-[12px] text-text">
                       {alert.riskScore.toFixed(2)}
                     </span>

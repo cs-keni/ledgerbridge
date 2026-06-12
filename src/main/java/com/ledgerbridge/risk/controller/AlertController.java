@@ -32,8 +32,8 @@ public class AlertController {
     public ResponseEntity<Page<RiskAlertResponse>> list(
             @RequestParam(required = false) String status,
             @PageableDefault(size = 20) Pageable pageable) {
-        if ("OPEN".equalsIgnoreCase(status)) {
-            return ResponseEntity.ok(alertService.getOpenAlerts(pageable));
+        if (status != null && !status.isBlank()) {
+            return ResponseEntity.ok(alertService.getAlertsByStatus(status, pageable));
         }
         return ResponseEntity.ok(alertService.getAlerts(pageable));
     }

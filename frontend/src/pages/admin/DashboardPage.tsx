@@ -99,7 +99,7 @@ export default function DashboardPage() {
                   key={alert.id}
                   className="flex items-center gap-3 px-4 py-2.5 border-b border-border last:border-0"
                 >
-                  <ScoreChip score={alert.riskScore} severity={alert.severity} />
+                  <ScoreChip score={alert.riskScore / 100} severity={alert.severity} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-text truncate">{alert.alertType.replace(/_/g, ' ')}</p>
                     <p className="font-mono text-[11px] text-muted">{formatRelativeTime(alert.createdAt)}</p>

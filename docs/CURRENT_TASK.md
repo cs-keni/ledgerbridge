@@ -5,11 +5,13 @@
 
 ## Active Task
 
-**Phase 6 — /plan-design-review complete (2026-06-12) — next: /qa**
+**Phase 6 — /qa complete (2026-06-12) — next: Phase 7 (Prometheus, CI, Docker)**
 
-10 design fixes applied (6.5 → 9/10). Frontend ready for end-to-end QA run.
-Start backend: `docker-compose up -d` → `./mvnw spring-boot:run`
-Frontend: `cd frontend && npm run dev`
+QA session complete. Health score: 6/10 → 9/10. 3 bugs fixed (ISSUE-006 score normalization, ISSUE-007 alert status filter, ISSUE-011 accountId async init).
+
+Two UX issues noted but not blocking (ISSUE-008 stats chips need invalidation after review, ISSUE-009 critical count inconsistency between Dashboard/Alerts).
+
+**Phase 7 scope:** Prometheus metrics endpoint, GitHub Actions CI pipeline, Docker multi-stage build, docker-compose production config.
 
 ---
 
