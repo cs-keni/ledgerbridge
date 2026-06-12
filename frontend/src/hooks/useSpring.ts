@@ -48,6 +48,7 @@ export function useSpring(
     return () => {
       if (frameRef.current) cancelAnimationFrame(frameRef.current)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target, config.stiffness, config.damping])
 
   return value

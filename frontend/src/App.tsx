@@ -11,7 +11,7 @@ import TransferPage from './pages/admin/TransferPage'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <a
         href="#main"
         className="fixed top-2 left-2 z-50 bg-surface text-text px-4 py-2 rounded border border-border focus:outline-none focus:ring-2 focus:ring-accent-light sr-only focus:not-sr-only"

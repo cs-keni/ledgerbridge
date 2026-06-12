@@ -23,7 +23,7 @@ export default function LoginPage() {
       })
       if (!res.ok) {
         setShake(true)
-        setError('Invalid credentials')
+        setError(res.status >= 500 ? 'Unable to connect. Please try again.' : 'Invalid credentials')
         setTimeout(() => setShake(false), 500)
         return
       }
