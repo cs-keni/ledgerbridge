@@ -19,7 +19,7 @@
 **QA artifacts:**
 - **`.gstack/qa-reports/qa-report-localhost-2026-06-12.md`** (NEW): Full QA report, health scores before/after, all issues documented.
 
-**Commit hash: (see below)**
+**Commit hash: `36be7f2`**
 
 ---
 
