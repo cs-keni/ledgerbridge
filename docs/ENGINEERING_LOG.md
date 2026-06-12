@@ -16,7 +16,7 @@
 
 ### Test results
 - **86/86 tests passing** (2 new VelocityRule tests added)
-- Commit hash: (see git log)
+- Commit hash: `6bff060`
 
 ---
 
