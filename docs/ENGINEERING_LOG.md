@@ -23,6 +23,7 @@
 ### Test results
 - **84/84 tests passing** — all unit + integration tests including `RiskScenarioIntegrationTest` 5/5 and `SchemaIntegrationTest` 4/4
 - `Could not configure topics` logged by `KafkaAdmin` at test startup is benign — tests use embedded Kafka; broker connection times out but tests proceed correctly
+- Commit hash: `b66c7ab`
 
 ---
 
