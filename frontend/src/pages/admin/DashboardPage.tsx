@@ -43,10 +43,18 @@ export default function DashboardPage() {
     0,
   )
 
+  function scoreColor(s: number | string): string {
+    const n = typeof s === 'string' ? parseFloat(s) : s
+    if (isNaN(n)) return '#888888'
+    if (n < 0.3) return '#34d399'
+    if (n < 0.6) return '#d97706'
+    return '#dc2626'
+  }
+
   return (
-    <div className="p-6 max-w-5xl mx-auto animate-fade-in">
+    <div className="p-6 animate-fade-in">
       <div className="mb-6">
-        <h1 className="text-lg font-semibold text-text">Dashboard</h1>
+        <h1 className="text-[20px] font-bold text-text">Dashboard</h1>
         <p className="text-sm text-muted mt-0.5">System overview</p>
       </div>
 
@@ -54,7 +62,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         <KpiCard label="Open Alerts" value={openAlerts.length} loading={alertsLoading} color="#dc2626" />
         <KpiCard label="Critical" value={criticalAlerts.length} loading={alertsLoading} color="#ea580c" />
-        <KpiCard label="Avg Risk Score" value={avgScore} loading={alertsLoading} color="#d97706" />
+        <KpiCard label="Avg Risk Score" value={avgScore} loading={alertsLoading} color={scoreColor(avgScore)} />
         <KpiCard
           label="Total Balance"
           value={accountsLoading ? '—' : AMOUNT_FMT.format(totalBalance)}

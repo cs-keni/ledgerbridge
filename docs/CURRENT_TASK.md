@@ -5,6 +5,14 @@
 
 ## Active Task
 
+**Phase 6 — /plan-design-review complete (2026-06-12) — next: /qa**
+
+10 design fixes applied (6.5 → 9/10). Frontend ready for end-to-end QA run.
+Start backend: `docker-compose up -d` → `./mvnw spring-boot:run`
+Frontend: `cd frontend && npm run dev`
+
+---
+
 **Phase 5 — Admin + Audit ✅ COMPLETE (2026-06-12)**
 
 ### Shipped

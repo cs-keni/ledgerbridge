@@ -1,5 +1,6 @@
 package com.ledgerbridge.risk.repository;
 
+import com.ledgerbridge.risk.model.AlertSeverity;
 import com.ledgerbridge.risk.model.AlertStatus;
 import com.ledgerbridge.risk.model.RiskAlert;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ public interface RiskAlertRepository extends JpaRepository<RiskAlert, UUID> {
     Page<RiskAlert> findByStatusOrderByCreatedAtDesc(AlertStatus status, Pageable pageable);
     Page<RiskAlert> findByUserIdOrderByCreatedAtDesc(UUID userId, Pageable pageable);
     long countByStatus(AlertStatus status);
+    long countBySeverityAndStatus(AlertSeverity severity, AlertStatus status);
     boolean existsByTransactionId(UUID transactionId);
     Optional<RiskAlert> findByTransactionId(UUID transactionId);
 }

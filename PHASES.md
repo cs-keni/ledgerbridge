@@ -89,6 +89,7 @@
 - [x] Connect SSE for real-time alert badge — **complete 2026-06-12**: `useAlertStream.ts` (fetch+ReadableStream, JWT header, exp backoff 1s→30s); `sseStore.ts` (Zustand status atom); `useAlertStream` in `AlertsPage` invalidates React Query cache on each SSE event
 - [x] Build Transfer form — **complete 2026-06-12**: `TransferPage.tsx` — 3-tab form (Deposit/Withdraw/Transfer), account dropdown, idempotency key auto-generated, success card with transaction number. `/transfer` route + Sidebar link.
 - [x] WCAG 2.1 AA verification — **complete 2026-06-12**: contrast audit passed (#888888 on #111111 = 5.35:1, on #1a1a1a = 4.93:1, both ≥4.5:1 AA); keyboard nav on alert table (Tab/Enter/Space); Escape closes AlertDetailPanel; focus moves to close button on panel open; all form inputs have `useId()` label pairs; `role="alert"` on errors; ARIA landmarks verified.
+- [x] **DESIGN gate (second pass):** run `/plan-design-review` — **complete 2026-06-12**: 10 fixes, 6.5→9/10. h1 20px, system-wide stat chips (AlertStatsResponse API), demo credentials on login, skeleton shimmer in panel, gauge bar semantics fixed, sidebar alert count badge, avg score dynamic color, button color rule, action btn focus rings, full-width content.
 - [ ] Run `/qa` to verify all flows end-to-end
 
 ## Phase 7 — Observability + DevOps

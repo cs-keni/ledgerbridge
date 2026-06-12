@@ -4,6 +4,34 @@
 
 ---
 
+## 2026-06-12 — Session 21 (/plan-design-review: 10 design fixes, 6.5→9/10)
+
+### Changes
+
+**Backend:**
+- **`RiskAlertRepository.java`**: added `countBySeverityAndStatus(AlertSeverity, AlertStatus)` derived query.
+- **`AlertStatsResponse.java`** (NEW): record DTO `{open, underReview, critical}` for system-wide alert counts.
+- **`AlertService.java`**: added `getAlertStats()` — single transactional call to three count queries.
+- **`AlertController.java`**: added `GET /api/admin/alerts/stats` endpoint returning `AlertStatsResponse`.
+
+**Frontend — 10 design fixes from /plan-design-review (6.5 → 9/10):**
+- **h1 size**: all admin pages `text-lg font-semibold` → `text-[20px] font-bold` (DESIGN.md spec: Inter 20px 700).
+- **Stat chips**: now sourced from `GET /api/admin/alerts/stats` (system-wide) instead of current page slice. Added `fetchAlertStats()` to `api/alerts.ts`, `AlertStatsResponse` to `types/api.ts`.
+- **Alert list error state**: added `isError` check with inline "Failed to load alerts / Retry" button (DESIGN.md spec).
+- **Login page demo credentials**: added visible "Demo credentials" card below login form (`demo@ledgerbridge.io / password`) — portfolio critical.
+- **AlertDetailPanel loading**: replaced centered spinner with skeleton shimmer (gauge arc placeholder + 4 bar rows + transaction field rows) per DESIGN.md spec.
+- **RiskGauge rule bars**: bar width = raw ruleScore (0–100%), label = weighted contribution (`+0.27`) with tooltip showing calculation. Previously: width = weighted contribution, label = raw score → confusing.
+- **Sidebar alert count badge**: indigo pill badge showing OPEN alert count next to "Risk Alerts" nav item, sourced from `alert-stats` query. SSE event invalidates the cache to keep count live.
+- **Dashboard avg score color**: `scoreColor()` helper applied dynamically instead of hardcoded amber.
+- **Transfer submit button**: `bg-accent text-white` → `bg-[#2a2a2a] text-text hover:bg-[#333]` (DESIGN.md: accent = hover/active only, never as fill).
+- **ActionBtn focus rings**: added `focus:outline-none focus:ring-1 focus:ring-accent-light/60` to Review/Dismiss/Resolve buttons in AlertDetailPanel.
+- **Content max-width**: removed `max-w-5xl mx-auto` from AlertsPage, DashboardPage, AuditLogPage, AccountsPage. TransferPage keeps `max-w-lg` (form width constraint is intentional). Full-width content on large monitors.
+- **SSE invalidation**: `useAlertStream` callback now invalidates `['alert-stats']` in addition to `['alerts']` so count badge stays live.
+
+**Commit hash: [pending]**
+
+---
+
 ## 2026-06-12 — Session 20 (Phase 6: Transfer form + WCAG 2.1 AA)
 
 ### Changes

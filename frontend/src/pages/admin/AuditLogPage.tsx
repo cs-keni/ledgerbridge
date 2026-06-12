@@ -15,9 +15,9 @@ export default function AuditLogPage() {
   const totalPages = data?.totalPages ?? 1
 
   return (
-    <div className="p-6 max-w-5xl mx-auto animate-fade-in">
+    <div className="p-6 animate-fade-in">
       <div className="mb-6">
-        <h1 className="text-lg font-semibold text-text">Audit Log</h1>
+        <h1 className="text-[20px] font-bold text-text">Audit Log</h1>
         <p className="text-sm text-muted mt-0.5">Immutable record of all system events</p>
       </div>
 

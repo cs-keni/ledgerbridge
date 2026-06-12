@@ -1,4 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+import { fetchAlertStats } from '../../api/alerts'
 import { useAuthStore } from '../../stores/authStore'
 import { useSseStore } from '../../stores/sseStore'
 
@@ -14,6 +16,12 @@ export function Sidebar() {
   const { email, clearAuth } = useAuthStore()
   const sseStatus = useSseStore((s) => s.status)
   const navigate = useNavigate()
+  const { data: stats } = useQuery({
+    queryKey: ['alert-stats'],
+    queryFn: fetchAlertStats,
+    staleTime: 30_000,
+  })
+  const openCount = stats?.open ?? 0
 
   const handleLogout = async () => {
     const refreshToken = localStorage.getItem('lb_refresh_token')
@@ -70,7 +78,12 @@ export function Sidebar() {
                 }`}
               />
             )}
-            {label}
+            <span className="flex-1 truncate">{label}</span>
+            {hasSseBadge && openCount > 0 && (
+              <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded bg-accent/20 text-accent-light leading-none flex-shrink-0">
+                {openCount > 99 ? '99+' : openCount}
+              </span>
+            )}
           </NavLink>
         ))}
       </nav>

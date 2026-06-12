@@ -3,6 +3,7 @@ package com.ledgerbridge.risk.controller;
 import com.ledgerbridge.auth.model.UserPrincipal;
 import com.ledgerbridge.risk.dto.AlertDetailResponse;
 import com.ledgerbridge.risk.dto.AlertReviewRequest;
+import com.ledgerbridge.risk.dto.AlertStatsResponse;
 import com.ledgerbridge.risk.dto.RiskAlertResponse;
 import com.ledgerbridge.risk.service.AlertService;
 import com.ledgerbridge.risk.service.SseAlertService;
@@ -35,6 +36,11 @@ public class AlertController {
             return ResponseEntity.ok(alertService.getOpenAlerts(pageable));
         }
         return ResponseEntity.ok(alertService.getAlerts(pageable));
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<AlertStatsResponse> stats() {
+        return ResponseEntity.ok(alertService.getAlertStats());
     }
 
     @GetMapping("/{id}")

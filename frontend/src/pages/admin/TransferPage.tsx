@@ -47,9 +47,9 @@ export default function TransferPage() {
   const apiErr = error instanceof ApiError ? error.message : error ? String(error) : null
 
   return (
-    <div className="p-6 max-w-lg mx-auto animate-fade-in">
+    <div className="p-6 max-w-lg animate-fade-in">
       <div className="mb-6">
-        <h1 className="text-lg font-semibold text-text">Transactions</h1>
+        <h1 className="text-[20px] font-bold text-text">Transactions</h1>
         <p className="text-sm text-muted mt-0.5">Deposit, withdraw, or transfer funds</p>
       </div>
 
@@ -387,7 +387,7 @@ function SubmitBtn({ isPending, label, disabled }: { isPending: boolean; label: 
     <button
       type="submit"
       disabled={isPending || disabled}
-      className="w-full py-2.5 rounded bg-accent text-white text-sm font-medium hover:bg-accent-light transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-accent-light/60"
+      className="w-full py-2.5 rounded bg-[#2a2a2a] text-text text-sm font-medium hover:bg-[#333333] transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-accent-light/60"
     >
       {isPending ? (
         <span className="flex items-center justify-center gap-2">

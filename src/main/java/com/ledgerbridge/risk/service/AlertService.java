@@ -7,6 +7,7 @@ import com.ledgerbridge.common.audit.AuditLog;
 import com.ledgerbridge.common.exception.AppException;
 import com.ledgerbridge.risk.dto.AlertDetailResponse;
 import com.ledgerbridge.risk.dto.AlertReviewRequest;
+import com.ledgerbridge.risk.dto.AlertStatsResponse;
 import com.ledgerbridge.risk.dto.RiskAlertResponse;
 import com.ledgerbridge.risk.model.AlertSeverity;
 import com.ledgerbridge.risk.model.AlertStatus;
@@ -93,6 +94,14 @@ public class AlertService {
     @Transactional(readOnly = true)
     public long countOpenAlerts() {
         return riskAlertRepository.countByStatus(AlertStatus.OPEN);
+    }
+
+    @Transactional(readOnly = true)
+    public AlertStatsResponse getAlertStats() {
+        long open = riskAlertRepository.countByStatus(AlertStatus.OPEN);
+        long underReview = riskAlertRepository.countByStatus(AlertStatus.UNDER_REVIEW);
+        long critical = riskAlertRepository.countBySeverityAndStatus(AlertSeverity.CRITICAL, AlertStatus.OPEN);
+        return new AlertStatsResponse(open, underReview, critical);
     }
 
     @AuditLog(action = AuditAction.ALERT_REVIEWED, entityType = "RiskAlert")

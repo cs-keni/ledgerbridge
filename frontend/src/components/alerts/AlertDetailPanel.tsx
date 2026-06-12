@@ -93,8 +93,22 @@ export function AlertDetailPanel({ alertId, onClose }: Props) {
         {/* Body */}
         <div className="flex-1 overflow-y-auto">
           {isPending && (
-            <div className="flex items-center justify-center h-40">
-              <div className="w-6 h-6 border-2 border-border border-t-accent-light rounded-full animate-spin" />
+            <div className="px-5 pt-5 animate-fade-in" aria-busy="true" aria-label="Loading alert details">
+              {/* Gauge skeleton */}
+              <div className="flex flex-col items-center gap-3 pb-5 border-b border-border">
+                <div className="w-[200px] h-[160px] rounded-full animate-shimmer bg-gradient-to-r from-surface via-border to-surface bg-[length:200%_100%]" />
+                <div className="w-full space-y-2 px-2">
+                  {[0, 1, 2, 3].map((i) => (
+                    <div key={i} className="h-2 rounded-full animate-shimmer bg-gradient-to-r from-surface via-border to-surface bg-[length:200%_100%]" style={{ animationDelay: `${i * 80}ms` }} />
+                  ))}
+                </div>
+              </div>
+              {/* Transaction rows skeleton */}
+              <div className="pt-4 space-y-3">
+                {[0, 1, 2, 3].map((i) => (
+                  <div key={i} className="h-3 rounded animate-shimmer bg-gradient-to-r from-surface via-border to-surface bg-[length:200%_100%]" style={{ animationDelay: `${i * 60}ms`, width: `${70 - i * 10}%` }} />
+                ))}
+              </div>
             </div>
           )}
 
@@ -249,7 +263,7 @@ function ActionBtn({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`flex-1 px-3 py-1.5 rounded border text-[12px] font-medium transition-colors disabled:opacity-50 ${className}`}
+      className={`flex-1 px-3 py-1.5 rounded border text-[12px] font-medium transition-colors disabled:opacity-50 focus:outline-none focus:ring-1 focus:ring-accent-light/60 ${className}`}
     >
       {children}
     </button>

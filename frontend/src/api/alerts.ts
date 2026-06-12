@@ -2,6 +2,7 @@ import { api } from './client'
 import type {
   AlertDetailResponse,
   AlertReviewRequest,
+  AlertStatsResponse,
   Page,
   RiskAlertResponse,
 } from '../types/api'
@@ -21,4 +22,8 @@ export function fetchAlertDetail(id: string) {
 
 export function reviewAlert(id: string, body: AlertReviewRequest) {
   return api.patch<RiskAlertResponse>(`/api/admin/alerts/${id}/review`, body)
+}
+
+export function fetchAlertStats() {
+  return api.get<AlertStatsResponse>('/api/admin/alerts/stats')
 }

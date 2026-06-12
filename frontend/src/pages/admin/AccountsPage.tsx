@@ -20,9 +20,9 @@ export default function AccountsPage() {
   const list = accounts ?? []
 
   return (
-    <div className="p-6 max-w-5xl mx-auto animate-fade-in">
+    <div className="p-6 animate-fade-in">
       <div className="mb-6">
-        <h1 className="text-lg font-semibold text-text">Accounts</h1>
+        <h1 className="text-[20px] font-bold text-text">Accounts</h1>
         <p className="text-sm text-muted mt-0.5">
           All ledger accounts for your user
           {list.length > 0 && (

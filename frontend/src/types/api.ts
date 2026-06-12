@@ -6,6 +6,12 @@ export type AccountType = 'CHECKING' | 'SAVINGS' | 'BUSINESS'
 export type AccountStatus = 'ACTIVE' | 'SUSPENDED' | 'CLOSED'
 export type TransactionStatus = 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED'
 
+export interface AlertStatsResponse {
+  open: number
+  underReview: number
+  critical: number
+}
+
 export interface Page<T> {
   content: T[]
   totalElements: number

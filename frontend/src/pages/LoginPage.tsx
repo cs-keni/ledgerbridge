@@ -103,6 +103,11 @@ export default function LoginPage() {
             Register
           </Link>
         </p>
+        <div className="mt-5 px-4 py-3 rounded border border-border bg-surface text-center">
+          <p className="text-[11px] text-muted uppercase tracking-[0.05em] mb-1">Demo credentials</p>
+          <p className="font-mono text-[12px] text-text">demo@ledgerbridge.io</p>
+          <p className="font-mono text-[12px] text-text">password</p>
+        </div>
       </div>
     </div>
   )

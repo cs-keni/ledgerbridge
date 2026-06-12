@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { fetchAlerts } from '../../api/alerts'
+import { fetchAlerts, fetchAlertStats } from '../../api/alerts'
 import { AlertTable } from '../../components/alerts/AlertTable'
 import { AlertDetailPanel } from '../../components/alerts/AlertDetailPanel'
 import { useAlertStream } from '../../hooks/useAlertStream'
@@ -20,14 +20,15 @@ export default function AlertsPage() {
   const [statusFilter, setStatusFilter] = useState<AlertStatus | 'ALL'>('ALL')
   const [page, setPage] = useState(0)
 
-  // Invalidate alert list on each SSE event so new alerts appear immediately
+  // Invalidate alert list and stats on each SSE event so counts stay live
   const qc = useQueryClient()
   useAlertStream(() => {
     qc.invalidateQueries({ queryKey: ['alerts'] })
+    qc.invalidateQueries({ queryKey: ['alert-stats'] })
   })
   const sseStatus = useSseStore((s) => s.status)
 
-  const { data, isPending } = useQuery({
+  const { data, isPending, isError, refetch } = useQuery({
     queryKey: ['alerts', statusFilter, page],
     queryFn: () =>
       fetchAlerts({
@@ -38,20 +39,26 @@ export default function AlertsPage() {
     staleTime: 10_000,
   })
 
+  // System-wide stats (not filtered by current page/tab)
+  const { data: stats } = useQuery({
+    queryKey: ['alert-stats'],
+    queryFn: fetchAlertStats,
+    staleTime: 30_000,
+  })
+
   const alerts = data?.content ?? []
   const totalPages = data?.totalPages ?? 1
 
-  // Stat chips derived from current page
-  const openCount = alerts.filter((a) => a.status === 'OPEN').length
-  const criticalCount = alerts.filter((a) => a.severity === 'CRITICAL').length
-  const reviewCount = alerts.filter((a) => a.status === 'UNDER_REVIEW').length
+  const openCount = stats?.open ?? 0
+  const criticalCount = stats?.critical ?? 0
+  const reviewCount = stats?.underReview ?? 0
 
   return (
-    <div className="p-6 max-w-5xl mx-auto animate-fade-in">
+    <div className="p-6 animate-fade-in">
       {/* Page header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-lg font-semibold text-text">Risk Alerts</h1>
+          <h1 className="text-[20px] font-bold text-text">Risk Alerts</h1>
           <p className="text-sm text-muted mt-0.5">
             Real-time fraud detection queue
             {sseStatus === 'connected' && (
@@ -101,12 +108,24 @@ export default function AlertsPage() {
 
       {/* Table */}
       <div className="rounded-lg border border-border overflow-hidden">
-        <AlertTable
-          alerts={alerts}
-          selectedId={selectedId}
-          onSelect={(id) => setSelectedId((prev) => (prev === id ? null : id))}
-          loading={isPending}
-        />
+        {isError ? (
+          <div className="flex flex-col items-center justify-center py-12 animate-fade-in">
+            <p className="text-sm text-muted mb-3">Failed to load alerts.</p>
+            <button
+              onClick={() => refetch()}
+              className="text-sm text-accent-light hover:underline"
+            >
+              Retry
+            </button>
+          </div>
+        ) : (
+          <AlertTable
+            alerts={alerts}
+            selectedId={selectedId}
+            onSelect={(id) => setSelectedId((prev) => (prev === id ? null : id))}
+            loading={isPending}
+          />
+        )}
       </div>
 
       {/* Pagination */}

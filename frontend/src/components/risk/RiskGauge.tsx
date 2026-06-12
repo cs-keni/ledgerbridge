@@ -176,15 +176,16 @@ export function RiskGauge({ score, severity, ruleDetails }: Props) {
                 <span
                   className="text-[11px] font-mono"
                   style={{ color: ruleScore > 0.3 ? barColor : '#888888' }}
+                  title={`Raw score: ${ruleScore.toFixed(2)} × weight ${rule.weight}`}
                 >
-                  {ruleScore.toFixed(2)}
+                  +{contribution.toFixed(2)}
                 </span>
               </div>
               <div className="h-1.5 bg-border rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-300"
                   style={{
-                    width: `${contribution * 100}%`,
+                    width: `${ruleScore * 100}%`,
                     background: barColor,
                     opacity: ruleScore > 0.01 ? 1 : 0.3,
                   }}
