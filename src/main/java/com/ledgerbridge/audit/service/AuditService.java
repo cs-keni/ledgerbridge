@@ -48,4 +48,9 @@ public class AuditService {
         return repository.findByUserIdOrderByOccurredAtDesc(userId, pageable)
                 .map(AuditLogResponse::from);
     }
+
+    @Transactional(readOnly = true)
+    public Page<AuditLogResponse> listAll(Pageable pageable) {
+        return repository.findAll(pageable).map(AuditLogResponse::from);
+    }
 }

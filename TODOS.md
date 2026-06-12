@@ -83,6 +83,23 @@
   chip severity badges, WCAG 2.1 AA a11y standard, demo-aware empty state with Swagger
   link, SSE reconnecting indicator, 'Try a Demo Scenario →' in-app Swagger CTA.
 
+## Before Phase 7 (frontend polish / post-Phase 6)
+
+- [ ] **Multi-tab refresh token replay (BroadcastChannel coordination)** — Two
+  React tabs silently refreshing with the same stored refresh token cause
+  `AuthService.refresh()` to detect a replay and revoke the entire token family —
+  logging both tabs out. Fix: `BroadcastChannel` cross-tab mutex in `authStore.ts`
+  so only one tab calls `/api/auth/refresh` at a time. Other tabs listen for the
+  new token and update their Zustand state from the broadcast.
+  - Priority: P3
+  - Effort: S (~50 min, frontend only)
+  - Source: Codex outside-voice review (Phase 6 /plan-eng-review 2026-06-12):
+    "Two tabs can silently refresh with the same stored token; the loser presents a
+    revoked token and AuthService revokes the whole family"
+  - **Note:** Phase 6 ships without this fix. Document as known limitation in
+    README. A recruiter opening the demo in two tabs simultaneously will be logged
+    out of both — acceptable for portfolio scope.
+
 ## Before Phase 7.5 (Railway deploy)
 
 - [ ] **Validate JVM memory flags for Railway free tier** — Confirm that

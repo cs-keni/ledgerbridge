@@ -1,6 +1,7 @@
 package com.ledgerbridge.risk.controller;
 
 import com.ledgerbridge.auth.model.UserPrincipal;
+import com.ledgerbridge.risk.dto.AlertDetailResponse;
 import com.ledgerbridge.risk.dto.AlertReviewRequest;
 import com.ledgerbridge.risk.dto.RiskAlertResponse;
 import com.ledgerbridge.risk.service.AlertService;
@@ -37,7 +38,7 @@ public class AlertController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RiskAlertResponse> getById(@PathVariable UUID id) {
+    public ResponseEntity<AlertDetailResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(alertService.getAlertById(id));
     }
 

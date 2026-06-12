@@ -5,7 +5,7 @@
 
 ## Current Status
 
-**Phase: 5 — Admin + Audit ✅ COMPLETE — Phase 6 (Frontend) is next**
+**Phase: 6 — Frontend (in progress)**
 
 All planning gates cleared:
 - `/plan-eng-review` ✅ Done 2026-06-05: 18 decisions locked (D2–D18), Codex outside voice, 6 TODOs
@@ -15,25 +15,34 @@ All planning gates cleared:
 - `/plan-eng-review` (Phase 4) ✅ Done 2026-06-11: 11 issues (T1–T11), all P1 fixes approved
 - `/review` (Phase 4) ✅ Done 2026-06-12: 8 critical fixes shipped, 84/84 tests passing
 - `/plan-eng-review` (Phase 5) ✅ Done 2026-06-12: 3 decisions locked (D1/D2/D3), full scope implemented, 89/89 tests passing
+- `/plan-eng-review` (Phase 6) ✅ Done 2026-06-12: 6 new decisions (D1–D6), Lane A + Lane B plan locked, TODOS.md P3 item written
 
 **Portfolio strategy locked** — see `docs/designs/portfolio-strategy.md` for the full CEO plan.
-**Design system locked** — see `DESIGN.md` for all Phase 6 component specs.
+**Design system locked** — see `DESIGN.md` for all Phase 6 component specs (updated: SSE now uses fetch+ReadableStream, not EventSource).
 
-Phase 5 complete: AuditAspect (AOP, service layer, always fires, outcome field), AuditService/Controller, SseAlertService (emitter registry with cleanup), AlertController (list/byId/review/SSE), NotificationService/Controller, TODOS.md risk score write. 89/89 tests passing.
+Phase 6 Lane A + B shipped. See Last Agent Action below.
 
 ## Last Agent Action
 
-Claude Code (2026-06-12): Phase 5 — Admin + Audit. New files:
-- `common/audit/AuditLog.java` (annotation, D11) + `common/audit/AuditAspect.java` — service-layer AOP, fires always including failures (D15), extracts entityId from first UUID arg, userId from SecurityContext, IP from RequestContextHolder (null-safe)
-- `audit/service/AuditService.java` — `record()` with `Propagation.REQUIRES_NEW`, query methods
-- `audit/dto/AuditLogResponse.java` + `audit/controller/AuditController.java` — GET /api/admin/audit-log
-- `risk/service/SseAlertService.java` — `CopyOnWriteArrayList` registry, onTimeout/onCompletion/onError cleanup, `broadcast()` called from `createAlert()`
-- `risk/dto/AlertReviewRequest.java` + `risk/controller/AlertController.java` — GET list/byId, PATCH /review, GET /stream
-- `notification/dto/NotificationResponse.java` + `notification/service/NotificationService.java` + `notification/controller/NotificationController.java`
-- `V11__add_audit_outcome.sql` — `outcome VARCHAR(100)` column on audit_log
-- `test/audit/AuditAspectTest.java` — 3 tests (success, failure, entityType attribute)
-- Edits: `audit/model/AuditLog.java` (outcome field), `risk/service/AlertService.java` (reviewAlert + getAlertById + SSE broadcast), `risk/service/CustomerRiskProfileService.java` (saveRiskScore), `risk/consumer/TransactionRiskConsumer.java` (calls saveRiskScore), `pom.xml` (spring-boot-starter-aop)
-- **89/89 tests passing**
+Claude Code (2026-06-12): Phase 6 Lane A (backend fixes) + Lane B (frontend scaffold + build plugin). 89/89 tests passing.
+
+**Lane A — backend fixes:**
+- `SecurityConfig.java`: `/api/admin/**` now requires `hasAnyRole("ADMIN", "DEMO_ACTOR")`; `anyRequest().permitAll()` for SPA routes
+- `V12__add_demo_actor.sql` (NEW): DEMO_ACTOR user `demo@ledgerbridge.io` (password "password")
+- `risk/dto/AlertDetailResponse.java` (NEW): enriched DTO (alert + transaction + account join)
+- `risk/service/AlertService.java`: `getAlertById()` returns `AlertDetailResponse` with 2-step join
+- `risk/controller/AlertController.java`: `getById()` returns `AlertDetailResponse`
+- `audit/service/AuditService.java`: added `listAll(Pageable)`
+- `audit/controller/AuditController.java`: `entityType`/`entityId` now `required = false`; falls back to `listAll()`
+- `risk/service/SseAlertService.java`: timeout `-1L` (no timeout) + 15s heartbeat via `ScheduledExecutorService`
+- `SchemaIntegrationTest.java`: updated count assertion 5 → 6 (V12 adds DEMO_ACTOR)
+
+**Lane B — frontend scaffold + build:**
+- `pom.xml`: `frontend-maven-plugin` 1.15.1, bound to `prepare-package` (skipped by `./mvnw test`)
+- `common/config/SpaFallbackController.java` (NEW): extension-free SPA fallback, `/` + `/**/{path:[^\\.]*}`
+- `frontend/` scaffold: package.json, vite.config.ts, tailwind.config.ts, tsconfig.json, postcss.config.js, index.html, vite-env.d.ts
+- `frontend/src/`: main.tsx, index.css, App.tsx, types/api.ts, stores/authStore.ts, components/auth/ProtectedRoute.tsx, pages/LoginPage.tsx, pages/RegisterPage.tsx
+- `DESIGN.md`: updated SSE auto-reconnect description to `useAlertStream` hook
 
 ## Previous Agent Action
 

@@ -19,11 +19,14 @@ public class AuditController {
     private final AuditService auditService;
 
     @GetMapping
-    public ResponseEntity<Page<AuditLogResponse>> getByEntity(
-            @RequestParam String entityType,
-            @RequestParam UUID entityId,
+    public ResponseEntity<Page<AuditLogResponse>> list(
+            @RequestParam(required = false) String entityType,
+            @RequestParam(required = false) UUID entityId,
             @PageableDefault(size = 20, sort = "occurredAt") Pageable pageable) {
-        return ResponseEntity.ok(auditService.getByEntity(entityType, entityId, pageable));
+        if (entityType != null && entityId != null) {
+            return ResponseEntity.ok(auditService.getByEntity(entityType, entityId, pageable));
+        }
+        return ResponseEntity.ok(auditService.listAll(pageable));
     }
 
     @GetMapping("/user/{userId}")

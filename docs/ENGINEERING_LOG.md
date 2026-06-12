@@ -4,6 +4,45 @@
 
 ---
 
+## 2026-06-12 — Session 18 (Phase 6 Lane A + Lane B: backend fixes + frontend scaffold)
+
+### Changes
+
+**Lane A — Backend fixes (T1–T4, T17):**
+- **`SecurityConfig.java`**: added `/api/admin/**` → `hasAnyRole("ADMIN", "DEMO_ACTOR")` before the catch-all; changed `anyRequest().authenticated()` → `anyRequest().permitAll()` so SPA routes and static assets are served without auth redirect.
+- **`V12__add_demo_actor.sql`** (NEW): Flyway migration inserts DEMO_ACTOR user `demo@ledgerbridge.io` (password "password", same BCrypt hash as V7 seed users) — Phase 6 local testing credential.
+- **`risk/dto/AlertDetailResponse.java`** (NEW): enriched DTO record joining `RiskAlert + LedgerTransaction + Account`. Exposes transaction amount, currency, type, accountId, accountNumber, counterpartyAccountId, description, merchantCategory, transactionInitiatedAt — required for the alert detail panel.
+- **`risk/service/AlertService.java`**: injected `TransactionRepository` + `AccountRepository`; `getAlertById()` now returns `AlertDetailResponse` by walking alert → transaction → account. Null-safe on account (returns null accountNumber if account row missing).
+- **`risk/controller/AlertController.java`**: updated `getById()` return type to `ResponseEntity<AlertDetailResponse>`.
+- **`audit/service/AuditService.java`**: added `listAll(Pageable)` using `repository.findAll(pageable)` (JpaRepository base method).
+- **`audit/controller/AuditController.java`**: made `entityType` + `entityId` `@RequestParam(required = false)`; dispatches to `getByEntity()` when both present, `listAll()` otherwise. Enables the frontend audit log page without a required entity filter.
+- **`risk/service/SseAlertService.java`**: SSE_TIMEOUT_MS removed; emitters now created with `-1L` (no timeout). Added 15s heartbeat via `ScheduledExecutorService` (daemon thread, `@PostConstruct` start, `@PreDestroy` shutdown) — sends `SseEmitter.event().comment("heartbeat")` every 15s to keep connections alive through proxies.
+- **`SchemaIntegrationTest.java`**: updated `seed_data_has_five_scenario_users` count assertion from 5 to 6 (V12 added DEMO_ACTOR as 6th user).
+
+**Lane B — Frontend scaffold + build plugin (T5–T8, T15, T16):**
+- **`pom.xml`**: added `frontend-maven-plugin` (com.github.eirslett 1.15.1) bound to `prepare-package` phase — Node 20 LTS install → npm install → vite build → `target/classes/static/`. Bound to `prepare-package` (not `generate-resources`) so `./mvnw clean test` skips the build.
+- **`common/config/SpaFallbackController.java`** (NEW): catches extension-free paths `/{path:[^\\.]*}` and `/**/{path:[^\\.]*}` — forwards to `/index.html`. Extension-free pattern avoids intercepting `.js`/`.css`/`.ico` static assets (which have dots in filename), leaving those to Spring's `ResourceHttpRequestHandler`.
+- **`frontend/package.json`** (NEW): React 18.3.1, TypeScript 5.5.3, Vite 5.4, Tailwind CSS 3.4.7, @tanstack/react-query v5.59, Zustand v4.5.5, react-router-dom v6.27, @fontsource/inter + @fontsource/geist-mono.
+- **`frontend/vite.config.ts`** (NEW): `outDir: ../target/classes/static`, `emptyOutDir: true`, dev proxy `/api → localhost:8080`.
+- **`frontend/tailwind.config.ts`** (NEW): extends theme with all DESIGN.md tokens (colors, font families, sidebar spacing, shake/shimmer/fade-in-up/slide-in-right/alert-arrive keyframe animations).
+- **`frontend/tsconfig.json` + `tsconfig.node.json`** (NEW): strict TS config, bundler module resolution, noEmit for Vite.
+- **`frontend/postcss.config.js`** (NEW): tailwindcss + autoprefixer.
+- **`frontend/index.html`** (NEW): minimal SPA entry.
+- **`frontend/src/main.tsx`** (NEW): React 18 `createRoot`, `QueryClientProvider` (staleTime 30s, retry 1).
+- **`frontend/src/index.css`** (NEW): Tailwind directives + CSS custom properties for all DESIGN.md color tokens.
+- **`frontend/src/App.tsx`** (NEW): `BrowserRouter` + `Routes` — login, register, `ProtectedRoute` wrapper, fallback `→ /login`.
+- **`frontend/src/types/api.ts`** (NEW): TypeScript types for `RiskAlertResponse`, `AlertDetailResponse`, `Page<T>`, `AuthResponse`, `LoginRequest`, `RegisterRequest`, `AuditLogResponse` — all matching backend DTO shapes.
+- **`frontend/src/stores/authStore.ts`** (NEW): Zustand store — access token in memory (never localStorage), refresh token in `localStorage` under key `lb_refresh_token`. `silentRefresh()` calls `/api/auth/refresh` on boot; sets `isInitialized` flag when done (true or false — used by `ProtectedRoute` to hold render until auth is known).
+- **`frontend/src/components/auth/ProtectedRoute.tsx`** (NEW): checks `isInitialized`; shows spinner while silent refresh is pending; redirects to `/login` if no access token.
+- **`frontend/src/pages/LoginPage.tsx`** (NEW): centered card, always-visible labels, WCAG 2.1 AA focus rings, spinner on submit, shake animation on bad credentials.
+- **`frontend/src/pages/RegisterPage.tsx`** (NEW): same design pattern as login, first/last name fields.
+- **`DESIGN.md`**: updated SSE connection state section — "Browser `EventSource` auto-reconnects" → `useAlertStream` hook (fetch + ReadableStream with JWT header + exponential backoff).
+
+### Test results
+- **89/89 tests passing** — all backend tests green with V12 migration
+
+---
+
 ## 2026-06-12 — Session 17 (Phase 5: Admin + Audit)
 
 ### Changes

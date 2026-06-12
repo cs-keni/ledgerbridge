@@ -34,7 +34,8 @@ class SchemaIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void seed_data_has_five_scenario_users() {
-        assertThat(userRepository.count()).isEqualTo(5);
+        // V12 adds a 6th user (DEMO_ACTOR — demo@ledgerbridge.io) for Phase 6 local testing
+        assertThat(userRepository.count()).isEqualTo(6);
         assertThat(userRepository.findById(TestScenarioIds.ALICE_USER_ID)).isPresent();
         assertThat(userRepository.findById(TestScenarioIds.BOB_USER_ID)).isPresent();
         assertThat(userRepository.findById(TestScenarioIds.CAROL_USER_ID)).isPresent();

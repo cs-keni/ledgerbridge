@@ -234,7 +234,7 @@ Dot (6px circle, left of label):
 
 **Reconnecting:** Orange 8px pulsing dot + tooltip on hover: "Reconnecting to live feed..."
 
-**Auto-reconnect:** Browser `EventSource` auto-reconnects. UI reflects state without manual refresh.
+**Auto-reconnect:** `useAlertStream` hook (fetch + ReadableStream) with exponential backoff — supports JWT Authorization header (native EventSource cannot). UI reflects state without manual refresh.
 
 ---
 

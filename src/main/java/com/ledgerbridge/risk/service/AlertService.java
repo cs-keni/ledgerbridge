@@ -1,8 +1,11 @@
 package com.ledgerbridge.risk.service;
 
+import com.ledgerbridge.account.model.Account;
+import com.ledgerbridge.account.repository.AccountRepository;
 import com.ledgerbridge.audit.model.AuditAction;
 import com.ledgerbridge.common.audit.AuditLog;
 import com.ledgerbridge.common.exception.AppException;
+import com.ledgerbridge.risk.dto.AlertDetailResponse;
 import com.ledgerbridge.risk.dto.AlertReviewRequest;
 import com.ledgerbridge.risk.dto.RiskAlertResponse;
 import com.ledgerbridge.risk.model.AlertSeverity;
@@ -11,6 +14,8 @@ import com.ledgerbridge.risk.model.AlertType;
 import com.ledgerbridge.risk.model.RiskAlert;
 import com.ledgerbridge.risk.repository.RiskAlertRepository;
 import com.ledgerbridge.transaction.event.TransactionEvent;
+import com.ledgerbridge.transaction.model.LedgerTransaction;
+import com.ledgerbridge.transaction.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -31,6 +36,8 @@ public class AlertService {
 
     private final RiskAlertRepository riskAlertRepository;
     private final SseAlertService sseAlertService;
+    private final TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
 
     @Transactional
     public RiskAlert createAlert(TransactionEvent event, AlertType alertType,
@@ -57,10 +64,13 @@ public class AlertService {
     }
 
     @Transactional(readOnly = true)
-    public RiskAlertResponse getAlertById(UUID alertId) {
-        return riskAlertRepository.findById(alertId)
-                .map(RiskAlertResponse::from)
+    public AlertDetailResponse getAlertById(UUID alertId) {
+        RiskAlert alert = riskAlertRepository.findById(alertId)
                 .orElseThrow(() -> new AppException("Alert not found: " + alertId, HttpStatus.NOT_FOUND));
+        LedgerTransaction tx = transactionRepository.findById(alert.getTransactionId())
+                .orElseThrow(() -> new AppException("Transaction not found for alert: " + alertId, HttpStatus.NOT_FOUND));
+        Account account = accountRepository.findById(tx.getAccountId()).orElse(null);
+        return AlertDetailResponse.from(alert, tx, account);
     }
 
     @Transactional(readOnly = true)

@@ -77,11 +77,9 @@
 
 ## Phase 6 — Frontend
 - [x] **DESIGN gate:** run `/plan-design-review` — **complete 2026-06-10**: `DESIGN.md` created, 11 decisions locked (sidebar layout, demo default route → `/admin/alerts`, risk gauge spec, interaction states, severity badges, WCAG 2.1 AA). All design decisions in `DESIGN.md`.
-- [ ] Set up React 18 + TypeScript + Tailwind + React Query + Zustand
-  - Configure Tailwind with tokens from `DESIGN.md` (CSS variables; `fontFamily: { sans: ['Inter'], mono: ['Geist Mono'] }`)
-  - Import Inter from `@fontsource/inter`, Geist Mono from `@fontsource/geist-mono`
-- [ ] Build auth pages (login/register)
-  - Login: centered card (#1a1a1a), LedgerBridge wordmark + tagline ("Real-time transaction risk monitoring"), WCAG 2.1 AA form with always-visible labels
+- [x] **Backend fixes (Lane A):** — **complete 2026-06-12**: SecurityConfig role guard on `/api/admin/**` (ADMIN + DEMO_ACTOR), `anyRequest().permitAll()` for SPA routes, `AlertDetailResponse` enriched DTO, `AuditController` optional entity filter + `listAll()`, `SseAlertService` no-timeout + 15s heartbeat, V12 DEMO_ACTOR migration. 89/89 tests.
+- [x] Set up React 18 + TypeScript + Tailwind + React Query + Zustand — **complete 2026-06-12**: `frontend/` scaffold: package.json, vite.config.ts, tailwind.config.ts (all DESIGN.md tokens + animations), tsconfig.json, postcss.config.js, index.html, src/main.tsx, src/index.css. Vite outDir → `target/classes/static/`; maven-frontend-plugin bound to `prepare-package`. SpaFallbackController for React Router.
+- [x] Build auth pages (login/register) — **complete 2026-06-12**: `LoginPage.tsx` (shake on bad creds, spinner, WCAG 2.1 AA focus rings, always-visible labels), `RegisterPage.tsx` (first/last name, same design). `authStore.ts` (Zustand: access token in memory, refresh in localStorage, `silentRefresh()` on boot). `ProtectedRoute.tsx` (spinner during silent re-auth, redirect on no token). All TypeScript types in `src/types/api.ts`.
 - [ ] Build Admin: Alert queue — **DEMO_ACTOR default route** `/admin/alerts` (post-login redirect)
   - Sidebar (160px, #161616): nav order Risk Alerts → Audit Log → Transactions → Accounts → Dashboard; active state indigo accent
   - Stat row: 4 chips (Total Alerts, Critical, High, Pending Review)
