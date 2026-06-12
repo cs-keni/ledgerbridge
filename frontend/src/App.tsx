@@ -7,6 +7,7 @@ import AlertsPage from './pages/admin/AlertsPage'
 import AuditLogPage from './pages/admin/AuditLogPage'
 import DashboardPage from './pages/admin/DashboardPage'
 import AccountsPage from './pages/admin/AccountsPage'
+import TransferPage from './pages/admin/TransferPage'
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
             <Route path="/alerts" element={<AlertsPage />} />
             <Route path="/audit" element={<AuditLogPage />} />
             <Route path="/accounts" element={<AccountsPage />} />
+            <Route path="/transfer" element={<TransferPage />} />
             <Route index element={<Navigate to="/alerts" replace />} />
             <Route path="/" element={<Navigate to="/alerts" replace />} />
           </Route>

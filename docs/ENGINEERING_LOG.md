@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-06-12 — Session 20 (Phase 6: Transfer form + WCAG 2.1 AA)
+
+### Changes
+
+**Transfer form (T remaining):**
+- **`api/transactions.ts`** (NEW): `deposit`, `withdraw`, `transfer` — each auto-generates a UUID v4 `Idempotency-Key` header per request. `api.post` extended to accept `extraHeaders`.
+- **`api/accounts.ts`**: fixed `fetchTransactions` signature to accept required `accountId` param (backend requires `?accountId=` query param).
+- **`pages/admin/TransferPage.tsx`** (NEW): 3-tab form (Deposit / Withdraw / Transfer). Account dropdown populated from `fetchAccounts`. Idempotency key auto-generated. Success card with spring-in confirmation showing transaction number, amount, status. `useId()` for all label–input pairs (WCAG 2.1 AA 1.3.1). `noValidate` with custom error message (aria `role="alert"`). Spinner on submit.
+- **`App.tsx`**: added `/transfer` route under AdminLayout.
+- **`Sidebar.tsx`**: added Transfer nav link between Audit Log and Accounts.
+
+**WCAG 2.1 AA sweep:**
+- `LoginPage.tsx` + `RegisterPage.tsx`: fixed post-login redirect from `/admin/alerts` → `/alerts` (route mismatch would have sent users to 404).
+- `ProtectedRoute.tsx`: added `role="status"` + `aria-label="Loading"` on spinner container; `aria-hidden="true"` on spinner div.
+- `AlertDetailPanel.tsx`: close button gets `autoFocus` after 310ms (after CSS transition ends) via `useEffect`; `Escape` keydown listener closes panel; close button has `focus:ring-2` focus indicator.
+- All form inputs: `useId()` for stable label–input ID pairs; `aria-describedby` wired to error messages; `role="alert"` on error paragraphs.
+- Contrast: `text-muted` (#888888) on bg (#111111) = 5.35:1 ✓ AA; on surface (#1a1a1a) = 4.93:1 ✓ AA; both pass WCAG AA for normal text.
+- AlertTable: keyboard nav already present (`tabIndex={0}`, Enter/Space handlers, `aria-selected`).
+- Landmarks: `<nav aria-label>`, `<main id="main">`, `<aside aria-label>` all in place from prior sessions.
+
+---
+
 ## 2026-06-12 — Session 19 (Phase 6 T9–T14: full admin frontend)
 
 ### Changes

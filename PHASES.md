@@ -87,8 +87,8 @@
 - [x] Build Dashboard (account overview, recent activity) — **complete 2026-06-12**: `DashboardPage.tsx` (KPI row, recent alerts list, accounts summary)
 - [x] Build Account list — **complete 2026-06-12**: `AccountsPage.tsx` (plain list — backend returns `List<AccountResponse>`, not paginated; empty state for DEMO_ACTOR)
 - [x] Connect SSE for real-time alert badge — **complete 2026-06-12**: `useAlertStream.ts` (fetch+ReadableStream, JWT header, exp backoff 1s→30s); `sseStore.ts` (Zustand status atom); `useAlertStream` in `AlertsPage` invalidates React Query cache on each SSE event
-- [ ] Build Transfer form
-- [ ] WCAG 2.1 AA verification: contrast check muted tokens (#888888 only for uppercase/≥14px, else #999999), keyboard nav on alert table (Tab/Enter/Escape), ARIA landmarks (`<nav>`, `<main>`, `role="table"`)
+- [x] Build Transfer form — **complete 2026-06-12**: `TransferPage.tsx` — 3-tab form (Deposit/Withdraw/Transfer), account dropdown, idempotency key auto-generated, success card with transaction number. `/transfer` route + Sidebar link.
+- [x] WCAG 2.1 AA verification — **complete 2026-06-12**: contrast audit passed (#888888 on #111111 = 5.35:1, on #1a1a1a = 4.93:1, both ≥4.5:1 AA); keyboard nav on alert table (Tab/Enter/Space); Escape closes AlertDetailPanel; focus moves to close button on panel open; all form inputs have `useId()` label pairs; `role="alert"` on errors; ARIA landmarks verified.
 - [ ] Run `/qa` to verify all flows end-to-end
 
 ## Phase 7 — Observability + DevOps

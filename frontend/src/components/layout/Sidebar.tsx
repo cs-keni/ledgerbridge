@@ -5,6 +5,7 @@ import { useSseStore } from '../../stores/sseStore'
 const NAV = [
   { to: '/alerts', label: 'Risk Alerts', hasSseBadge: true },
   { to: '/audit', label: 'Audit Log' },
+  { to: '/transfer', label: 'Transfer' },
   { to: '/accounts', label: 'Accounts' },
   { to: '/dashboard', label: 'Dashboard' },
 ]

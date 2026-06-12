@@ -30,7 +30,7 @@ export default function LoginPage() {
       const data = await res.json()
       setTokens(data.accessToken, data.email, data.role)
       setRefreshToken(data.refreshToken)
-      navigate('/admin/alerts', { replace: true })
+      navigate('/alerts', { replace: true })
     } catch {
       setError('Unable to connect. Please try again.')
     } finally {

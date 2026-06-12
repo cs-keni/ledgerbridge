@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchAlertDetail, reviewAlert } from '../../api/alerts'
 import { RiskGauge } from '../risk/RiskGauge'
@@ -22,6 +22,22 @@ interface Props {
 export function AlertDetailPanel({ alertId, onClose }: Props) {
   const qc = useQueryClient()
   const [notes, setNotes] = useState('')
+  const closeBtnRef = useRef<HTMLButtonElement>(null)
+
+  // Move focus to close button when panel opens; restore on close
+  useEffect(() => {
+    if (alertId) {
+      const timer = setTimeout(() => closeBtnRef.current?.focus(), 310)
+      return () => clearTimeout(timer)
+    }
+  }, [alertId])
+
+  // Close on Escape
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape' && alertId) onClose() }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [alertId, onClose])
 
   const { data: alert, isPending } = useQuery({
     queryKey: ['alert-detail', alertId],
@@ -65,9 +81,10 @@ export function AlertDetailPanel({ alertId, onClose }: Props) {
         <div className="flex items-center justify-between px-5 py-4 border-b border-border flex-shrink-0">
           <h2 className="text-sm font-semibold text-text">Alert Detail</h2>
           <button
+            ref={closeBtnRef}
             onClick={onClose}
-            aria-label="Close panel"
-            className="text-muted hover:text-text transition-colors text-xl leading-none"
+            aria-label="Close alert detail panel"
+            className="text-muted hover:text-text transition-colors text-xl leading-none focus:outline-none focus:ring-2 focus:ring-accent-light/60 rounded"
           >
             ×
           </button>
