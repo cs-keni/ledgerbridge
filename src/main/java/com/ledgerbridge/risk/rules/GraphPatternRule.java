@@ -39,9 +39,11 @@ public class GraphPatternRule implements RiskRule {
         long fanOut = transactionRepository.countDistinctNewCounterpartiesSince(
                 event.accountId(), now.minusDays(1), exclusionList);
 
-        // Fan-in: distinct new senders to the counterparty's account in last 24h
-        long fanIn = transactionRepository.countDistinctNewCounterpartiesSince(
-                event.counterpartyAccountId(), now.minusDays(1), exclusionList);
+        // Fan-in: distinct accounts that sent TO the counterparty in last 24h.
+        // Uses countDistinctSendersSince (reads sender column where counterparty = receiver),
+        // not countDistinctNewCounterpartiesSince which counts the counterparty's outbound.
+        long fanIn = transactionRepository.countDistinctSendersSince(
+                event.counterpartyAccountId(), now.minusDays(1));
 
         // Round-trip: same exact amount returned from counterparty within 2h
         boolean roundTrip = transactionRepository.existsRoundTrip(

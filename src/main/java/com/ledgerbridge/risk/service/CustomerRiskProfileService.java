@@ -11,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
@@ -63,6 +64,20 @@ public class CustomerRiskProfileService {
 
         profile.setTransactionCount(newCount);
         profile.setTotalTransactionsAnalyzed(profile.getTotalTransactionsAnalyzed() + 1);
+
+        // EWMA inter-arrival velocity baseline — skip first transaction (no prior arrival).
+        // profile.lastUpdated reflects when the profile was last saved (previous transaction).
+        // Clamp inter-arrival to [1min, 7d] to handle cold-start and long inactivity gaps.
+        if (newCount >= 2 && profile.getLastUpdated() != null) {
+            long seconds = Duration.between(profile.getLastUpdated(), event.initiatedAt()).toSeconds();
+            seconds = Math.max(60, Math.min(seconds, 7L * 24 * 3600));
+            double interArrivalHours = seconds / 3600.0;
+            double alpha = 2.0 / (Math.min(newCount, 30) + 1.0);
+            profile.setAvgTransactionsPerHour(
+                profile.getAvgTransactionsPerHour() * (1 - alpha) + (1.0 / interArrivalHours) * alpha);
+            profile.setAvgTransactionsPerDay(
+                profile.getAvgTransactionsPerDay() * (1 - alpha) + (24.0 / interArrivalHours) * alpha);
+        }
 
         // Incremental frequency update for transaction hour
         String hour = String.valueOf(event.initiatedAt().getHour());

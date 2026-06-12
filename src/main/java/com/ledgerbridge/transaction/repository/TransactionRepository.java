@@ -30,9 +30,8 @@ public interface TransactionRepository extends JpaRepository<LedgerTransaction, 
             LocalDateTime oneDayAgo,
             LocalDateTime sevenDaysAgo);
 
-    // GraphPatternRule: native SQL to avoid Hibernate LocalDateTime→UTC shift and
-    // to support LIMIT 100 (D20 query cap). The NOT IN list is bounded at MAX 50
-    // entries (typicalCounterparties cap) plus a sentinel UUID for the empty-list guard.
+    // GraphPatternRule fan-out: counts distinct new recipients this account sent to.
+    // NOT IN list bounded at MAX 50 entries plus a sentinel UUID for the empty-list guard.
     @Query(value = """
         SELECT COUNT(DISTINCT sub.counterparty_account_id)
         FROM (
@@ -47,6 +46,21 @@ public interface TransactionRepository extends JpaRepository<LedgerTransaction, 
         """, nativeQuery = true)
     long countDistinctNewCounterpartiesSince(UUID accountId, LocalDateTime since,
                                               java.util.List<String> knownCounterparties);
+
+    // GraphPatternRule fan-in: counts distinct accounts that sent TO receiverAccountId
+    // in the window. Reads account_id (sender column) where counterparty = receiver.
+    @Query(value = """
+        SELECT COUNT(DISTINCT sub.account_id)
+        FROM (
+            SELECT account_id
+            FROM ledger_transaction
+            WHERE counterparty_account_id = :receiverAccountId
+              AND initiated_at >= :since
+              AND account_id IS NOT NULL
+            LIMIT 100
+        ) sub
+        """, nativeQuery = true)
+    long countDistinctSendersSince(UUID receiverAccountId, LocalDateTime since);
 
     // GraphPatternRule: native SQL to avoid Hibernate's LocalDateTime→UTC conversion
     // on the 2-hour window (same timezone mismatch issue as countVelocityWindows).

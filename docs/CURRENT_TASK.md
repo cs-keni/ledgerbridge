@@ -31,9 +31,9 @@
 - [x] `/review` gate: 8 critical fixes, 84/84 tests confirmed
 
 ### P2 Deferred (not blocking Phase 5)
-- T7: Add 7-day velocity scoring to VelocityRule
-- T8: Compute avgTransactionsPerHour/Day in updateProfile()
-- T9: Fix fan-in to count inbound senders (WHERE counterparty_account_id = :accountId)
+- [x] T7: 7-day velocity scoring — weekSpike detection, floor on dailyThreshold — **complete 2026-06-12**
+- [x] T8: EWMA inter-arrival velocity baseline in updateProfile() — **complete 2026-06-12**
+- [x] T9: Fan-in semantic fix — countDistinctSendersSince (inbound) replaces countDistinctNewCounterpartiesSince (outbound) — **complete 2026-06-12**
 - T11: Unit tests for TransactionRiskConsumer + CustomerRiskProfileService Welford logic
 - OpenAPI `@Operation`/`@ApiResponse` examples for 5 fraud scenarios
 

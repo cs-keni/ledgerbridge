@@ -55,8 +55,8 @@ class GraphPatternRuleTest {
     }
 
     private void stubFanIn(long count) {
-        when(transactionRepository.countDistinctNewCounterpartiesSince(
-                eq(counterpartyId), any(), anyList())).thenReturn(count);
+        when(transactionRepository.countDistinctSendersSince(
+                eq(counterpartyId), any())).thenReturn(count);
     }
 
     private void stubRoundTrip(boolean exists) {

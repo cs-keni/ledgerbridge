@@ -47,10 +47,14 @@ class VelocityRuleTest {
     }
 
     private void stubCounts(long lastHour, long lastDay) {
+        stubCounts(lastHour, lastDay, lastDay); // week defaults to day for backward compat
+    }
+
+    private void stubCounts(long lastHour, long lastDay, long lastWeek) {
         TransactionRepository.VelocityWindowCounts counts = new TransactionRepository.VelocityWindowCounts() {
             public long getLastHour() { return lastHour; }
             public long getLastDay()  { return lastDay; }
-            public long getLastWeek() { return lastDay; }
+            public long getLastWeek() { return lastWeek; }
         };
         when(transactionRepository.countVelocityWindows(eq(accountId), any(), any(), any()))
                 .thenReturn(counts);
@@ -74,10 +78,28 @@ class VelocityRuleTest {
 
     @Test
     void daySpikeOnly_scorePoint4() {
-        // 5 in last day > 0.5*2.5=1.25; only 2 in last hour (≤ threshold 3)
+        // 5 in last day > max(4, 0.5*2.5)=4; only 2 in last hour (≤ threshold 3)
+        // weekSpike: lastWeek=5 vs threshold max(20, 0.5*7*2)=20 → false
         stubCounts(2, 5);
         RiskRuleResult result = rule.evaluate(event(), profile);
         assertThat(result.score()).isEqualTo(0.4);
+    }
+
+    @Test
+    void weekSpikeOnly_scorePoint3() {
+        // 50 in last week > max(20, 0.5*7*2)=20 → week spike
+        // 2 in last hour (≤ 3), 3 in last day (≤ max(4,1.25)=4)
+        stubCounts(2, 3, 50);
+        RiskRuleResult result = rule.evaluate(event(), profile);
+        assertThat(result.score()).isEqualTo(0.3);
+    }
+
+    @Test
+    void daySpikeAndWeekSpike_escalatesToPoint5() {
+        // 5 in last day (>4) AND 50 in last week (>20) → sustained pattern, escalated to 0.5
+        stubCounts(2, 5, 50);
+        RiskRuleResult result = rule.evaluate(event(), profile);
+        assertThat(result.score()).isEqualTo(0.5);
     }
 
     @Test

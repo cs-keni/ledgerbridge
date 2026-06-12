@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-06-12 — Session 16 (P2 fixes: T7/T8/T9 — velocity + fan-in correctness)
+
+### Changes
+- **`VelocityRule.java`**: T7 — added 7-day spike detection using `lastWeek` (already fetched but unused). Weekly threshold: `max(20, avgPerDay*7*2.0)`. Scoring: `weekSpike only → 0.3`; `daySpike + weekSpike → 0.5` (sustained multi-day pattern escalates). Also added floor to `dailyThreshold = max(4, dailyBaseline * 2.5)` — prevents false positives on new users while EWMA converges (T8 companion fix).
+- **`CustomerRiskProfileService.java`**: T8 — added EWMA inter-arrival velocity baseline update. Uses `profile.lastUpdated` (timestamp of previous profile save) and `event.initiatedAt()` to compute inter-arrival time. Clamps to [1min, 7d]. Alpha = 2/(min(N,30)+1). Skips first transaction (newCount < 2, no prior arrival to diff against).
+- **`TransactionRepository.java`**: T9 — added `countDistinctSendersSince(receiverAccountId, since)` native SQL query: counts distinct `account_id` values WHERE `counterparty_account_id = :receiverAccountId` (true fan-in direction). Prior `countDistinctNewCounterpartiesSince` was counting the counterparty's outbound — semantically backwards.
+- **`GraphPatternRule.java`**: T9 — fan-in now calls `countDistinctSendersSince` instead of `countDistinctNewCounterpartiesSince`. No exclusion list needed for fan-in (we don't have the receiver's `typicalCounterparties` loaded).
+- **`VelocityRuleTest.java`**: added `weekSpikeOnly_scorePoint3` and `daySpikeAndWeekSpike_escalatesToPoint5` tests; overloaded `stubCounts` to accept 3-arg form.
+- **`GraphPatternRuleTest.java`**: updated `stubFanIn` to stub `countDistinctSendersSince`.
+
+### Test results
+- **86/86 tests passing** (2 new VelocityRule tests added)
+- Commit hash: (see git log)
+
+---
+
 ## 2026-06-12 — Session 15 (/review gate: 8 critical fixes, 84/84 tests green)
 
 ### Changes — /review gate critical fixes (T1–T6, T10, +NEW)
