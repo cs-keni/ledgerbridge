@@ -28,7 +28,7 @@
 
 ### Test results
 - **89/89 tests passing** (3 new AuditAspect tests added: success outcome, failure outcome, entityType attribute override)
-- Commit hash: TBD
+- Commit hash: `8da0dfc`
 
 ---
 
