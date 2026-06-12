@@ -4,6 +4,35 @@
 
 ---
 
+## 2026-06-12 — Session 19 (Phase 6 T9–T14: full admin frontend)
+
+### Changes
+
+**T9–T14 — Admin frontend (AlertTable, AlertDetailPanel, RiskGauge, AlertsPage, AuditLogPage, DashboardPage, AccountsPage, App.tsx):**
+- **`api/client.ts`** (NEW): `apiFetch` wrapper — adds `Authorization: Bearer` header, handles 401 with `silentRefresh()` + retry, throws typed `ApiError`. `api.get/post/patch/del` helpers.
+- **`api/alerts.ts`** (NEW): `fetchAlerts`, `fetchAlertDetail`, `reviewAlert`.
+- **`api/audit.ts`** (NEW): `fetchAuditLog` (paginated `Page<AuditLogResponse>`).
+- **`api/accounts.ts`** (NEW): `fetchAccounts` (plain `AccountResponse[]` — backend returns list not page), `fetchTransactions`.
+- **`stores/sseStore.ts`** (NEW): Zustand atom for SSE connection status (`connected` / `reconnecting` / `disconnected`).
+- **`hooks/useSpring.ts`** (NEW): Euler spring animation hook — stiffness=100, damping=20 (critically damped), dt capped at 50ms, settles when |x−target| < 0.001 && |v| < 0.005.
+- **`hooks/useAlertStream.ts`** (NEW): SSE over fetch+ReadableStream (NOT EventSource — can't send JWT headers). Parses event/data/blank-line SSE protocol; ignores `:heartbeat` comments. JWT-authenticated, 401→silentRefresh+reconnect, exponential backoff 1s→30s. Re-subscribes on token change.
+- **`components/layout/Sidebar.tsx`** (NEW): NavLink nav for `/alerts`, `/audit`, `/accounts`, `/dashboard`. SSE status dot on Risk Alerts (green pulse = connected, amber pulse = reconnecting). Logout: POST /api/auth/logout (best-effort) → clearAuth → /login.
+- **`components/layout/AdminLayout.tsx`** (NEW): Sidebar + Outlet layout.
+- **`components/alerts/SeverityBadge.tsx`** (NEW): dark chip (#1e1e1e bg, #3a3a3a border) with semantic dot + colored label per DESIGN.md.
+- **`components/alerts/ScoreChip.tsx`** (NEW): 24×24 SVG mini arc (same 135°/270° geometry as RiskGauge), severity-colored fill, static (no spring for table perf).
+- **`components/risk/RiskGauge.tsx`** (NEW): SVG 200×160, R=76, START=135°, SWEEP=270°. Spring-animated arc (useSpring), 3-segment gradient (green/amber/red at 0.3/0.6). Threshold marker at score 0.4. Center: animated score (28px Geist Mono) + severity label. Rule bars: amountAnomaly(0.25), velocity(0.30), behavioral(0.20), graphPattern(0.25) — bar width = ruleScore×weight.
+- **`components/alerts/AlertTable.tsx`** (NEW): sortable table (Score/AlertType/Severity/Status/Time), skeleton shimmer loading, empty state with Swagger link, `alert-arrive` animation for fresh rows.
+- **`components/alerts/AlertDetailPanel.tsx`** (NEW): 380px slide-in panel (translateX transition 300ms). RiskGauge + transaction details + Review/Dismiss/Resolve action buttons via useMutation. Backdrop overlay.
+- **`pages/admin/AlertsPage.tsx`** (NEW): stat chips, filter tabs, AlertTable, pagination, SSE via `useAlertStream` (invalidates query cache on each alert). "Try a Demo Scenario →" CTA.
+- **`pages/admin/AuditLogPage.tsx`** (NEW): paginated audit log table with skeleton shimmer and OutcomeBadge.
+- **`pages/admin/DashboardPage.tsx`** (NEW): KPI row (open/critical/avg score/total balance), recent alerts list, accounts summary — links to detail pages.
+- **`pages/admin/AccountsPage.tsx`** (NEW): plain list table (backend returns `AccountResponse[]`, not paginated).
+- **`App.tsx`** (UPDATED): added `AdminLayout` + all admin routes (`/alerts`, `/audit`, `/accounts`, `/dashboard`). Default `/` → `/alerts`.
+- **`stores/authStore.ts`**: login endpoint fixed to `/api/auth/login` (not `/authenticate`).
+- **TypeScript**: 0 errors — `tsc --noEmit` passes clean.
+
+---
+
 ## 2026-06-12 — Session 18 (Phase 6 Lane A + Lane B: backend fixes + frontend scaffold)
 
 ### Changes

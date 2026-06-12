@@ -80,27 +80,14 @@
 - [x] **Backend fixes (Lane A):** — **complete 2026-06-12**: SecurityConfig role guard on `/api/admin/**` (ADMIN + DEMO_ACTOR), `anyRequest().permitAll()` for SPA routes, `AlertDetailResponse` enriched DTO, `AuditController` optional entity filter + `listAll()`, `SseAlertService` no-timeout + 15s heartbeat, V12 DEMO_ACTOR migration. 89/89 tests.
 - [x] Set up React 18 + TypeScript + Tailwind + React Query + Zustand — **complete 2026-06-12**: `frontend/` scaffold: package.json, vite.config.ts, tailwind.config.ts (all DESIGN.md tokens + animations), tsconfig.json, postcss.config.js, index.html, src/main.tsx, src/index.css. Vite outDir → `target/classes/static/`; maven-frontend-plugin bound to `prepare-package`. SpaFallbackController for React Router.
 - [x] Build auth pages (login/register) — **complete 2026-06-12**: `LoginPage.tsx` (shake on bad creds, spinner, WCAG 2.1 AA focus rings, always-visible labels), `RegisterPage.tsx` (first/last name, same design). `authStore.ts` (Zustand: access token in memory, refresh in localStorage, `silentRefresh()` on boot). `ProtectedRoute.tsx` (spinner during silent re-auth, redirect on no token). All TypeScript types in `src/types/api.ts`.
-- [ ] Build Admin: Alert queue — **DEMO_ACTOR default route** `/admin/alerts` (post-login redirect)
-  - Sidebar (160px, #161616): nav order Risk Alerts → Audit Log → Transactions → Accounts → Dashboard; active state indigo accent
-  - Stat row: 4 chips (Total Alerts, Critical, High, Pending Review)
-  - Alert queue: sortable table (44px rows); Score column = mini arc chip color-coded by severity; Severity = filled dark chip + semantic dot per `DESIGN.md`; Amount/ID columns = `font-mono`
-  - Alert queue header right: `Try a Demo Scenario →` button → opens `/swagger-ui.html` in new tab
-  - Empty state: "No risk alerts yet. Trigger a fraud scenario in Swagger UI →" [link button] with 150ms fade-in (per D5)
-  - Row click: slide-in alert detail panel from right (300ms ease-out) — NOT a new route
-  - SSE badge: green connected dot; orange pulsing dot + "Reconnecting..." tooltip on disconnect (per D6)
-- [ ] Build `RiskGauge` component (alert detail panel) — **visual portfolio centerpiece**
-  - Radial arc, 270°, scale 0.0–1.0, decimal score display (e.g. `0.73`, never `73%`)
-  - Color gradient: #34d399 (0–0.3) → #d97706 (0.3–0.6) → #dc2626 (0.6–1.0)
-  - Dotted threshold marker at 0.4 labeled "Alert threshold" (per D11)
-  - Center: score value (28px font-mono) + severity label below
-  - Below arc: 4 mini bars for rule contributions (AmountAnomaly 0.25, Velocity 0.30, BehavioralBaseline 0.20, GraphPattern 0.25)
-  - Mount animation: spring 600ms from 0 to score; SSE update: spring 600ms re-animate; Loading: skeleton shimmer arc; Null: `—` + tooltip "Insufficient transaction history"
-- [ ] Build Admin: Alert detail slide-in panel (RiskGauge + rule breakdown + transaction details + Review/Dismiss actions)
-- [ ] Build Admin: Audit log
-- [ ] Build Dashboard (account overview, recent transactions) — secondary screen for demo
-- [ ] Build Account list + detail with transaction history
+- [x] Build Admin: Alert queue — **complete 2026-06-12**: `AlertsPage.tsx` (stat chips, filter tabs, pagination, SSE live invalidation, "Try a Demo Scenario →" CTA), `AlertTable.tsx` (sortable, skeleton shimmer, empty state, `alert-arrive` animation for fresh rows), `Sidebar.tsx` (NavLink nav, SSE connection dot), `AdminLayout.tsx`
+- [x] Build `RiskGauge` component — **complete 2026-06-12**: SVG 200×160, START=135°, SWEEP=270°, spring-animated arc (stiffness=100, damping=20), 3-segment gradient, threshold marker at 0.4, center score (28px Geist Mono) + severity label, 4 rule contribution bars
+- [x] Build Admin: Alert detail slide-in panel — **complete 2026-06-12**: `AlertDetailPanel.tsx` — 380px translateX panel, RiskGauge, transaction details, Review/Dismiss/Resolve via useMutation, backdrop overlay
+- [x] Build Admin: Audit log — **complete 2026-06-12**: `AuditLogPage.tsx` (paginated, skeleton shimmer, OutcomeBadge)
+- [x] Build Dashboard (account overview, recent activity) — **complete 2026-06-12**: `DashboardPage.tsx` (KPI row, recent alerts list, accounts summary)
+- [x] Build Account list — **complete 2026-06-12**: `AccountsPage.tsx` (plain list — backend returns `List<AccountResponse>`, not paginated; empty state for DEMO_ACTOR)
+- [x] Connect SSE for real-time alert badge — **complete 2026-06-12**: `useAlertStream.ts` (fetch+ReadableStream, JWT header, exp backoff 1s→30s); `sseStore.ts` (Zustand status atom); `useAlertStream` in `AlertsPage` invalidates React Query cache on each SSE event
 - [ ] Build Transfer form
-- [ ] Connect SSE for real-time alert badge (green/orange state per D6)
 - [ ] WCAG 2.1 AA verification: contrast check muted tokens (#888888 only for uppercase/≥14px, else #999999), keyboard nav on alert table (Tab/Enter/Escape), ARIA landmarks (`<nav>`, `<main>`, `role="table"`)
 - [ ] Run `/qa` to verify all flows end-to-end
 

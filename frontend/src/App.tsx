@@ -1,7 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import { AdminLayout } from './components/layout/AdminLayout'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import AlertsPage from './pages/admin/AlertsPage'
+import AuditLogPage from './pages/admin/AuditLogPage'
+import DashboardPage from './pages/admin/DashboardPage'
+import AccountsPage from './pages/admin/AccountsPage'
 
 export default function App() {
   return (
@@ -16,7 +21,14 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route element={<ProtectedRoute />}>
-          {/* Phase 6 admin pages added in T9–T14 */}
+          <Route element={<AdminLayout />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/alerts" element={<AlertsPage />} />
+            <Route path="/audit" element={<AuditLogPage />} />
+            <Route path="/accounts" element={<AccountsPage />} />
+            <Route index element={<Navigate to="/alerts" replace />} />
+            <Route path="/" element={<Navigate to="/alerts" replace />} />
+          </Route>
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
