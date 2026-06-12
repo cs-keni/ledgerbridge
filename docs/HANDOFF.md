@@ -5,20 +5,38 @@
 
 ## Current Status
 
-**Phase: 4 — Risk Engine COMPLETE — Phase 5 (Admin + Audit) is next**
+**Phase: 4 — Risk Engine ✅ COMPLETE — Phase 5 (Admin + Audit) is next**
 
-All 4 planning gates cleared:
+All planning gates cleared:
 - `/plan-eng-review` ✅ Done 2026-06-05: 18 decisions locked (D2–D18), Codex outside voice, 6 TODOs
 - `/plan-ceo-review` ✅ Done 2026-06-10: 4 scope expansions accepted, Codex outside voice, 3 new TODOs
 - `/plan-eng-review` (CEO additions) ✅ Done 2026-06-10: 9 issues found, all resolved, D1–D10 locked
 - `/plan-design-review` ✅ Done 2026-06-10: `DESIGN.md` created, 11 decisions locked, score 2/10 → 8/10
+- `/plan-eng-review` (Phase 4) ✅ Done 2026-06-11: 11 issues (T1–T11), all P1 fixes approved
+- `/review` (Phase 4) ✅ Done 2026-06-12: 8 critical fixes shipped, 84/84 tests passing
 
 **Portfolio strategy locked** — see `docs/designs/portfolio-strategy.md` for the full CEO plan.
 **Design system locked** — see `DESIGN.md` for all Phase 6 component specs.
 
-Phase 4 complete: Risk Engine with 4 rules (AmountAnomaly/Velocity/Behavioral/GraphPattern), weighted scoring + tier-1/tier-2 escalation, Kafka consumer with @RetryableTopic + DLT, D19 score-conditional baseline update, 84/84 tests passing (5/5 fraud scenarios).
+Phase 4 complete: Risk Engine with 4 rules (AmountAnomaly/Velocity/Behavioral/GraphPattern), weighted scoring + tier-1/tier-2 escalation, Kafka consumer with @RetryableTopic + DLT, D19 score-conditional baseline update, full consumer idempotency via `ProcessedTransactionEvent`, 84/84 tests passing.
 
 ## Last Agent Action
+
+Claude Code (2026-06-12): Phase 4 /review gate — 8 critical fixes. Edits + new files:
+- `TransactionRepository.java` — T1: `AND type = 'TRANSFER_DEBIT'` in `existsRoundTrip`; T2: `countDistinctNewCounterpartiesSince` → native SQL + LIMIT 100
+- `GraphPatternRule.java` — T6: sentinel UUID guard for empty `knownCounterparties` (prevents Hibernate 6 `IllegalArgumentException` on `NOT IN ()`)
+- `CustomerRiskProfileService.java` — T5: hour freq initial value `1.0` → `1.0/newCount`; T4: DIV catch + re-fetch in `getOrCreate()`
+- `AlertService.java` — T3: DIV catch + re-fetch in `createAlert()` via new `findByTransactionId()`
+- `RiskAlertRepository.java` — T3: added `Optional<RiskAlert> findByTransactionId(UUID)`
+- `risk/model/ProcessedTransactionEvent.java` (NEW) — T10: idempotency entity
+- `risk/repository/ProcessedTransactionEventRepository.java` (NEW) — T10: `existsByTransactionId()`
+- `TransactionRiskConsumer.java` — T10: rewrote to use `ProcessedTransactionEventRepository`; now guards ALL deliveries, not just alerted ones
+- `KafkaConfig.java` — NEW CRITICAL: added retry-0/retry-1/DLT topic beans (required when `autoCreateTopics=false`)
+- `V10__risk_alert_unique_txn_and_processed_events.sql` (NEW) — T3: UNIQUE on `risk_alert.transaction_id`; T10: `processed_transaction_event` table
+- `AmountAnomalyRuleTest.java` / `RiskEngineTest.java` — pinned `LocalDateTime` to deterministic values
+- **84/84 tests passing**
+
+## Previous Agent Action
 
 Claude Code (2026-06-11): Completed Phase 4. New files:
 - `risk/rules/{RiskRule, RiskRuleResult, AmountAnomalyRule, VelocityRule, BehavioralBaselineRule, GraphPatternRule}.java` — 4-rule detection with Welford's z-score, velocity windows, behavioral signals, fan-out/fan-in/round-trip graph patterns

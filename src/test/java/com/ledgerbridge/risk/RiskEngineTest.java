@@ -41,7 +41,7 @@ class RiskEngineTest {
     private final TransactionEvent event = new TransactionEvent(
             UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
             null, TransactionType.DEPOSIT, BigDecimal.valueOf(100), "USD",
-            null, null, LocalDateTime.now());
+            null, null, LocalDateTime.of(2026, 6, 11, 12, 0));
 
     private final CustomerRiskProfile profile = new CustomerRiskProfile();
 

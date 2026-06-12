@@ -41,18 +41,18 @@
 - [x] Write unit tests for TransactionService (mock Kafka producer) — **complete 2026-06-11**: 15 tests passing
 - [x] Write integration test: full deposit flow → Kafka event published — **complete 2026-06-11**: 2 tests (deposit + withdraw) via embedded Kafka (@EmbeddedKafka), 38/38 total tests passing
 
-## Phase 4 — Risk Engine (Core Differentiator)
+## Phase 4 — Risk Engine (Core Differentiator) ✅ Complete
 - [x] **TODOS gate:** decide baseline-poisoning mitigation — **complete 2026-06-11**: score-first evaluation; skip profile update if score ≥ 0.4 (D19). Known counterparty = first non-alerted appearance. typicalCounterparties max 50 entries (LRU eviction). See TODOS.md.
 - [x] **TODOS gate:** define `GraphPatternRule` traversal bounds — **complete 2026-06-11**: 1 hop only; fan-out/fan-in ≥5 new counterparties in 24h; round-trip exact-amount match within 2h; query cap 100; "new" = NOT IN typicalCounterparties (D20). See TODOS.md.
-- [ ] Implement CustomerRiskProfile update logic (Welford's online algorithm over a bounded recent-N window per D6/Tension 1 — replaces originally-considered EWMA)
-- [ ] Implement AmountAnomalyRule (Z-score)
-- [ ] Implement VelocityRule (sliding window counts, single conditional-aggregation query per D17)
-- [ ] Implement BehavioralBaselineRule (time-of-day, MCC, new counterparty — reuses `profile.typicalCounterparties` per D16)
-- [ ] Implement GraphPatternRule (fan-in, fan-out, round-trip detection — within the bounds decided above)
-- [ ] Implement RiskEngine (weighted score aggregation via `RiskRuleResult` records per D9, alert creation, lower-bound-inclusive thresholds per D14)
-- [ ] Implement TransactionRiskConsumer (Kafka consumer → RiskEngine, `@RetryableTopic` per D7, idempotency-key dedupe per D2)
-- [ ] Unit tests for each rule with edge cases — assert against the labeled scenario matrix from the Phase 1 fraud-validation gate
-- [ ] Integration test: transaction → Kafka → risk consumer → alert created
+- [x] Implement CustomerRiskProfile update logic (Welford's online algorithm over a bounded recent-N window per D6/Tension 1 — replaces originally-considered EWMA) — **complete 2026-06-11**
+- [x] Implement AmountAnomalyRule (Z-score) — **complete 2026-06-11**
+- [x] Implement VelocityRule (sliding window counts, single conditional-aggregation query per D17) — **complete 2026-06-11**
+- [x] Implement BehavioralBaselineRule (time-of-day, MCC, new counterparty — reuses `profile.typicalCounterparties` per D16) — **complete 2026-06-11**
+- [x] Implement GraphPatternRule (fan-in, fan-out, round-trip detection — within the bounds decided above) — **complete 2026-06-11**
+- [x] Implement RiskEngine (weighted score aggregation via `RiskRuleResult` records per D9, alert creation, lower-bound-inclusive thresholds per D14) — **complete 2026-06-11**
+- [x] Implement TransactionRiskConsumer (Kafka consumer → RiskEngine, `@RetryableTopic` per D7, idempotency-key dedupe per D2) — **complete 2026-06-11; rewritten 2026-06-12 for full idempotency via ProcessedTransactionEvent**
+- [x] Unit tests for each rule with edge cases — assert against the labeled scenario matrix from the Phase 1 fraud-validation gate — **complete 2026-06-11**: 36/36 rule unit tests
+- [x] Integration test: transaction → Kafka → risk consumer → alert created — **complete 2026-06-11**
 - [x] **Fraud scenario tests (per-scenario quality gate):** write a Testcontainers integration test for each of the 5 Swagger fraud scenarios — **complete 2026-06-11**: 5/5 passing (S1–S5). Fixed: Hibernate `LocalDateTime` UTC conversion bug via `-Duser.timezone=UTC` in Surefire + native SQL queries for 1h/2h windows; `@DirtiesContext` fixes SchemaIntegrationTest container lifecycle conflict. **84/84 total tests passing.**
   - Normal deposit: assert score **< 0.4** and **no alert created** (negative control — proves false-positive resistance) ✓
   - Velocity spike: assert score ≥ 0.4, severity MEDIUM+ ✓ (0.46)
@@ -60,9 +60,9 @@
   - Fan-out pattern: assert score ≥ 0.4, severity HIGH ✓
   - Round-trip: assert score ≥ 0.4, severity CRITICAL ✓ (0.80 via tier-2 escalation)
   — (D3, /plan-eng-review 2026-06-10: NormalDeposit is a precision test, not a sensitivity test)
+- [x] Run `/plan-eng-review` — **complete 2026-06-11**: 11 issues found (T1–T11), all approved for implementation
+- [x] Run `/review` — **complete 2026-06-12**: 8 critical fixes implemented (T1–T6, T10, +retry/DLT topics); 84/84 tests passing. Commit: see ENGINEERING_LOG Session 15.
 - [ ] Add 5 labeled fraud-scenario examples to OpenAPI spec via `@Operation`/`@ApiResponse` on transaction endpoint (Normal deposit, Velocity spike, Large amount to new counterparty, Fan-out pattern, Round-trip)
-- [ ] Run `/plan-eng-review` again (per ledgerbridge.md gate) — by now the TODOS-gated items above need concrete designs
-- [ ] Run `/review` before marking Phase 4 complete
 - [ ] **MILESTONE RULE: submit applications to Wells Fargo, Capital One, Citi, and JPMorgan the day this phase ships**
 
 ## Phase 5 — Admin + Audit

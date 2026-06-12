@@ -8,6 +8,8 @@ import com.ledgerbridge.risk.model.RiskAlert;
 import com.ledgerbridge.risk.repository.RiskAlertRepository;
 import com.ledgerbridge.transaction.event.TransactionEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AlertService {
@@ -26,15 +29,22 @@ public class AlertService {
     public RiskAlert createAlert(TransactionEvent event, AlertType alertType,
                                  AlertSeverity severity, double score,
                                  Map<String, Object> ruleDetails) {
-        RiskAlert alert = new RiskAlert();
-        alert.setAlertNumber(generateAlertNumber());
-        alert.setTransactionId(event.transactionId());
-        alert.setUserId(event.userId());
-        alert.setAlertType(alertType);
-        alert.setSeverity(severity);
-        alert.setRiskScore(score);
-        alert.setRuleDetails(ruleDetails);
-        return riskAlertRepository.save(alert);
+        try {
+            RiskAlert alert = new RiskAlert();
+            alert.setAlertNumber(generateAlertNumber());
+            alert.setTransactionId(event.transactionId());
+            alert.setUserId(event.userId());
+            alert.setAlertType(alertType);
+            alert.setSeverity(severity);
+            alert.setRiskScore(score);
+            alert.setRuleDetails(ruleDetails);
+            return riskAlertRepository.save(alert);
+        } catch (DataIntegrityViolationException e) {
+            // Concurrent Kafka retry created the alert before us — fetch and return it
+            log.debug("Duplicate alert creation for txn={} — returning existing alert", event.transactionId());
+            return riskAlertRepository.findByTransactionId(event.transactionId())
+                    .orElseThrow(() -> new IllegalStateException("Alert missing after concurrent insert", e));
+        }
     }
 
     @Transactional(readOnly = true)

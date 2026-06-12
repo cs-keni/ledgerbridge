@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-06-12 — Session 15 (/review gate: 8 critical fixes, 84/84 tests green)
+
+### Changes — /review gate critical fixes (T1–T6, T10, +NEW)
+
+- **`TransactionRepository.java`**: T1 — added `AND type = 'TRANSFER_DEBIT'` to `existsRoundTrip` native SQL; T2 — converted `countDistinctNewCounterpartiesSince` to native SQL with `LIMIT 100` subquery (Hibernate JPQL NOT IN with LocalDateTime params had the same UTC-offset bug as the prior session's velocity queries)
+- **`GraphPatternRule.java`**: T6 — added sentinel UUID guard (`"00000000-0000-0000-0000-000000000000"`) for empty `knownCounterparties`; prevents Hibernate 6 `IllegalArgumentException` on `NOT IN ()` — crashed as DLT for every new user before this fix
+- **`CustomerRiskProfileService.java`**: T5 — fixed hour frequency initial value from `1.0` to `1.0 / newCount` (Welford hour histogram was neutered after first observation); T4 — added `DataIntegrityViolationException` catch in `getOrCreate()` with re-fetch to resolve TOCTOU race on concurrent user first-transaction
+- **`AlertService.java`**: T3 — added `DataIntegrityViolationException` catch in `createAlert()` with re-fetch via `findByTransactionId()` (concurrent Kafka retry duplicates blocked by DB UNIQUE on `transaction_id`)
+- **`RiskAlertRepository.java`**: T3 — added `Optional<RiskAlert> findByTransactionId(UUID)` used by `AlertService` DIV catch
+- **`risk/model/ProcessedTransactionEvent.java`** (NEW): T10 — JPA entity for full consumer idempotency; `transaction_id UUID PK`
+- **`risk/repository/ProcessedTransactionEventRepository.java`** (NEW): T10 — `existsByTransactionId()` replaces the prior `riskAlertRepository.existsByTransactionId()` guard (which only protected alerted transactions — clean redeliveries re-ran Welford + double-incremented)
+- **`TransactionRiskConsumer.java`**: T10 — rewrote to use `ProcessedTransactionEventRepository`; idempotency guard now covers ALL deliveries (clean + alerted); marks processed AFTER evaluation with DIV catch for concurrent retry race
+- **`KafkaConfig.java`**: NEW CRITICAL — added `transactionEventsRetry0Topic`, `transactionEventsRetry1Topic`, `transactionEventsDltTopic` beans; `@RetryableTopic` sets `autoCreateTopics=false` so these must be provisioned explicitly; without this, Kafka retries silently fail on brokers with `auto.create.topics.enable=false`
+- **`V10__risk_alert_unique_txn_and_processed_events.sql`** (NEW): T3 — `UNIQUE (transaction_id)` on `risk_alert`; T10 — `processed_transaction_event` table
+- **`AmountAnomalyRuleTest.java`** / **`RiskEngineTest.java`**: pinned `LocalDateTime.now()` to deterministic fixed values to eliminate flake from wall-clock drift
+
+### Test results
+- **84/84 tests passing** — all unit + integration tests including `RiskScenarioIntegrationTest` 5/5 and `SchemaIntegrationTest` 4/4
+- `Could not configure topics` logged by `KafkaAdmin` at test startup is benign — tests use embedded Kafka; broker connection times out but tests proceed correctly
+
+---
+
 ## 2026-06-11 — Session 14 (Phase 4 integration tests: all 84 tests green)
 
 ### Changes

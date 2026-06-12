@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface RiskAlertRepository extends JpaRepository<RiskAlert, UUID> {
@@ -13,4 +14,5 @@ public interface RiskAlertRepository extends JpaRepository<RiskAlert, UUID> {
     Page<RiskAlert> findByUserIdOrderByCreatedAtDesc(UUID userId, Pageable pageable);
     long countByStatus(AlertStatus status);
     boolean existsByTransactionId(UUID transactionId);
+    Optional<RiskAlert> findByTransactionId(UUID transactionId);
 }

@@ -30,15 +30,21 @@ public interface TransactionRepository extends JpaRepository<LedgerTransaction, 
             LocalDateTime oneDayAgo,
             LocalDateTime sevenDaysAgo);
 
-    // GraphPatternRule: distinct new counterparties in the last 24h not in the known set
-    @Query("""
-        SELECT COUNT(DISTINCT t.counterpartyAccountId)
-        FROM LedgerTransaction t
-        WHERE t.accountId = :accountId
-          AND t.initiatedAt >= :since
-          AND t.counterpartyAccountId IS NOT NULL
-          AND CAST(t.counterpartyAccountId AS string) NOT IN :knownCounterparties
-        """)
+    // GraphPatternRule: native SQL to avoid Hibernate LocalDateTime→UTC shift and
+    // to support LIMIT 100 (D20 query cap). The NOT IN list is bounded at MAX 50
+    // entries (typicalCounterparties cap) plus a sentinel UUID for the empty-list guard.
+    @Query(value = """
+        SELECT COUNT(DISTINCT sub.counterparty_account_id)
+        FROM (
+            SELECT counterparty_account_id
+            FROM ledger_transaction
+            WHERE account_id = :accountId
+              AND initiated_at >= :since
+              AND counterparty_account_id IS NOT NULL
+              AND CAST(counterparty_account_id AS varchar) NOT IN :knownCounterparties
+            LIMIT 100
+        ) sub
+        """, nativeQuery = true)
     long countDistinctNewCounterpartiesSince(UUID accountId, LocalDateTime since,
                                               java.util.List<String> knownCounterparties);
 
@@ -52,6 +58,7 @@ public interface TransactionRepository extends JpaRepository<LedgerTransaction, 
               AND amount                 = :amount
               AND initiated_at           >= :since
               AND status                 = 'COMPLETED'
+              AND type                   = 'TRANSFER_DEBIT'
         )
         """, nativeQuery = true)
     boolean existsRoundTrip(UUID senderAccountId, UUID receiverAccountId,

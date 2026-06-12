@@ -28,13 +28,20 @@ public class GraphPatternRule implements RiskRule {
         var now = event.initiatedAt();
         List<String> knownCounterparties = profile.getTypicalCounterparties();
 
-        // Fan-out: distinct new recipients this account sent to in last 24h
+        // Fan-out: distinct new recipients this account sent to in last 24h.
+        // When knownCounterparties is empty (new user) we must avoid JPQL NOT IN ()
+        // which throws IllegalArgumentException in Hibernate 6. Use a sentinel
+        // single-element list that matches no real UUID — all counterparties are "new".
+        List<String> exclusionList = knownCounterparties.isEmpty()
+                ? List.of("00000000-0000-0000-0000-000000000000")
+                : knownCounterparties;
+
         long fanOut = transactionRepository.countDistinctNewCounterpartiesSince(
-                event.accountId(), now.minusDays(1), knownCounterparties);
+                event.accountId(), now.minusDays(1), exclusionList);
 
         // Fan-in: distinct new senders to the counterparty's account in last 24h
         long fanIn = transactionRepository.countDistinctNewCounterpartiesSince(
-                event.counterpartyAccountId(), now.minusDays(1), knownCounterparties);
+                event.counterpartyAccountId(), now.minusDays(1), exclusionList);
 
         // Round-trip: same exact amount returned from counterparty within 2h
         boolean roundTrip = transactionRepository.existsRoundTrip(

@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.dao.DataIntegrityViolationException;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -23,9 +25,15 @@ public class CustomerRiskProfileService {
     @Transactional
     public CustomerRiskProfile getOrCreate(UUID userId) {
         return repository.findByUserId(userId).orElseGet(() -> {
-            CustomerRiskProfile profile = new CustomerRiskProfile();
-            profile.setUserId(userId);
-            return repository.save(profile);
+            try {
+                CustomerRiskProfile profile = new CustomerRiskProfile();
+                profile.setUserId(userId);
+                return repository.save(profile);
+            } catch (DataIntegrityViolationException e) {
+                // Concurrent insert raced us — re-fetch the winner's record
+                return repository.findByUserId(userId)
+                        .orElseThrow(() -> new IllegalStateException("Profile missing after concurrent insert", e));
+            }
         });
     }
 
@@ -59,7 +67,7 @@ public class CustomerRiskProfileService {
         // Incremental frequency update for transaction hour
         String hour = String.valueOf(event.initiatedAt().getHour());
         var hours = profile.getTypicalTransactionHours();
-        hours.merge(hour, 1.0,
+        hours.merge(hour, 1.0 / newCount,
                 (existing, inc) -> ((existing * (newCount - 1)) + 1.0) / newCount);
         profile.setTypicalTransactionHours(hours);
 

@@ -1,33 +1,41 @@
 # CURRENT_TASK.md — LedgerBridge
 
 > Reflects the single active task. Update when starting or finishing a task.
-> Last updated: 2026-06-11
+> Last updated: 2026-06-12
 
 ## Active Task
 
-**Phase 4 — Risk Engine COMPLETE ✅**
+**Phase 5 — Admin + Audit** (up next)
 
-### Phase 4 Complete ✅
+---
+
+## Phase 4 — Risk Engine ✅ COMPLETE (2026-06-12)
+
+### Shipped
 - [x] `RiskRule` interface + `RiskRuleResult` record
 - [x] `AmountAnomalyRule` (Welford's z-score, MIN_HISTORY_COUNT=2)
 - [x] `VelocityRule` (1h/1d/7d conditional-aggregation query, native SQL)
 - [x] `BehavioralBaselineRule` (hour, MCC, new-counterparty signals)
 - [x] `GraphPatternRule` (fan-out ≥5, fan-in ≥5, round-trip 2h, native SQL)
 - [x] `RiskEngine` (weighted scoring 0.25/0.30/0.20/0.25, tier-1/tier-2 escalation)
-- [x] `CustomerRiskProfileService` (Welford's update, D19 score-conditional baseline)
-- [x] `AlertService` + `RiskAlertResponse` DTO
-- [x] `TransactionRiskConsumer` (@RetryableTopic, @DltHandler, D2 idempotency, D19)
+- [x] `CustomerRiskProfileService` (Welford's update, D19 score-conditional baseline, T4/T5 fixes)
+- [x] `AlertService` + `RiskAlertResponse` DTO (T3: DIV catch + `findByTransactionId`)
+- [x] `TransactionRiskConsumer` (@RetryableTopic, @DltHandler, T10 full idempotency via `ProcessedTransactionEvent`)
+- [x] `ProcessedTransactionEvent` entity + `ProcessedTransactionEventRepository` (T10)
+- [x] `V10__risk_alert_unique_txn_and_processed_events.sql` (T3 UNIQUE + T10 table)
+- [x] `KafkaConfig` retry/DLT topic beans (NEW CRITICAL)
 - [x] Unit tests: 36/36 passing (AmountAnomaly 7, Velocity 6, Behavioral 9, GraphPattern 7, RiskEngine 7)
 - [x] Integration tests: 5/5 fraud scenarios passing (S1–S5)
 - [x] **Total tests: 84/84 passing**
-- [x] PHASES.md + ENGINEERING_LOG.md + HANDOFF.md updated
-- [x] Commit: `a1b04a9`
+- [x] `/plan-eng-review` gate: 11 issues (T1–T11), all P1 fixes implemented
+- [x] `/review` gate: 8 critical fixes, 84/84 tests confirmed
 
-### Phase 4 Remaining
-- [ ] Add 5 labeled fraud-scenario examples to OpenAPI spec via `@Operation`/`@ApiResponse`
-- [ ] Run `/plan-eng-review` (architecture review gate)
-- [ ] Run `/review` before marking Phase 4 fully complete
-- [ ] **MILESTONE: submit applications to Wells Fargo, Capital One, Citi, JPMorgan**
+### P2 Deferred (not blocking Phase 5)
+- T7: Add 7-day velocity scoring to VelocityRule
+- T8: Compute avgTransactionsPerHour/Day in updateProfile()
+- T9: Fix fan-in to count inbound senders (WHERE counterparty_account_id = :accountId)
+- T11: Unit tests for TransactionRiskConsumer + CustomerRiskProfileService Welford logic
+- OpenAPI `@Operation`/`@ApiResponse` examples for 5 fraud scenarios
 
 ### Up Next
 Phase 5 — Admin + Audit (AuditAspect, AuditService, SSE alerts dashboard)

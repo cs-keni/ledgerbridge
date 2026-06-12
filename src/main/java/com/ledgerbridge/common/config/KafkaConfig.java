@@ -17,4 +17,30 @@ public class KafkaConfig {
                 .replicas(1)
                 .build();
     }
+
+    // @RetryableTopic uses autoCreateTopics=false — must provision retry and DLT
+    // topics explicitly so they exist on brokers with auto.create.topics.enable=false.
+    @Bean
+    public NewTopic transactionEventsRetry0Topic() {
+        return TopicBuilder.name(TRANSACTION_EVENTS_TOPIC + "-retry-0")
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic transactionEventsRetry1Topic() {
+        return TopicBuilder.name(TRANSACTION_EVENTS_TOPIC + "-retry-1")
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic transactionEventsDltTopic() {
+        return TopicBuilder.name(TRANSACTION_EVENTS_TOPIC + "-dlt")
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
 }

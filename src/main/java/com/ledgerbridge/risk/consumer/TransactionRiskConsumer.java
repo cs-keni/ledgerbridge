@@ -4,12 +4,14 @@ import com.ledgerbridge.common.config.KafkaConfig;
 import com.ledgerbridge.risk.engine.RiskEngine;
 import com.ledgerbridge.risk.engine.RiskScoringResult;
 import com.ledgerbridge.risk.model.CustomerRiskProfile;
-import com.ledgerbridge.risk.repository.RiskAlertRepository;
+import com.ledgerbridge.risk.model.ProcessedTransactionEvent;
+import com.ledgerbridge.risk.repository.ProcessedTransactionEventRepository;
 import com.ledgerbridge.risk.service.CustomerRiskProfileService;
 import com.ledgerbridge.transaction.event.TransactionEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
@@ -25,7 +27,7 @@ public class TransactionRiskConsumer {
 
     private final RiskEngine riskEngine;
     private final CustomerRiskProfileService profileService;
-    private final RiskAlertRepository riskAlertRepository;
+    private final ProcessedTransactionEventRepository processedRepo;
 
     @RetryableTopic(
             attempts = "3",
@@ -37,8 +39,8 @@ public class TransactionRiskConsumer {
                         @Header(name = "X-Correlation-ID", required = false) String correlationId) {
         if (correlationId != null) MDC.put("correlationId", correlationId);
         try {
-            // D2: idempotency — skip if we already created an alert for this transaction
-            if (riskAlertRepository.existsByTransactionId(event.transactionId())) {
+            // T10: full idempotency — skip ALL re-evaluations (not just alerted ones)
+            if (processedRepo.existsByTransactionId(event.transactionId())) {
                 log.debug("Risk event already processed for txn={}, skipping", event.transactionId());
                 return;
             }
@@ -51,6 +53,13 @@ public class TransactionRiskConsumer {
             // D19: baseline-poisoning protection — only update profile if transaction is clean
             if (!result.alertTriggered()) {
                 profileService.updateProfile(profile, event);
+            }
+
+            // Mark evaluated — idempotency guard for retries/redeliveries
+            try {
+                processedRepo.save(new ProcessedTransactionEvent(event.transactionId()));
+            } catch (DataIntegrityViolationException ignored) {
+                // Concurrent retry beat us — already processed, result is the same
             }
 
             log.info("Risk evaluation: txn={} score={} alert={} severity={}",

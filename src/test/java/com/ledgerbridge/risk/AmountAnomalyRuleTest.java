@@ -34,7 +34,7 @@ class AmountAnomalyRuleTest {
     private TransactionEvent event(BigDecimal amount) {
         return new TransactionEvent(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
                 null, TransactionType.DEPOSIT, amount, "USD", null, null,
-                LocalDateTime.now());
+                LocalDateTime.of(2026, 6, 11, 11, 0));
     }
 
     @Test
