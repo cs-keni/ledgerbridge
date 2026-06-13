@@ -9,7 +9,7 @@
 
 Phase 7 shipped: custom risk-engine Prometheus metrics (RiskMetrics.java), Prometheus + Grafana in docker-compose, GitHub Actions CI (backend + frontend jobs), `.env.example` updated.
 
-**Phase 7.5 scope:** JVM memory validation, V8 demo seed SQL (timestamp matrix for fraud scenarios), Dockerfile (multi-stage Maven → eclipse-temurin:21-jre-alpine), DemoDataRefreshComponent, Upstash Kafka SASL config, Railway project setup.
+**Phase 7.5 scope:** Supabase (managed Postgres) + Render (app host, free 750h/month) instead of Railway. Dockerfile, V8 demo seed SQL, DemoDataRefreshComponent, Upstash Kafka SASL, render.yaml blueprint.
 
 ---
 

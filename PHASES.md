@@ -101,19 +101,21 @@
 - [x] Add Prometheus + Grafana with dashboard — **complete 2026-06-12**: `monitoring/prometheus.yml` (scrapes `/actuator/prometheus`); Grafana auto-provisioned datasource + dashboard (`monitoring/grafana/dashboards/risk-engine.json`) with 6 panels: scoring latency p50/p95/p99, alert creation rate by type, severity pie chart, evaluations/min stat, DLT counter stat, alert vs clean transaction rate.
 - [x] Write .env.example with all variables documented — **complete 2026-06-12**: DB_PASSWORD, JWT_SECRET, SPRING_KAFKA_BOOTSTRAP_SERVERS, SPRING_PROFILES_ACTIVE, GRAFANA_PASSWORD, commented Upstash Kafka block.
 
-## Phase 7.5 — Live Demo Deploy (Railway)
+## Phase 7.5 — Live Demo Deploy (Supabase + Render)
+> Railway dropped its free tier. Using Supabase (managed Postgres, free) + Render (app host, free 750h/month) instead.
+
 - [ ] **TODOS gate:** validate JVM memory flags locally before deploying (-Xmx200m -Xms64m -XX:+UseSerialGC — see TODOS.md)
 - [ ] **TODOS gate:** design V8__demo_seed.sql timestamp matrix for 5 fraud scenarios (see TODOS.md)
 - [ ] Write Dockerfile (multi-stage: Maven build → eclipse-temurin:21-jre-alpine) with JVM flag ENV
-- [ ] Write `resources/db/demo/V8__demo_seed.sql` (profile-gated: only loads when `SPRING_PROFILES_ACTIVE=demo` via `application-demo.properties` — D5) — demo admin user (demo@ledgerbridge.io, role: DEMO_ACTOR per D6), demo accounts with known fixed UUIDs, 30+ anchor-timestamped prior transactions per scenario
-- [ ] Implement `DemoDataRefreshComponent` (@Component, @Profile("demo"), runs on ApplicationReadyEvent) — updates V8 seed transaction timestamps to NOW() + fixed offsets so velocity windows never go stale (D4)
+- [ ] Write `resources/db/demo/V8__demo_seed.sql` (profile-gated: only loads when `SPRING_PROFILES_ACTIVE=demo` via `application-demo.properties`) — demo admin user (demo@ledgerbridge.io, role: DEMO_ACTOR), demo accounts with known fixed UUIDs, 30+ anchor-timestamped prior transactions per scenario
+- [ ] Implement `DemoDataRefreshComponent` (@Component, @Profile("demo"), runs on ApplicationReadyEvent) — updates V8 seed transaction timestamps to NOW() + fixed offsets so velocity windows never go stale
 - [ ] Configure Upstash Kafka free tier (SASL/PLAIN) — Spring Kafka SASL config via env vars
-- [ ] Set up Railway project: web service (GitHub auto-deploy) + managed PostgreSQL
-- [ ] Set all Railway env vars: SPRING_DATASOURCE_*, JWT_SECRET, UPSTASH_KAFKA_* credentials
-- [ ] Configure `railway.toml` health check: `/actuator/health/liveness` (NOT `/actuator/health` — DB/Kafka readiness causes Railway deploy flapping; enable probes with `management.endpoint.health.probes.enabled=true` — D7)
-- [ ] Configure Maven Frontend Plugin (frontend-maven-plugin) in pom.xml to compile React SPA as part of `mvn package`, output to `src/main/resources/static/` (D1, /plan-eng-review 2026-06-10: keeps Railway Dockerfile to a single Java stage)
-- [ ] Add `SpaFallbackController` — catches `/**` (excluding `/api/**`, `/actuator/**`, `/swagger-ui/**`, `/swagger-ui.html`, `/v3/api-docs/**`, `/webjars/**`) and serves `classpath:static/index.html` (D2 + D8, /plan-eng-review 2026-06-10 — Swagger paths excluded or Swagger UI breaks)
-- [ ] Verify demo: visit live URL → log in with demo credentials (from README) → see pre-loaded alerts → trigger fraud scenario in Swagger → alert appears in React admin dashboard
+- [ ] **Supabase:** create project, copy direct connection string (port 5432, NOT the PgBouncer pooler at 6543 — Flyway and JPA need direct connections). JDBC URL format: `jdbc:postgresql://[host].supabase.co:5432/postgres?sslmode=require`. Run `mvn flyway:migrate` against Supabase to apply V1–V8 and seed demo data.
+- [ ] **Render:** create Web Service from GitHub repo, set build command `mvn package -DskipTests`, start command `java $JAVA_OPTS -jar target/*.jar`. Set env vars: SPRING_DATASOURCE_*, JWT_SECRET, UPSTASH_KAFKA_*, SPRING_PROFILES_ACTIVE=demo. Use free plan (750h/month, spins down after 15 min idle — acceptable for demo).
+- [ ] Add `render.yaml` (Render blueprint) with service config, health check path `/actuator/health/liveness`, env var declarations
+- [ ] Configure Maven Frontend Plugin (frontend-maven-plugin) in pom.xml to compile React SPA as part of `mvn package`, output to `src/main/resources/static/`
+- [ ] Add `SpaFallbackController` — catches `/**` (excluding `/api/**`, `/actuator/**`, `/swagger-ui/**`, `/swagger-ui.html`, `/v3/api-docs/**`, `/webjars/**`) and serves `classpath:static/index.html`
+- [ ] Verify demo: visit live URL → log in with demo credentials → see pre-loaded alerts → trigger fraud scenario in Swagger → alert appears in React admin dashboard
 - [ ] Add live URL to README "Live Demo" section with demo credentials and screenshot
 
 ## Phase 8 — Testing + Portfolio Integration
