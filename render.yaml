@@ -19,12 +19,7 @@ services:
       # ── Auth ─────────────────────────────────────────────────────────────────
       - key: JWT_SECRET
         generateValue: true
-      # ── Kafka — Upstash SASL/PLAIN ───────────────────────────────────────────
-      - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
-        sync: false
-      - key: SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG
-        sync: false
-      - key: SPRING_KAFKA_PROPERTIES_SASL_MECHANISM
-        value: PLAIN
-      - key: SPRING_KAFKA_PROPERTIES_SECURITY_PROTOCOL
-        value: SASL_SSL
+      # ── Kafka ────────────────────────────────────────────────────────────────
+      # Kafka is disabled in demo profile (KafkaAutoConfiguration excluded).
+      # The full Kafka pipeline runs locally via Docker Compose for demo recording.
+      # No Kafka env vars needed here.

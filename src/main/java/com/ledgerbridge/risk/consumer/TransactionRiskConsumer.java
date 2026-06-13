@@ -12,6 +12,7 @@ import com.ledgerbridge.transaction.event.TransactionEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@Profile("!demo")
 @RequiredArgsConstructor
 public class TransactionRiskConsumer {
 

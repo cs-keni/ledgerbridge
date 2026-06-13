@@ -4,6 +4,20 @@
 
 ---
 
+## 2026-06-12 — Session 25 (Phase 7.5: Disable Kafka in demo profile)
+
+### Changes
+
+- **`KafkaConfig.java`**: Added `@Profile("!demo")` — prevents topic `NewTopic` beans from being created in demo, which would trigger a broker connection attempt.
+- **`TransactionEventProducer.java`**: Added `@Profile("!demo")` — bean not created in demo; the `TransactionCompletedEvent` fires but no listener picks it up (no exception).
+- **`TransactionRiskConsumer.java`**: Added `@Profile("!demo")` — `@KafkaListener` and `@RetryableTopic` infrastructure not registered in demo.
+- **`application-demo.properties`**: Added `spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration` — prevents Spring from trying to connect to a Kafka broker at startup. Kafka disabled because Upstash Kafka and CloudKarafka both deprecated/shut down in 2024–2025; no free managed Kafka tier available. Full pipeline runs locally via Docker Compose.
+- **`render.yaml`**: Removed Kafka env var declarations (no longer needed).
+
+**Commit hash: (pending)**
+
+---
+
 ## 2026-06-12 — Session 24 (Phase 7.5: Supabase + Render Deploy Infrastructure)
 
 ### Changes
