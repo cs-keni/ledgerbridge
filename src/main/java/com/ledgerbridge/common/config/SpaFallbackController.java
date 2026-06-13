@@ -6,10 +6,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class SpaFallbackController {
 
-    // Only match paths without dots (frontend routes like /login, /dashboard).
-    // Files with extensions (/index.html, /assets/main.js) fall through to the
-    // static resource handler — avoiding a forward-re-entry infinite loop.
-    @GetMapping({"/{path:[^.]*}", "/**/{path:[^.]*}"})
+    // Match root and single-segment extensionless paths (/login, /dashboard, /admin).
+    // PathPatternParser forbids anything after **, so /**/{path} is invalid.
+    // The forward to /index.html does not loop because "index.html" contains a
+    // dot and does not match [^.]*; the static resource handler serves it directly.
+    @GetMapping({"", "/", "/{path:[^.]*}"})
     public String spa() {
         return "forward:/index.html";
     }
