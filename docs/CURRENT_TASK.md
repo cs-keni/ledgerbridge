@@ -5,13 +5,11 @@
 
 ## Active Task
 
-**Phase 6 — /qa complete (2026-06-12) — next: Phase 7 (Prometheus, CI, Docker)**
+**Phase 7 — Observability + DevOps complete (2026-06-12) — next: Phase 7.5 (Railway deploy)**
 
-QA session complete. Health score: 6/10 → 9/10. 3 bugs fixed (ISSUE-006 score normalization, ISSUE-007 alert status filter, ISSUE-011 accountId async init).
+Phase 7 shipped: custom risk-engine Prometheus metrics (RiskMetrics.java), Prometheus + Grafana in docker-compose, GitHub Actions CI (backend + frontend jobs), `.env.example` updated.
 
-Two UX issues noted but not blocking (ISSUE-008 stats chips need invalidation after review, ISSUE-009 critical count inconsistency between Dashboard/Alerts).
-
-**Phase 7 scope:** Prometheus metrics endpoint, GitHub Actions CI pipeline, Docker multi-stage build, docker-compose production config.
+**Phase 7.5 scope:** JVM memory validation, V8 demo seed SQL (timestamp matrix for fraud scenarios), Dockerfile (multi-stage Maven → eclipse-temurin:21-jre-alpine), DemoDataRefreshComponent, Upstash Kafka SASL config, Railway project setup.
 
 ---
 

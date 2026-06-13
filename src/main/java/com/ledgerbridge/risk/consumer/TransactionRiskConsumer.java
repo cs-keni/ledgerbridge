@@ -3,6 +3,7 @@ package com.ledgerbridge.risk.consumer;
 import com.ledgerbridge.common.config.KafkaConfig;
 import com.ledgerbridge.risk.engine.RiskEngine;
 import com.ledgerbridge.risk.engine.RiskScoringResult;
+import com.ledgerbridge.risk.metrics.RiskMetrics;
 import com.ledgerbridge.risk.model.CustomerRiskProfile;
 import com.ledgerbridge.risk.model.ProcessedTransactionEvent;
 import com.ledgerbridge.risk.repository.ProcessedTransactionEventRepository;
@@ -28,6 +29,7 @@ public class TransactionRiskConsumer {
     private final RiskEngine riskEngine;
     private final CustomerRiskProfileService profileService;
     private final ProcessedTransactionEventRepository processedRepo;
+    private final RiskMetrics riskMetrics;
 
     @RetryableTopic(
             attempts = "3",
@@ -79,5 +81,6 @@ public class TransactionRiskConsumer {
                           @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         log.error("TransactionEvent reached DLT after all retries: txn={} topic={}",
                 event.transactionId(), topic);
+        riskMetrics.incrementDlt();
     }
 }

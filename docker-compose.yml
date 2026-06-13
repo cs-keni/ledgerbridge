@@ -42,9 +42,43 @@ services:
       retries: 5
       start_period: 30s
 
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheusdata:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.enable-lifecycle'
+    # host.docker.internal lets Prometheus reach the Spring Boot app
+    # running natively on the Docker host (standard local dev mode)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/risk-engine.json
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafanadata:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
   # ── api ─────────────────────────────────────────────────────────────────────
-  # Added in Phase 7.5 when the Dockerfile is written.
-  # For Phase 0–6 local dev: run `docker-compose up -d db kafka`
+  # Uncomment in Phase 7.5 after the Dockerfile is written.
+  # For local dev: run `docker-compose up -d db kafka prometheus grafana`
   # then `./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`
   #
   # api:
@@ -66,3 +100,5 @@ services:
 
 volumes:
   pgdata:
+  prometheusdata:
+  grafanadata:

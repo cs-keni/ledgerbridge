@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'ledgerbridge'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      # host.docker.internal resolves to the Docker host — works when the Spring Boot
+      # app runs outside Docker (standard local dev: docker-compose up db kafka).
+      # In full-compose mode (with the api service), change to: api:8080
+      - targets: ['host.docker.internal:8080']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'ledgerbridge-api'

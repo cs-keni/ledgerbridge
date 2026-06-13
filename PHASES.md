@@ -90,16 +90,16 @@
 - [x] Build Transfer form — **complete 2026-06-12**: `TransferPage.tsx` — 3-tab form (Deposit/Withdraw/Transfer), account dropdown, idempotency key auto-generated, success card with transaction number. `/transfer` route + Sidebar link.
 - [x] WCAG 2.1 AA verification — **complete 2026-06-12**: contrast audit passed (#888888 on #111111 = 5.35:1, on #1a1a1a = 4.93:1, both ≥4.5:1 AA); keyboard nav on alert table (Tab/Enter/Space); Escape closes AlertDetailPanel; focus moves to close button on panel open; all form inputs have `useId()` label pairs; `role="alert"` on errors; ARIA landmarks verified.
 - [x] **DESIGN gate (second pass):** run `/plan-design-review` — **complete 2026-06-12**: 10 fixes, 6.5→9/10. h1 20px, system-wide stat chips (AlertStatsResponse API), demo credentials on login, skeleton shimmer in panel, gauge bar semantics fixed, sidebar alert count badge, avg score dynamic color, button color rule, action btn focus rings, full-width content.
-- [ ] Run `/qa` to verify all flows end-to-end
+- [x] Run `/qa` to verify all flows end-to-end — **complete 2026-06-12**: 3 bugs fixed (ISSUE-006 score normalization, ISSUE-007 status filter, ISSUE-011 async accountId). Health: 6/10 → 9/10. Deposit/Withdraw/Transfer tab UI all confirmed working. Commit: `36be7f2`.
 
-## Phase 7 — Observability + DevOps
-- [ ] **TODOS gate:** design risk-engine-specific Prometheus metrics (`risk_scoring_latency_seconds`, `risk_alerts_created_total` by rule, `risk_consumer_lag`, `risk_dlt_messages_total`, `risk_rule_contribution_distribution`) — generic Actuator metrics alone won't show whether the differentiator works
-- [ ] Verify all structured logging in place (correlation IDs from Phase 3 should now be queryable end-to-end)
-- [ ] Add Spring Actuator health + metrics endpoints
-- [ ] Finalize Docker Compose (all services)
-- [ ] Write GitHub Actions CI workflow
-- [ ] Add Prometheus + Grafana with at least one dashboard panel for the risk-engine metrics above
-- [ ] Write .env.example with all variables documented
+## Phase 7 — Observability + DevOps ✅ Complete
+- [x] **TODOS gate:** design risk-engine-specific Prometheus metrics — **complete 2026-06-12**: `risk.scoring.duration` (Timer, tagged `alert_triggered`), `risk.alerts.created` (Counter, tagged `alert_type`+`severity`), `risk.dlt.messages` (Counter). Implemented in `RiskMetrics.java`, wired into `RiskEngine.evaluate()` and `TransactionRiskConsumer.handleDlt()`.
+- [x] Verify all structured logging in place — **complete 2026-06-12**: `CorrelationIdFilter` propagates X-Correlation-ID from Phase 3; risk consumer sets MDC `correlationId` from Kafka header; Logback JSON in prod, readable in dev. All logging in place.
+- [x] Add Spring Actuator health + metrics endpoints — **complete** (from Phase 6 application.properties): health/liveness/readiness probes + `/actuator/prometheus` already exposed. Added `micrometer-registry-prometheus` dep to pom.xml.
+- [x] Finalize Docker Compose — **complete 2026-06-12**: Added `prometheus` (prom/prometheus:v2.53.0) and `grafana` (grafana/grafana:11.1.0) services with volume mounts, `host-gateway` extra_host for scraping the app, persistent volumes.
+- [x] Write GitHub Actions CI workflow — **complete 2026-06-12**: `.github/workflows/ci.yml` — two jobs: `backend` (Java 21, Maven test with Testcontainers, Surefire report on failure) and `frontend` (Node 20, `npm ci`, `tsc --noEmit`, `npm run build`).
+- [x] Add Prometheus + Grafana with dashboard — **complete 2026-06-12**: `monitoring/prometheus.yml` (scrapes `/actuator/prometheus`); Grafana auto-provisioned datasource + dashboard (`monitoring/grafana/dashboards/risk-engine.json`) with 6 panels: scoring latency p50/p95/p99, alert creation rate by type, severity pie chart, evaluations/min stat, DLT counter stat, alert vs clean transaction rate.
+- [x] Write .env.example with all variables documented — **complete 2026-06-12**: DB_PASSWORD, JWT_SECRET, SPRING_KAFKA_BOOTSTRAP_SERVERS, SPRING_PROFILES_ACTIVE, GRAFANA_PASSWORD, commented Upstash Kafka block.
 
 ## Phase 7.5 — Live Demo Deploy (Railway)
 - [ ] **TODOS gate:** validate JVM memory flags locally before deploying (-Xmx200m -Xms64m -XX:+UseSerialGC — see TODOS.md)

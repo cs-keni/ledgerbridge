@@ -4,6 +4,31 @@
 
 ---
 
+## 2026-06-12 — Session 23 (Phase 7: Observability + DevOps)
+
+### Changes
+
+**Backend:**
+- **`pom.xml`**: Added `micrometer-registry-prometheus` — unlocks `/actuator/prometheus` scrape endpoint (endpoint was already exposed in `application.properties` from Phase 6).
+- **`RiskMetrics.java`** (NEW — `risk/metrics/`): Micrometer component wrapping three custom metrics: `risk.scoring.duration` (Timer, tagged `alert_triggered=true|false`), `risk.alerts.created` (Counter, tagged `alert_type` + `severity`), `risk.dlt.messages` (Counter, no variable tags). Metric names map to `risk_scoring_duration_seconds{quantiles}`, `risk_alerts_created_total`, `risk_dlt_messages_total` in Prometheus text format.
+- **`RiskEngine.java`**: Injected `RiskMetrics`. `evaluate()` now opens a `Timer.Sample` before rule evaluation and records it in the `finally` block tagged with `alert_triggered`. Increments `risk.alerts.created` counter when an alert is persisted.
+- **`TransactionRiskConsumer.java`**: Injected `RiskMetrics`. `handleDlt()` now increments `risk.dlt.messages` counter when a message exhausts all retries.
+- **`RiskEngineTest.java`**: Added `@Spy RiskMetrics riskMetrics = new RiskMetrics(new SimpleMeterRegistry())` so `@InjectMocks` can satisfy the new constructor dep without needing a full Spring context.
+
+**DevOps:**
+- **`docker-compose.yml`**: Added `prometheus` (prom/prometheus:v2.53.0, port 9090) and `grafana` (grafana/grafana:11.1.0, port 3000) services. Both have named volumes for persistence. Prometheus uses `extra_hosts: host.docker.internal:host-gateway` to reach the Spring Boot app running natively on the Docker host. Grafana password configurable via `$GRAFANA_PASSWORD`.
+- **`monitoring/prometheus.yml`** (NEW): Scrape config targeting `host.docker.internal:8080/actuator/prometheus` every 15s, with `instance` relabel to `ledgerbridge-api`.
+- **`monitoring/grafana/provisioning/datasources/prometheus.yml`** (NEW): Auto-provisions Prometheus datasource pointing to `http://prometheus:9090`.
+- **`monitoring/grafana/provisioning/dashboards/dashboard.yml`** (NEW): Dashboard file provider watching `/var/lib/grafana/dashboards/`.
+- **`monitoring/grafana/dashboards/risk-engine.json`** (NEW): 6-panel Grafana dashboard — scoring latency (p50/p95/p99 timeseries), alert creation rate by type, severity pie chart, evaluations/min stat, DLT messages stat (red threshold at 1), alert vs clean transaction rate.
+- **`.github/workflows/ci.yml`** (NEW): Two parallel CI jobs — `backend` (Java 21 Temurin, Maven cache, `mvn test`, Surefire artifact on failure) and `frontend` (Node 20, npm cache, `tsc --noEmit`, `npm run build`). Testcontainers works because Docker is available on `ubuntu-latest`.
+- **`.env.example`**: Added `SPRING_KAFKA_BOOTSTRAP_SERVERS` and `GRAFANA_PASSWORD` entries. Updated JWT_SECRET generation hint to use `openssl rand -hex 32`.
+- **`PHASES.md`**: Phase 6 `/qa` task marked complete; Phase 7 block replaced with fully checked tasks.
+
+**Commit hash: (see below)**
+
+---
+
 ## 2026-06-12 — Session 22 (/qa: 3 bugs fixed, 6→9/10 health score)
 
 ### Changes

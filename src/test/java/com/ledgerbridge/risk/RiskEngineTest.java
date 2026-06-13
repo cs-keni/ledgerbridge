@@ -2,6 +2,7 @@ package com.ledgerbridge.risk;
 
 import com.ledgerbridge.risk.engine.RiskEngine;
 import com.ledgerbridge.risk.engine.RiskScoringResult;
+import com.ledgerbridge.risk.metrics.RiskMetrics;
 import com.ledgerbridge.risk.model.AlertSeverity;
 import com.ledgerbridge.risk.model.AlertType;
 import com.ledgerbridge.risk.model.CustomerRiskProfile;
@@ -10,10 +11,12 @@ import com.ledgerbridge.risk.rules.*;
 import com.ledgerbridge.risk.service.AlertService;
 import com.ledgerbridge.transaction.event.TransactionEvent;
 import com.ledgerbridge.transaction.model.TransactionType;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
@@ -35,6 +38,7 @@ class RiskEngineTest {
     @Mock BehavioralBaselineRule behavioralBaselineRule;
     @Mock GraphPatternRule     graphPatternRule;
     @Mock AlertService         alertService;
+    @Spy  RiskMetrics          riskMetrics = new RiskMetrics(new SimpleMeterRegistry());
 
     @InjectMocks RiskEngine riskEngine;
 
