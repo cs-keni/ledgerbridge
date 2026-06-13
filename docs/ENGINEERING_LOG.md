@@ -16,7 +16,7 @@
 - **`AuditAspect.java`**: P3 fix — `extractEntityId` uses `argIndex` from the annotation instead of scanning for the first UUID.
 - **`RiskEngine.java`**: P3 clarification — added comment that `AlertSeverity.LOW` is never produced by the live engine (only present in seeded demo data).
 
-**Commit hash: TBD**
+**Commit hash: `040d454`**
 
 ---
 
