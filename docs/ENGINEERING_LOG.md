@@ -4,13 +4,18 @@
 
 ---
 
-## 2026-06-13 — Session 27 (Phase 7.5: Fix SPA fallback infinite forward loop)
+## 2026-06-13 — Session 27 (Phase 7.5: Fix SPA fallback + deploy live)
+
+### Live URL
+`https://ledgerbridge-i0c5.onrender.com` — Render free tier, demo profile, Supabase Postgres.
+
+### Changes
 
 ### Changes
 
 - **`SpaFallbackController.java`**: Replaced `/{*path}` catch-all + in-code `path.contains(".")` filter with regex-constrained path variables `/{path:[^.]*}` and `/**/{path:[^.]*}`. The regex only matches extensionless paths (frontend routes). Paths with dots (`.html`, `.js`, `.css`) fall through to the static resource handler. The old approach returned `null` for extension paths, which triggered Spring's default view name translator, caused a view resolution error, Spring Boot's error controller sent the request to `/error`, and the SPA controller forwarded back to `/index.html` — infinite loop. Fix prevents the re-entry entirely.
 
-**Commit hash: (pending)**
+**Commit hashes: `629de78` (initial fix, infinite loop) → `e8a0b2d` (PathPatternParser compat)**
 
 ---
 
