@@ -4,6 +4,26 @@
 
 ---
 
+## 2026-06-12 — Session 24 (Phase 7.5: Supabase + Render Deploy Infrastructure)
+
+### Changes
+
+**Backend:**
+- **`SpaFallbackController.java`**: Added explicit exclusions for `/api/**`, `/actuator/**`, `/swagger-ui/**`, `/v3/api-docs/**` so API 404s don't return `index.html`. Previously only excluded paths with dots.
+- **`DemoDataRefreshComponent.java`** (NEW — `common/demo/`): `@Profile("demo")` component. Fires on `ApplicationReadyEvent`. Updates `initiated_at`/`completed_at` on 6 trigger transactions, `created_at`/`reviewed_at` on 6 risk alerts, `created_at`/`read_at` on 3 notifications, and `occurred_at` on 3 audit log entries to be relative to NOW(). This keeps the demo dashboard looking fresh on every Render cold start.
+- **`application-demo.properties`**: Updated Railway reference to Render. Added `spring.kafka.consumer.group-id=ledgerbridge-demo` to distinguish demo from local dev on shared Upstash brokers.
+
+**Database (demo profile only):**
+- **`db/demo/V13__demo_alerts_and_audit.sql`** (NEW): Pre-seeds 6 fixed-UUID trigger transactions (one per fraud scenario), 6 risk alerts in various states (CRITICAL/OPEN, HIGH/OPEN, HIGH/UNDER_REVIEW, MEDIUM/OPEN, MEDIUM/RESOLVED, LOW/DISMISSED), 3 notifications, and 3 audit log entries. All timestamps set relative to NOW() at Flyway run time; DemoDataRefreshComponent refreshes them on subsequent restarts.
+
+**DevOps:**
+- **`Dockerfile`** (NEW): Multi-stage — `eclipse-temurin:21-jdk-jammy` build stage (Maven + frontend-maven-plugin builds React bundle into `target/classes/static/`); `eclipse-temurin:21-jre-alpine` runtime stage. Non-root user `ledgerbridge`. Shell-form ENTRYPOINT maps Render's `${PORT}` env var to `-Dserver.port`. JVM flags: `-Xmx200m -Xms64m -XX:+UseSerialGC` (tuned for Render free 512MB RAM).
+- **`render.yaml`** (NEW): Render blueprint. Docker runtime, free plan, health check at `/actuator/health/liveness`. Env vars: `SPRING_PROFILES_ACTIVE=demo`, `JWT_SECRET` (generateValue), `SPRING_DATASOURCE_*` (sync:false — set in dashboard), Upstash Kafka SASL vars.
+
+**Commit hash: (pending)**
+
+---
+
 ## 2026-06-12 — Session 23 (Phase 7: Observability + DevOps)
 
 ### Changes

@@ -7,12 +7,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class SpaFallbackController {
 
-    // /{*path} is the Spring Boot 3 / PathPatternParser-compatible way to match
-    // all paths greedily. We exclude paths with dots so static assets (/main.js,
-    // /main.css) fall through to the default resource handler.
     @GetMapping("/{*path}")
     public String forward(@PathVariable String path) {
-        if (path.contains(".")) {
+        if (path.contains(".")
+                || path.startsWith("/api/")
+                || path.startsWith("/actuator")
+                || path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs")) {
             return null;
         }
         return "forward:/index.html";

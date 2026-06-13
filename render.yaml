@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: ledgerbridge
+    runtime: docker
+    plan: free
+    healthCheckPath: /actuator/health/liveness
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: demo
+      # ── Database — set in Render dashboard (Supabase direct connection) ──────
+      # Use port 5432, NOT the PgBouncer pooler at 6543.
+      # Flyway and JPA prepared statements require a direct connection.
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      # ── Auth ─────────────────────────────────────────────────────────────────
+      - key: JWT_SECRET
+        generateValue: true
+      # ── Kafka — Upstash SASL/PLAIN ───────────────────────────────────────────
+      - key: SPRING_KAFKA_BOOTSTRAP_SERVERS
+        sync: false
+      - key: SPRING_KAFKA_PROPERTIES_SASL_JAAS_CONFIG
+        sync: false
+      - key: SPRING_KAFKA_PROPERTIES_SASL_MECHANISM
+        value: PLAIN
+      - key: SPRING_KAFKA_PROPERTIES_SECURITY_PROTOCOL
+        value: SASL_SSL

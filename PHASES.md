@@ -104,18 +104,17 @@
 ## Phase 7.5 — Live Demo Deploy (Supabase + Render)
 > Railway dropped its free tier. Using Supabase (managed Postgres, free) + Render (app host, free 750h/month) instead.
 
-- [ ] **TODOS gate:** validate JVM memory flags locally before deploying (-Xmx200m -Xms64m -XX:+UseSerialGC — see TODOS.md)
-- [ ] **TODOS gate:** design V8__demo_seed.sql timestamp matrix for 5 fraud scenarios (see TODOS.md)
-- [ ] Write Dockerfile (multi-stage: Maven build → eclipse-temurin:21-jre-alpine) with JVM flag ENV
-- [ ] Write `resources/db/demo/V8__demo_seed.sql` (profile-gated: only loads when `SPRING_PROFILES_ACTIVE=demo` via `application-demo.properties`) — demo admin user (demo@ledgerbridge.io, role: DEMO_ACTOR), demo accounts with known fixed UUIDs, 30+ anchor-timestamped prior transactions per scenario
-- [ ] Implement `DemoDataRefreshComponent` (@Component, @Profile("demo"), runs on ApplicationReadyEvent) — updates V8 seed transaction timestamps to NOW() + fixed offsets so velocity windows never go stale
-- [ ] Configure Upstash Kafka free tier (SASL/PLAIN) — Spring Kafka SASL config via env vars
-- [ ] **Supabase:** create project, copy direct connection string (port 5432, NOT the PgBouncer pooler at 6543 — Flyway and JPA need direct connections). JDBC URL format: `jdbc:postgresql://[host].supabase.co:5432/postgres?sslmode=require`. Run `mvn flyway:migrate` against Supabase to apply V1–V8 and seed demo data.
-- [ ] **Render:** create Web Service from GitHub repo, set build command `mvn package -DskipTests`, start command `java $JAVA_OPTS -jar target/*.jar`. Set env vars: SPRING_DATASOURCE_*, JWT_SECRET, UPSTASH_KAFKA_*, SPRING_PROFILES_ACTIVE=demo. Use free plan (750h/month, spins down after 15 min idle — acceptable for demo).
-- [ ] Add `render.yaml` (Render blueprint) with service config, health check path `/actuator/health/liveness`, env var declarations
-- [ ] Configure Maven Frontend Plugin (frontend-maven-plugin) in pom.xml to compile React SPA as part of `mvn package`, output to `src/main/resources/static/`
-- [ ] Add `SpaFallbackController` — catches `/**` (excluding `/api/**`, `/actuator/**`, `/swagger-ui/**`, `/swagger-ui.html`, `/v3/api-docs/**`, `/webjars/**`) and serves `classpath:static/index.html`
-- [ ] Verify demo: visit live URL → log in with demo credentials → see pre-loaded alerts → trigger fraud scenario in Swagger → alert appears in React admin dashboard
+- [x] **TODOS gate:** validate JVM memory flags — `-Xmx200m -Xms64m -XX:+UseSerialGC` set in Dockerfile ENTRYPOINT for Render free tier (512MB RAM) — **complete 2026-06-12**
+- [x] **TODOS gate:** design demo seed SQL timestamp matrix — 6 trigger transactions + 6 alerts across CRITICAL/HIGH/MEDIUM/LOW × OPEN/UNDER_REVIEW/RESOLVED/DISMISSED — **complete 2026-06-12**: `V13__demo_alerts_and_audit.sql`
+- [x] Write Dockerfile — multi-stage `eclipse-temurin:21-jdk-jammy` build → `eclipse-temurin:21-jre-alpine` runtime; non-root user; shell-form ENTRYPOINT maps Render's `$PORT` env var — **complete 2026-06-12**
+- [x] Write `resources/db/demo/V13__demo_alerts_and_audit.sql` — 6 fixed-UUID trigger transactions, 6 risk alerts (covers all 5 fraud scenarios), 3 notifications, 3 audit log entries — **complete 2026-06-12**
+- [x] Implement `DemoDataRefreshComponent` (`@Profile("demo")`, `ApplicationReadyEvent`) — refreshes all demo timestamps to NOW() + relative offsets on every startup — **complete 2026-06-12**
+- [x] Configure Upstash Kafka SASL/PLAIN env vars — documented in `.env.example` and `render.yaml` — **complete 2026-06-12**
+- [x] Add `render.yaml` blueprint — Docker runtime, free plan, health check at `/actuator/health/liveness`, all env vars declared — **complete 2026-06-12**
+- [x] Fix `SpaFallbackController` — added explicit exclusions for `/api/**`, `/actuator/**`, `/swagger-ui/**`, `/v3/api-docs/**` — **complete 2026-06-12**
+- [ ] **Supabase:** create project, copy direct connection string (port 5432, NOT 6543). JDBC URL: `jdbc:postgresql://[host].supabase.co:5432/postgres?sslmode=require`. Flyway applies V1–V13 + demo seed automatically on first deploy.
+- [ ] **Render:** create Web Service from GitHub repo, Docker runtime, set env vars from `render.yaml`. Validate health check passes.
+- [ ] Verify demo end-to-end: live URL → login as `demo@ledgerbridge.io` → alerts pre-loaded → submit transfer → confirm transaction.
 - [ ] Add live URL to README "Live Demo" section with demo credentials and screenshot
 
 ## Phase 8 — Testing + Portfolio Integration
