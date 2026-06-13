@@ -12,7 +12,7 @@
 - **Demo password corrected**: seed hash resolves to `password` (not `demo1234`); login confirmed working at `https://ledgerbridge-i0c5.onrender.com`.
 - **Alerts dashboard verified**: 6 pre-seeded alerts loading correctly (CRITICAL / HIGH / MEDIUM / LOW), all status tabs present.
 
-**Commit hash: (pending)**
+**Commit hash: `200ad82`**
 
 ---
 
