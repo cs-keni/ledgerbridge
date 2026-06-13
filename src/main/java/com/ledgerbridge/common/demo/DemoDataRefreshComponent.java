@@ -45,14 +45,14 @@ public class DemoDataRefreshComponent {
         jdbc.update("UPDATE risk_alert SET created_at = NOW() - INTERVAL '2 days', reviewed_at = NOW() - INTERVAL '1 day 22 hours' WHERE id = 'aa000002-0000-0000-0000-000000000002'");
 
         // Notifications
-        jdbc.update("UPDATE notification SET created_at = NOW() - INTERVAL '25 minutes' WHERE id = 'n0000001-0000-0000-0000-000000000001'");
-        jdbc.update("UPDATE notification SET created_at = NOW() - INTERVAL '1 hour 12 minutes' WHERE id = 'n0000002-0000-0000-0000-000000000002'");
-        jdbc.update("UPDATE notification SET created_at = NOW() - INTERVAL '17 hours 45 minutes', read_at = NOW() - INTERVAL '16 hours' WHERE id = 'n0000003-0000-0000-0000-000000000003'");
+        jdbc.update("UPDATE notification SET created_at = NOW() - INTERVAL '25 minutes' WHERE id = '0b000001-0000-0000-0000-000000000001'");
+        jdbc.update("UPDATE notification SET created_at = NOW() - INTERVAL '1 hour 12 minutes' WHERE id = '0b000002-0000-0000-0000-000000000002'");
+        jdbc.update("UPDATE notification SET created_at = NOW() - INTERVAL '17 hours 45 minutes', read_at = NOW() - INTERVAL '16 hours' WHERE id = '0b000003-0000-0000-0000-000000000003'");
 
         // Audit log (occurred_at, not created_at)
-        jdbc.update("UPDATE audit_log SET occurred_at = NOW() - INTERVAL '2 hours 45 minutes' WHERE id = 'au000001-0000-0000-0000-000000000001'");
-        jdbc.update("UPDATE audit_log SET occurred_at = NOW() - INTERVAL '17 hours' WHERE id = 'au000002-0000-0000-0000-000000000002'");
-        jdbc.update("UPDATE audit_log SET occurred_at = NOW() - INTERVAL '1 day 22 hours' WHERE id = 'au000003-0000-0000-0000-000000000003'");
+        jdbc.update("UPDATE audit_log SET occurred_at = NOW() - INTERVAL '2 hours 45 minutes' WHERE id = '0a000001-0000-0000-0000-000000000001'");
+        jdbc.update("UPDATE audit_log SET occurred_at = NOW() - INTERVAL '17 hours' WHERE id = '0a000002-0000-0000-0000-000000000002'");
+        jdbc.update("UPDATE audit_log SET occurred_at = NOW() - INTERVAL '1 day 22 hours' WHERE id = '0a000003-0000-0000-0000-000000000003'");
 
         log.info("Demo profile: timestamp refresh complete");
     }

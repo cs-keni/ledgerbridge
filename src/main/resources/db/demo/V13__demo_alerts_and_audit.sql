@@ -154,7 +154,7 @@ INSERT INTO risk_alert (
 
 INSERT INTO notification (id, user_id, type, title, body, read_at, created_at)
 VALUES
-    ('n0000001-0000-0000-0000-000000000001',
+    ('0b000001-0000-0000-0000-000000000001',
      'f0000006-0000-0000-0000-000000000006',
      'RISK_ALERT',
      'CRITICAL alert: Eve Santos',
@@ -162,7 +162,7 @@ VALUES
      NULL,
      NOW() - INTERVAL '25 minutes'),
 
-    ('n0000002-0000-0000-0000-000000000002',
+    ('0b000002-0000-0000-0000-000000000002',
      'f0000006-0000-0000-0000-000000000006',
      'RISK_ALERT',
      'HIGH alert: Carol HighAmount',
@@ -170,7 +170,7 @@ VALUES
      NULL,
      NOW() - INTERVAL '1 hour 12 minutes'),
 
-    ('n0000003-0000-0000-0000-000000000003',
+    ('0b000003-0000-0000-0000-000000000003',
      'f0000006-0000-0000-0000-000000000006',
      'RISK_ALERT',
      'Alert resolved: Alice Normal',
@@ -184,7 +184,7 @@ INSERT INTO audit_log (
     id, entity_type, entity_id, action, user_id,
     new_values, outcome, occurred_at
 ) VALUES
-    ('au000001-0000-0000-0000-000000000001',
+    ('0a000001-0000-0000-0000-000000000001',
      'RiskAlert',
      'bb000001-0000-0000-0000-000000000001',
      'ALERT_REVIEWED',
@@ -193,7 +193,7 @@ INSERT INTO audit_log (
      'SUCCESS',
      NOW() - INTERVAL '2 hours 45 minutes'),
 
-    ('au000002-0000-0000-0000-000000000002',
+    ('0a000002-0000-0000-0000-000000000002',
      'RiskAlert',
      'aa000001-0000-0000-0000-000000000001',
      'ALERT_REVIEWED',
@@ -202,7 +202,7 @@ INSERT INTO audit_log (
      'SUCCESS',
      NOW() - INTERVAL '17 hours'),
 
-    ('au000003-0000-0000-0000-000000000003',
+    ('0a000003-0000-0000-0000-000000000003',
      'RiskAlert',
      'aa000002-0000-0000-0000-000000000002',
      'ALERT_REVIEWED',

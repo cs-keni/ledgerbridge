@@ -4,6 +4,17 @@
 
 ---
 
+## 2026-06-12 — Session 26 (Phase 7.5: Fix V13 UUID syntax error)
+
+### Changes
+
+- **`db/demo/V13__demo_alerts_and_audit.sql`**: Fixed 6 invalid UUIDs. Notification IDs `n0000001-3` used `n` (not a hex digit); audit log IDs `au000001-3` used `u` (not a hex digit). Replaced with valid hex prefixes: `0b000001-3` (notifications) and `0a000001-3` (audit log). V1–V12 were already applied; V13 will re-run on next deploy.
+- **`DemoDataRefreshComponent.java`**: Updated UPDATE statements to use the corrected UUIDs, matching V13.
+
+**Commit hash: (pending)**
+
+---
+
 ## 2026-06-12 — Session 25 (Phase 7.5: Disable Kafka in demo profile)
 
 ### Changes
