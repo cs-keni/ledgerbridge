@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.dao.DataIntegrityViolationException;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -30,7 +32,14 @@ public class AccountService {
         account.setUserId(userId);
         account.setType(request.type());
         account.setCurrency(request.currency() != null ? request.currency() : "USD");
-        return AccountResponse.from(accountRepository.save(account));
+        try {
+            return AccountResponse.from(accountRepository.save(account));
+        } catch (DataIntegrityViolationException e) {
+            // Two concurrent threads generated the same number and both passed the
+            // pre-check — retry once with a new number (probability ~10^-24 of repeat).
+            account.setAccountNumber(generateAccountNumber());
+            return AccountResponse.from(accountRepository.save(account));
+        }
     }
 
     public List<AccountResponse> getAccountsByUser(UUID userId) {

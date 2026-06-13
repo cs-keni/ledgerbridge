@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-06-13 — Session 28 (Full codebase review — fix P1/P2/P3 findings)
+
+### Changes
+
+- **`TransactionService.java`**: P1 fix — `requireOwnedActiveAccount` now uses `findByIdWithLock` (PESSIMISTIC_WRITE) instead of `findById`. Concurrent deposit/withdraw to the same account previously had a lost-update race; transfer already used the lock but deposit/withdraw did not.
+- **`AlertService.java`**: P2 fix — `getAlertsByStatus` now throws `AppException(400 BAD_REQUEST)` on an unrecognized status string instead of silently falling back to all-alerts.
+- **`SecurityConfig.java`**: P2 fix — added `.requestMatchers("/actuator/**").hasAnyRole("ADMIN")` (after the `/actuator/health/**` permitAll rule) so `/actuator/metrics` and `/actuator/prometheus` require authentication.
+- **`AccountService.java`**: P3 fix — `createAccount` now catches `DataIntegrityViolationException` on the save and retries with a fresh account number, matching the pattern used in `AlertService` and `CustomerRiskProfileService`.
+- **`AuditLog.java`**: P3 fix — added `entityIdArgIndex()` attribute (default 0) so callers declare which UUID argument is the entity ID rather than relying on implicit position.
+- **`AuditAspect.java`**: P3 fix — `extractEntityId` uses `argIndex` from the annotation instead of scanning for the first UUID.
+- **`RiskEngine.java`**: P3 clarification — added comment that `AlertSeverity.LOW` is never produced by the live engine (only present in seeded demo data).
+
+**Commit hash: TBD**
+
+---
+
 ## 2026-06-13 — Session 27 (Phase 7.5: Fix SPA fallback + deploy live)
 
 ### Live URL

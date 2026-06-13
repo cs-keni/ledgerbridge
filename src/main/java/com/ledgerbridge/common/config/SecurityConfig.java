@@ -43,6 +43,7 @@ public class SecurityConfig {
                                 "/v3/api-docs/**", "/webjars/**"
                         ).permitAll()
                         .requestMatchers("/actuator/health/**").permitAll()
+                        .requestMatchers("/actuator/**").hasAnyRole("ADMIN")
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
                 )

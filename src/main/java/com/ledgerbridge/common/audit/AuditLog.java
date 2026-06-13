@@ -17,4 +17,6 @@ import java.lang.annotation.Target;
 public @interface AuditLog {
     AuditAction action();
     String entityType() default "";
+    /** Zero-based index of the UUID argument that identifies the audited entity. */
+    int entityIdArgIndex() default 0;
 }

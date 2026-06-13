@@ -135,8 +135,10 @@ public class TransactionService {
 
     // ── helpers ──────────────────────────────────────────────────────────────
 
+    // Uses PESSIMISTIC_WRITE so concurrent deposit/withdraw to the same account
+    // serialize at the DB level and cannot produce a lost update.
     private Account requireOwnedActiveAccount(UUID accountId, UUID userId) {
-        Account account = accountRepository.findById(accountId)
+        Account account = accountRepository.findByIdWithLock(accountId)
                 .filter(a -> a.getUserId().equals(userId))
                 .orElseThrow(() -> new AppException("Account not found", HttpStatus.NOT_FOUND));
         requireActiveStatus(account);

@@ -91,6 +91,8 @@ public class RiskEngine {
         }
     }
 
+    // ALERT_THRESHOLD is 0.4, so any live alert is at minimum MEDIUM.
+    // AlertSeverity.LOW exists in the enum but is only produced by seeded demo data.
     private AlertSeverity resolveSeverity(double score) {
         if (score >= 0.8) return AlertSeverity.CRITICAL;
         if (score >= 0.6) return AlertSeverity.HIGH;

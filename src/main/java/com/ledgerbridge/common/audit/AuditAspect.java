@@ -31,7 +31,7 @@ public class AuditAspect {
             throw ex;
         } finally {
             String entityType = resolveEntityType(auditLog, pjp);
-            UUID entityId     = extractEntityId(pjp.getArgs());
+            UUID entityId     = extractEntityId(pjp.getArgs(), auditLog.entityIdArgIndex());
             UUID userId       = resolveUserId();
             String ip         = resolveIp();
             String corrId     = MDC.get("correlationId");
@@ -44,12 +44,10 @@ public class AuditAspect {
         return pjp.getTarget().getClass().getSimpleName();
     }
 
-    private UUID extractEntityId(Object[] args) {
-        if (args == null) return null;
-        for (Object arg : args) {
-            if (arg instanceof UUID uuid) return uuid;
-        }
-        return null;
+    private UUID extractEntityId(Object[] args, int argIndex) {
+        if (args == null || args.length == 0) return null;
+        Object arg = args[argIndex < args.length ? argIndex : 0];
+        return arg instanceof UUID uuid ? uuid : null;
     }
 
     private UUID resolveUserId() {

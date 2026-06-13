@@ -86,7 +86,7 @@ public class AlertService {
             return riskAlertRepository.findByStatusOrderByCreatedAtDesc(status, pageable)
                     .map(RiskAlertResponse::from);
         } catch (IllegalArgumentException e) {
-            return getAlerts(pageable);
+            throw new AppException("Invalid alert status: " + statusStr, HttpStatus.BAD_REQUEST);
         }
     }
 
