@@ -25,7 +25,7 @@
 - **`.env.example`**: Added `SPRING_KAFKA_BOOTSTRAP_SERVERS` and `GRAFANA_PASSWORD` entries. Updated JWT_SECRET generation hint to use `openssl rand -hex 32`.
 - **`PHASES.md`**: Phase 6 `/qa` task marked complete; Phase 7 block replaced with fully checked tasks.
 
-**Commit hash: (see below)**
+**Commit hash: `5d308b3`**
 
 ---
 
