@@ -14,7 +14,7 @@
 - **`application-demo.properties`**: Added `spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration` — prevents Spring from trying to connect to a Kafka broker at startup. Kafka disabled because Upstash Kafka and CloudKarafka both deprecated/shut down in 2024–2025; no free managed Kafka tier available. Full pipeline runs locally via Docker Compose.
 - **`render.yaml`**: Removed Kafka env var declarations (no longer needed).
 
-**Commit hash: (pending)**
+**Commit hash: `20629ab`**
 
 ---
 
