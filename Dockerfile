@@ -33,5 +33,6 @@ EXPOSE 10000
 ENTRYPOINT ["sh", "-c", \
   "exec java -Xmx200m -Xms64m -XX:+UseSerialGC \
    -Djava.security.egd=file:/dev/./urandom \
+   -Djava.net.preferIPv4Stack=true \
    -Dserver.port=${PORT:-8080} \
    -jar /app/app.jar"]
