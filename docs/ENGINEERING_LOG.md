@@ -4,6 +4,18 @@
 
 ---
 
+## 2026-06-13 — Session 29 (Demo verification + V14 migration)
+
+### Changes
+
+- **`V14__demo_actor_accounts.sql`**: New migration — adds a CHECKING ($10,000) and SAVINGS ($25,000) account for the DEMO_ACTOR user (`demo@ledgerbridge.io`), plus a customer risk profile baseline. Without this, the Transfer page showed "No active accounts" making the demo golden path impossible.
+- **Demo password corrected**: seed hash resolves to `password` (not `demo1234`); login confirmed working at `https://ledgerbridge-i0c5.onrender.com`.
+- **Alerts dashboard verified**: 6 pre-seeded alerts loading correctly (CRITICAL / HIGH / MEDIUM / LOW), all status tabs present.
+
+**Commit hash: (pending)**
+
+---
+
 ## 2026-06-13 — Session 28 (Full codebase review — fix P1/P2/P3 findings)
 
 ### Changes
