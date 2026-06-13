@@ -112,9 +112,9 @@
 - [x] Configure Upstash Kafka SASL/PLAIN env vars — documented in `.env.example` and `render.yaml` — **complete 2026-06-12**
 - [x] Add `render.yaml` blueprint — Docker runtime, free plan, health check at `/actuator/health/liveness`, all env vars declared — **complete 2026-06-12**
 - [x] Fix `SpaFallbackController` — added explicit exclusions for `/api/**`, `/actuator/**`, `/swagger-ui/**`, `/v3/api-docs/**` — **complete 2026-06-12**
-- [ ] **Supabase:** create project, copy direct connection string (port 5432, NOT 6543). JDBC URL: `jdbc:postgresql://[host].supabase.co:5432/postgres?sslmode=require`. Flyway applies V1–V13 + demo seed automatically on first deploy.
-- [ ] **Render:** create Web Service from GitHub repo, Docker runtime, set env vars from `render.yaml`. Validate health check passes.
-- [ ] Verify demo end-to-end: live URL → login as `demo@ledgerbridge.io` → alerts pre-loaded → submit transfer → confirm transaction.
+- [x] **Supabase:** create project, copy direct connection string (port 5432, NOT 6543). JDBC URL: `jdbc:postgresql://[host].supabase.co:5432/postgres?sslmode=require`. Flyway applies V1–V14 + demo seed automatically on first deploy — **complete 2026-06-12**
+- [x] **Render:** create Web Service from GitHub repo, Docker runtime, set env vars from `render.yaml`. Validate health check passes — **complete 2026-06-12**: `https://ledgerbridge-i0c5.onrender.com`
+- [ ] Verify demo end-to-end: live URL → login as `demo@ledgerbridge.io` → alerts pre-loaded → submit transfer → confirm transaction. (V14 migration pending redeploy — commit `200ad82`)
 - [ ] Add live URL to README "Live Demo" section with demo credentials and screenshot
 
 ## Phase 8 — Testing + Portfolio Integration
