@@ -20,7 +20,7 @@
 - **`Dockerfile`** (NEW): Multi-stage — `eclipse-temurin:21-jdk-jammy` build stage (Maven + frontend-maven-plugin builds React bundle into `target/classes/static/`); `eclipse-temurin:21-jre-alpine` runtime stage. Non-root user `ledgerbridge`. Shell-form ENTRYPOINT maps Render's `${PORT}` env var to `-Dserver.port`. JVM flags: `-Xmx200m -Xms64m -XX:+UseSerialGC` (tuned for Render free 512MB RAM).
 - **`render.yaml`** (NEW): Render blueprint. Docker runtime, free plan, health check at `/actuator/health/liveness`. Env vars: `SPRING_PROFILES_ACTIVE=demo`, `JWT_SECRET` (generateValue), `SPRING_DATASOURCE_*` (sync:false — set in dashboard), Upstash Kafka SASL vars.
 
-**Commit hash: (pending)**
+**Commit hash: `540786f`**
 
 ---
 
