@@ -9,7 +9,7 @@ WORKDIR /workspace
 # Cache the Maven dependency layer separately from application source.
 COPY pom.xml mvnw ./
 COPY .mvn .mvn
-RUN ./mvnw dependency:go-offline -q
+RUN chmod +x mvnw && ./mvnw dependency:go-offline -q
 
 # Copy source and build the fat jar + React bundle in one pass.
 COPY src src
