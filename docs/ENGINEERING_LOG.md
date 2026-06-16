@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-06-16 — Session 30 (Phase 8 — README)
+
+### Changes
+
+- **`README.md`** (NEW): Polished portfolio README. Includes live demo badge + URL (`https://ledgerbridge-i0c5.onrender.com`), demo credentials, Mermaid architecture diagram, risk engine explanation (weighted scoring + escalation tiers), full stack table, fraud scenario table, API surface, known limitations (no transactional outbox, SSE Render cold start), project structure, ADR index, and author section.
+
+**Commit hash: TBD**
+
+---
+
 ## 2026-06-13 — Session 29 (Demo verification + V14 migration)
 
 ### Changes

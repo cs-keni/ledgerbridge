@@ -120,7 +120,7 @@
 ## Phase 8 — Testing + Portfolio Integration
 - [ ] Testcontainers integration tests: full transaction→risk flow
 - [ ] Verify test coverage on all four risk engine rules
-- [ ] Write polished README with Mermaid architecture diagram, live demo URL, demo credentials, risk engine explanation, architecture decisions overview
+- [x] Write polished README with Mermaid architecture diagram, live demo URL, demo credentials, risk engine explanation, architecture decisions overview — **complete 2026-06-16**
 - [ ] Take screenshots of key pages (risk alert feed, risk score gauge, Swagger fraud scenario — use demo seed data)
 - [ ] Write 10-15 Architecture Decision Records in `docs/adr/` covering: UUID PKs, NUMERIC(19,4), Flyway, Kafka userId keying, @TransactionalEventListener, Welford's algorithm, @RetryableTopic, SseEmitter, pessimistic locking + fixed ordering, idempotency keys, correlation IDs, JSONB + Hypersistence, RiskRuleResult record, @AuditLog naming, composite indexes
 - [ ] Draft technical blog post (CC drafts from AI_CONTEXT.md, Kenny edits — publish to dev.to after Phase 7.5 live URL exists, share on LinkedIn with live demo URL)

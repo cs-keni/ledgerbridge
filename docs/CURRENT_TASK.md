@@ -5,11 +5,16 @@
 
 ## Active Task
 
-**Phase 7 — Observability + DevOps complete (2026-06-12) — next: Phase 7.5 (Railway deploy)**
+**Phase 8 — Portfolio Integration (in progress, 2026-06-16)**
 
-Phase 7 shipped: custom risk-engine Prometheus metrics (RiskMetrics.java), Prometheus + Grafana in docker-compose, GitHub Actions CI (backend + frontend jobs), `.env.example` updated.
+Phase 7.5 complete and verified: `https://ledgerbridge-i0c5.onrender.com` passes full golden path.
 
-**Phase 7.5 scope:** Supabase (managed Postgres) + Render (app host, free 750h/month) instead of Railway. Dockerfile, V8 demo seed SQL, DemoDataRefreshComponent, Upstash Kafka SASL, render.yaml blueprint.
+Phase 8 current progress:
+- [x] README.md (polished, Mermaid diagram, live demo badges, risk engine explanation, ADR index)
+- [ ] `docs/adr/` — 15 ADRs (ADR-001 through ADR-015)
+- [ ] Technical blog post (draft from AI_CONTEXT.md)
+- [ ] ePortfolio entry
+- [ ] Final `/review` + `/qa` pass
 
 ---
 
