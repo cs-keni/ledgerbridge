@@ -1,48 +1,31 @@
 # HANDOFF.md — LedgerBridge
 
 > Update this whenever architecture, module ownership, or component structure changes.
-> Last updated: 2026-06-11
+> Last updated: 2026-06-16
 
 ## Current Status
 
-**Phase: 6 — Frontend (in progress)**
+**Phase: 8 — Portfolio Integration (in progress)**
 
-All planning gates cleared:
-- `/plan-eng-review` ✅ Done 2026-06-05: 18 decisions locked (D2–D18), Codex outside voice, 6 TODOs
-- `/plan-ceo-review` ✅ Done 2026-06-10: 4 scope expansions accepted, Codex outside voice, 3 new TODOs
-- `/plan-eng-review` (CEO additions) ✅ Done 2026-06-10: 9 issues found, all resolved, D1–D10 locked
-- `/plan-design-review` ✅ Done 2026-06-10: `DESIGN.md` created, 11 decisions locked, score 2/10 → 8/10
-- `/plan-eng-review` (Phase 4) ✅ Done 2026-06-11: 11 issues (T1–T11), all P1 fixes approved
-- `/review` (Phase 4) ✅ Done 2026-06-12: 8 critical fixes shipped, 84/84 tests passing
-- `/plan-eng-review` (Phase 5) ✅ Done 2026-06-12: 3 decisions locked (D1/D2/D3), full scope implemented, 89/89 tests passing
-- `/plan-eng-review` (Phase 6) ✅ Done 2026-06-12: 6 new decisions (D1–D6), Lane A + Lane B plan locked, TODOS.md P3 item written
+All phases shipped:
+- `/plan-eng-review` ✅ Done 2026-06-05: 18 decisions locked (D2–D18)
+- `/plan-ceo-review` ✅ Done 2026-06-10: 4 scope expansions, D1–D10 locked
+- `/plan-design-review` ✅ Done 2026-06-10: `DESIGN.md` created, 11 decisions locked
+- Phase 0–7 ✅ All shipped (see ENGINEERING_LOG.md for per-session detail)
+- Phase 7.5 ✅ Live at `https://ledgerbridge-i0c5.onrender.com` (Supabase + Render)
+- Phase 8 in progress: README done; ADRs, blog post, ePortfolio, final /review + /qa remaining
 
-**Portfolio strategy locked** — see `docs/designs/portfolio-strategy.md` for the full CEO plan.
-**Design system locked** — see `DESIGN.md` for all Phase 6 component specs (updated: SSE now uses fetch+ReadableStream, not EventSource).
-
-Phase 6 Lane A + B shipped. See Last Agent Action below.
+**Portfolio strategy locked** — see `docs/designs/portfolio-strategy.md`
+**Design system locked** — see `DESIGN.md` (SSE uses fetch+ReadableStream, not EventSource)
 
 ## Last Agent Action
 
-Claude Code (2026-06-12): Phase 6 Lane A (backend fixes) + Lane B (frontend scaffold + build plugin). 89/89 tests passing.
+Claude Code (2026-06-16): Phase 8 — README.md created (commit `cdcafd6`).
 
-**Lane A — backend fixes:**
-- `SecurityConfig.java`: `/api/admin/**` now requires `hasAnyRole("ADMIN", "DEMO_ACTOR")`; `anyRequest().permitAll()` for SPA routes
-- `V12__add_demo_actor.sql` (NEW): DEMO_ACTOR user `demo@ledgerbridge.io` (password "password")
-- `risk/dto/AlertDetailResponse.java` (NEW): enriched DTO (alert + transaction + account join)
-- `risk/service/AlertService.java`: `getAlertById()` returns `AlertDetailResponse` with 2-step join
-- `risk/controller/AlertController.java`: `getById()` returns `AlertDetailResponse`
-- `audit/service/AuditService.java`: added `listAll(Pageable)`
-- `audit/controller/AuditController.java`: `entityType`/`entityId` now `required = false`; falls back to `listAll()`
-- `risk/service/SseAlertService.java`: timeout `-1L` (no timeout) + 15s heartbeat via `ScheduledExecutorService`
-- `SchemaIntegrationTest.java`: updated count assertion 5 → 6 (V12 adds DEMO_ACTOR)
-
-**Lane B — frontend scaffold + build:**
-- `pom.xml`: `frontend-maven-plugin` 1.15.1, bound to `prepare-package` (skipped by `./mvnw test`)
-- `common/config/SpaFallbackController.java` (NEW): extension-free SPA fallback, `/` + `/**/{path:[^\\.]*}`
-- `frontend/` scaffold: package.json, vite.config.ts, tailwind.config.ts, tsconfig.json, postcss.config.js, index.html, vite-env.d.ts
-- `frontend/src/`: main.tsx, index.css, App.tsx, types/api.ts, stores/authStore.ts, components/auth/ProtectedRoute.tsx, pages/LoginPage.tsx, pages/RegisterPage.tsx
-- `DESIGN.md`: updated SSE auto-reconnect description to `useAlertStream` hook
+- `README.md` (NEW): Mermaid architecture diagram, live demo badge + URL, demo credentials, risk engine explanation (weights + escalation tiers), fraud scenario table, full API surface, known limitations, ADR index, project structure map.
+- `docs/CURRENT_TASK.md`: updated to reflect Phase 8 in progress.
+- `docs/ENGINEERING_LOG.md`: Session 30 entry added.
+- `PHASES.md`: README checkbox marked complete.
 
 ## Previous Agent Action
 
@@ -88,21 +71,11 @@ Claude Code (2026-06-10): Completed Phase 0 scaffold. See ENGINEERING_LOG.md Ses
 
 ## What's Next
 
-**Phase 4 — Risk Engine (Core Differentiator)**
-
-Two TODOS gates must be locked before implementation:
-1. **Baseline-poisoning mitigation** — Exclude alert-triggering transactions from Welford's update? Hold until review clears? Affects evaluation order in the Kafka consumer.
-2. **GraphPatternRule traversal bounds** — Max hops, time window, counterparty-count ceiling. Critical gap from failure-mode review; must be a mini-design before writing the rule.
-
-Then implement (in order):
-1. `CustomerRiskProfile` update logic (Welford's online algorithm, bounded recent-N window per D6)
-2. `AmountAnomalyRule` (Z-score)
-3. `VelocityRule` (sliding window, single conditional-aggregation query per D17)
-4. `BehavioralBaselineRule` (time-of-day, MCC, counterparties per D16)
-5. `GraphPatternRule` (fan-in/fan-out/round-trip — within locked traversal bounds)
-6. `RiskEngine` (weighted score via `RiskRuleResult` records per D9, alert creation, thresholds per D14)
-7. `TransactionRiskConsumer` (Kafka consumer, `@RetryableTopic` per D7, idempotency dedupe per D2)
-8. Unit tests per fraud scenario matrix; integration test: transaction → Kafka → risk consumer → alert
+**Phase 8 remaining:**
+1. `docs/adr/` — 15 Architecture Decision Records (ADR-001 through ADR-015)
+2. Technical blog post draft
+3. ePortfolio entry (`src/data/projects.js`)
+4. Final `/review` + `/qa` pass before demo screenshots + video
 
 ## Module Ownership / Status
 
@@ -111,11 +84,11 @@ Then implement (in order):
 | auth | ✅ Complete | JwtService, AuthService, AuthController, UserPrincipal, JwtAuthenticationFilter, SecurityConfig |
 | account | ✅ Complete | AccountService, AccountController |
 | transaction | ✅ Complete | TransactionService, TransactionController, TransactionEventProducer, IdempotencyService |
-| risk | Not started | — |
-| audit | Not started | — |
-| notification | Not started | — |
-| common | Active | CorrelationIdFilter, OpenApiConfig, SecurityConfig, KafkaConfig, GlobalExceptionHandler, AppException |
-| frontend | Not started | — |
+| risk | ✅ Complete | RiskEngine, AmountAnomalyRule, VelocityRule, BehavioralBaselineRule, GraphPatternRule, TransactionRiskConsumer, AlertService, CustomerRiskProfileService, AlertController, SseAlertService |
+| audit | ✅ Complete | AuditAspect (@AuditLog AOP), AuditService, AuditController |
+| notification | ✅ Complete | NotificationService, NotificationController |
+| common | ✅ Complete | CorrelationIdFilter, OpenApiConfig, SecurityConfig, KafkaConfig, GlobalExceptionHandler, AppException, IdempotencyService, SpaFallbackController, DemoDataRefreshComponent |
+| frontend | ✅ Complete | React 18 SPA — AlertsPage, AlertDetailPanel, RiskGauge, DashboardPage, TransferPage, AuditLogPage, AccountsPage, LoginPage, RegisterPage, useAlertStream (SSE), authStore, sseStore |
 
 ## Architecture Notes
 
@@ -129,15 +102,11 @@ Modular monolith. Package: `com.ledgerbridge`. See `AI_CONTEXT.md` for full arch
 
 **Transfer deadlock prevention**: `AccountRepository.findByIdWithLock()` with `@Lock(PESSIMISTIC_WRITE)`. Lock acquisition order = ascending UUID comparison. Fixed in `TransactionService.transfer()`.
 
-## Open Design Work (Decisions Pending)
+## Open Design Work
 
-| Item | Gate | Notes |
-|---|---|---|
-| Baseline poisoning mitigation | Before Phase 4 | Exclude alerted txns from Welford's update? Hold until review? |
-| `GraphPatternRule` traversal bounds | Before Phase 4 | Max hops, time window, counterparty-count ceiling — mini-design required |
-| Risk-engine Prometheus metrics | Alongside Phase 7 | Instrument during Phase 4 so metrics land with the rule code |
-| JVM flag validation | Before Phase 7.5 | Confirm -Xmx200m -Xms64m -XX:+UseSerialGC fits Railway 512MB |
-| V8 demo seed timestamp matrix | Before Phase 7.5 | Depends on Phase 4 fraud-scenario validation matrix |
-| Upstash Kafka SASL/PLAIN spike | Before Phase 7.5 | Prove connectivity before building Railway deploy around it |
+No architectural decisions pending. All TODOS gates resolved through Phase 7.5.
 
-See `TODOS.md` for full detail on each item.
+Known accepted tradeoffs (document in README, no code change required):
+- No Transactional Outbox — Kafka publish can fail silently after DB commit. Documented in README.
+- SSE drops on Render reverse proxy — client reconnects with backoff; polling keeps alert counts fresh. Documented in README.
+- Approximate Kafka ordering on retry — idempotency keys prevent duplicates but not ordering.

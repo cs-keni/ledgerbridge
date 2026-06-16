@@ -1,13 +1,13 @@
 # AI_CONTEXT.md — LedgerBridge
 
 > **Read this first.** All architectural and implementation decisions live here.
-> Last updated: 2026-06-11 (Phase 3 complete)
+> Last updated: 2026-06-16 (Phase 7.5 complete — Phase 8 in progress)
 
 ---
 
 ## Project State
 
-**Phase 3 COMPLETE. Phase 4 (Risk Engine) is next.**
+**Phase 7.5 COMPLETE. Phase 8 (Portfolio Integration) in progress.**
 
 | Gate | Status | Date |
 |---|---|---|
@@ -17,10 +17,21 @@
 | `/plan-design-review` | ✅ CLEAR | 2026-06-10 |
 | Phase 0 implementation | ✅ SHIPPED | 2026-06-10 |
 | Phase 1 implementation | ✅ SHIPPED | 2026-06-11 |
-| Phase 2 TODOS gate (refresh-token rotation) | ✅ CLEAR | 2026-06-11 |
 | Phase 2 implementation | ✅ SHIPPED | 2026-06-11 |
-| Phase 3 TODOS gates (idempotency + correlation IDs) | ✅ CLEAR | 2026-06-11 |
 | Phase 3 implementation | ✅ SHIPPED | 2026-06-11 |
+| Phase 4 implementation | ✅ SHIPPED | 2026-06-12 |
+| Phase 5 implementation | ✅ SHIPPED | 2026-06-12 |
+| Phase 6 implementation | ✅ SHIPPED | 2026-06-12 |
+| Phase 7 implementation | ✅ SHIPPED | 2026-06-12 |
+| Phase 7.5 live deploy | ✅ LIVE | 2026-06-13 |
+| Phase 8 README | ✅ SHIPPED | 2026-06-16 |
+| Phase 8 ADRs | ⬜ Next | — |
+| Phase 8 /review + /qa | ⬜ Next | — |
+| Phase 8 demo screenshots + video | ⬜ After /review + /qa | — |
+
+**Live URL:** `https://ledgerbridge-i0c5.onrender.com`
+**Demo credentials:** `demo@ledgerbridge.io` / `password`
+**Tests:** 89/89 passing (Testcontainers, real DB + Kafka, 5 fraud scenario integration tests)
 
 Portfolio strategy: `docs/designs/portfolio-strategy.md`
 Design system: `DESIGN.md`
