@@ -125,7 +125,7 @@
 - [ ] Write 10-15 Architecture Decision Records in `docs/adr/` covering: UUID PKs, NUMERIC(19,4), Flyway, Kafka userId keying, @TransactionalEventListener, Welford's algorithm, @RetryableTopic, SseEmitter, pessimistic locking + fixed ordering, idempotency keys, correlation IDs, JSONB + Hypersistence, RiskRuleResult record, @AuditLog naming, composite indexes
 - [ ] Draft technical blog post (CC drafts from AI_CONTEXT.md, Kenny edits — publish to dev.to after Phase 7.5 live URL exists, share on LinkedIn with live demo URL)
 - [ ] Add project to ePortfolio (`src/data/projects.js`)
-- [ ] Final `/review` + `/qa` pass
+- [x] Final `/review` + `/qa` pass — **complete 2026-06-16**: /review (commit `fe54a0b`), /qa found+fixed 2 bugs: ISSUE-001 RiskGauge score display (`fadab39`), ISSUE-002 stats stale after review (`9f9b8f1`). Health: 72 → 95.
 
 ## GSTACK REVIEW REPORT
 

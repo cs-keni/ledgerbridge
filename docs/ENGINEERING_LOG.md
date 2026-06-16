@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-06-16 — Session 30 (Phase 8 — /qa pass)
+
+### Changes (qa pass)
+
+Two bugs found and fixed during /qa of the live Render deployment:
+
+- **ISSUE-001** (`AlertDetailPanel.tsx`, `RiskGauge.tsx`, `V15__fix_demo_rule_details.sql`): RiskGauge showed "0.01" for a 0.91-score CRITICAL alert because `riskScore / 100` was passed instead of `riskScore`. Also added plain-number fallback in `getRuleScore` and created V15 demo migration to normalize seed `rule_details` to the canonical engine format (`velocity`/`behavioral` keys, `{score, factors}` structure).
+- **ISSUE-002** (`AlertDetailPanel.tsx`): Stats cards (OPEN/CRITICAL/UNDER REVIEW) and sidebar badge stayed stale after reviewing an alert. Added `['alert-stats']` invalidation to the review mutation's `onSuccess`.
+
+QA report: `.gstack/qa-reports/qa-report-ledgerbridge-2026-06-16.md`  
+Health score: 72 → 95
+
+**Commit hashes: `fadab39` (ISSUE-001), `9f9b8f1` (ISSUE-002)**
+
+---
+
 ## 2026-06-16 — Session 30 (Phase 8 — README + /review fixes)
 
 ### Changes (review pass)
