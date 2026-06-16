@@ -57,6 +57,9 @@ const RULES = [
 
 function getRuleScore(ruleDetails: Record<string, unknown>, key: string): number {
   const entry = ruleDetails[key]
+  if (typeof entry === 'number') {
+    return Math.max(0, Math.min(1, entry))
+  }
   if (entry && typeof entry === 'object' && 'score' in entry) {
     return Math.max(0, Math.min(1, Number((entry as { score: unknown }).score) || 0))
   }
