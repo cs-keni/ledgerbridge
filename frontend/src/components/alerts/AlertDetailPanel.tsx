@@ -52,6 +52,7 @@ export function AlertDetailPanel({ alertId, onClose }: Props) {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['alerts'] })
       qc.invalidateQueries({ queryKey: ['alert-detail', alertId] })
+      qc.invalidateQueries({ queryKey: ['alert-stats'] })
       setNotes('')
     },
   })
