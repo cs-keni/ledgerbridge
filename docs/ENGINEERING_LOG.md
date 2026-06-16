@@ -11,7 +11,7 @@
 - **`AlertService.java`**: P2 fix — `getAlertById` error message changed from "Transaction not found for alert: {alertId}" to "Alert not found: {alertId}" to avoid leaking internal DB structure to callers.
 - **`README.md`**: Clarified demo loop — live Render URL shows pre-seeded fraud scenarios (Kafka disabled in demo profile by design); local run with Docker Compose gives full live SSE pipeline. Separated into two demo loops.
 
-**Commit hash: TBD**
+**Commit hash: `fe54a0b`**
 
 ---
 
