@@ -22,11 +22,18 @@
 
 > **Cold start:** Render's free tier sleeps after 15 minutes. First request takes 30–60 seconds to wake. Subsequent requests are fast.
 
-**Demo loop:**
-1. Log in → you land on the **Risk Alerts dashboard** (pre-seeded with fraud scenarios)
-2. Click an alert → inspect the **RiskGauge** showing the weighted score breakdown
-3. Go to **Transfer** → submit a deposit or transfer to trigger the live risk engine
-4. Watch the alert appear in the dashboard within seconds via Server-Sent Events
+**What the live URL shows:** Six pre-seeded fraud scenarios (CRITICAL, HIGH, MEDIUM — all severities and statuses). You can browse alerts, inspect the RiskGauge score breakdown, submit transactions, and review the audit log. Kafka-backed live alert generation requires a local run (see [Running Locally](#running-locally)).
+
+**Demo loop (live URL):**
+1. Log in → you land on the **Risk Alerts dashboard** (pre-seeded with fraud scenarios covering all five detection patterns)
+2. Click an alert → inspect the **RiskGauge** (270° animated arc, weighted rule breakdown, 0.4 threshold marker)
+3. Use the **Transfer** tab to trigger a deposit or transfer — transaction is recorded and shown in the audit log
+4. Check **Audit Log** and **Accounts** tabs to see the full data model in action
+
+**Demo loop (local — full live pipeline):**
+1. `docker-compose up -d && ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev`
+2. Submit a transfer via the UI or Swagger UI
+3. Watch the SSE alert appear in the dashboard within seconds as the risk engine processes the Kafka event
 
 ---
 

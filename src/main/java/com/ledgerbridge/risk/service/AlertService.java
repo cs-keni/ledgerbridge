@@ -69,7 +69,7 @@ public class AlertService {
         RiskAlert alert = riskAlertRepository.findById(alertId)
                 .orElseThrow(() -> new AppException("Alert not found: " + alertId, HttpStatus.NOT_FOUND));
         LedgerTransaction tx = transactionRepository.findById(alert.getTransactionId())
-                .orElseThrow(() -> new AppException("Transaction not found for alert: " + alertId, HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new AppException("Alert not found: " + alertId, HttpStatus.NOT_FOUND));
         Account account = accountRepository.findById(tx.getAccountId()).orElse(null);
         return AlertDetailResponse.from(alert, tx, account);
     }
