@@ -85,11 +85,11 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-accent hover:bg-accent-light disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium py-2.5 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-accent-light focus:ring-offset-2 focus:ring-offset-surface"
+            className="w-full bg-accent hover:bg-accent-light disabled:opacity-50 disabled:cursor-not-allowed text-[#0f0e0d] text-sm font-semibold py-2.5 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-accent-light focus:ring-offset-2 focus:ring-offset-surface"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" aria-hidden="true" />
+                <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" aria-hidden="true" />
                 Signing in…
               </span>
             ) : (
@@ -103,11 +103,6 @@ export default function LoginPage() {
             Register
           </Link>
         </p>
-        <div className="mt-5 px-4 py-3 rounded border border-border bg-surface text-center">
-          <p className="text-[11px] text-muted uppercase tracking-[0.05em] mb-1">Demo credentials</p>
-          <p className="font-mono text-[12px] text-text">demo@ledgerbridge.io</p>
-          <p className="font-mono text-[12px] text-text">password</p>
-        </div>
       </div>
     </div>
   )
