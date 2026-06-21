@@ -4,17 +4,18 @@ import { fetchAlertStats } from '../../api/alerts'
 import { useAuthStore } from '../../stores/authStore'
 import { useSseStore } from '../../stores/sseStore'
 
-const NAV = [
+const NAV_ALL = [
   { to: '/alerts', label: 'Risk Alerts', hasSseBadge: true },
   { to: '/audit', label: 'Audit Log' },
   { to: '/transfer', label: 'Transfer' },
   { to: '/accounts', label: 'Accounts' },
-  { to: '/dashboard', label: 'Dashboard' },
+  { to: '/dashboard', label: 'Dashboard', adminOnly: true },
 ]
 
 export function Sidebar() {
-  const { email, clearAuth } = useAuthStore()
+  const { email, role, clearAuth } = useAuthStore()
   const sseStatus = useSseStore((s) => s.status)
+  const NAV = NAV_ALL.filter((item) => !item.adminOnly || role === 'ADMIN')
   const navigate = useNavigate()
   const { data: stats } = useQuery({
     queryKey: ['alert-stats'],
@@ -53,7 +54,7 @@ export function Sidebar() {
             key={to}
             to={to}
             className={({ isActive }) =>
-              `flex items-center gap-2 px-3 py-2 rounded text-[11px] font-medium uppercase tracking-[0.05em] mb-0.5 transition-colors ${
+              `flex items-center gap-2 px-3 py-2.5 min-h-[40px] rounded text-[11px] font-medium uppercase tracking-[0.05em] mb-0.5 transition-colors ${
                 isActive
                   ? 'bg-accent/10 text-accent'
                   : 'text-muted hover:text-text hover:bg-surface'
@@ -94,7 +95,7 @@ export function Sidebar() {
         </p>
         <button
           onClick={handleLogout}
-          className="text-[11px] text-muted hover:text-text transition-colors"
+          className="text-[11px] text-muted hover:text-text transition-colors py-1.5 -ml-1 px-1"
         >
           Logout
         </button>
