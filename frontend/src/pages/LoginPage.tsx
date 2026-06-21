@@ -41,9 +41,14 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-bg flex items-center justify-center">
       <div className="w-full max-w-sm px-4">
-        <h1 className="text-[20px] font-bold text-text mb-8 text-center tracking-tight">
-          LedgerBridge
-        </h1>
+        <div className="text-center mb-8">
+          <h1 className="text-[20px] font-bold text-text tracking-tight">
+            LedgerBridge
+          </h1>
+          <p className="text-[12px] text-muted mt-1.5 tracking-wide uppercase">
+            Real-time transaction risk monitoring
+          </p>
+        </div>
         <form
           onSubmit={handleSubmit}
           className={`bg-surface border border-border rounded p-8 ${shake ? 'animate-shake' : ''}`}
