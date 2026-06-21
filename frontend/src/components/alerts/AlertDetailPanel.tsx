@@ -85,7 +85,7 @@ export function AlertDetailPanel({ alertId, onClose }: Props) {
             ref={closeBtnRef}
             onClick={onClose}
             aria-label="Close alert detail panel"
-            className="text-muted hover:text-text transition-colors text-xl leading-none focus:outline-none focus:ring-2 focus:ring-accent-light/60 rounded"
+            className="text-muted hover:text-text transition-colors text-xl leading-none focus:outline-none focus:ring-2 focus:ring-accent-light/60 rounded min-w-[36px] min-h-[36px] flex items-center justify-center -mr-1"
           >
             ×
           </button>
@@ -264,7 +264,7 @@ function ActionBtn({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`flex-1 px-3 py-1.5 rounded border text-[12px] font-medium transition-colors disabled:opacity-50 focus:outline-none focus:ring-1 focus:ring-accent-light/60 ${className}`}
+      className={`flex-1 px-3 py-2.5 rounded border text-[12px] font-medium transition-colors disabled:opacity-50 focus:outline-none focus:ring-1 focus:ring-accent-light/60 ${className}`}
     >
       {children}
     </button>
