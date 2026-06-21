@@ -81,8 +81,8 @@ export default function AlertsPage() {
 
       {/* Stat chips */}
       <div className="grid grid-cols-3 gap-3 mb-6">
-        <StatChip label="Open" value={openCount} color="#dc2626" />
-        <StatChip label="Critical" value={criticalCount} color="#ea580c" />
+        <StatChip label="Open" value={openCount} color="var(--color-text)" />
+        <StatChip label="Critical" value={criticalCount} color={criticalCount > 0 ? '#dc2626' : 'var(--color-muted)'} highlight={criticalCount > 0} />
         <StatChip label="Under Review" value={reviewCount} color="#d97706" />
       </div>
 
@@ -155,13 +155,15 @@ function StatChip({
   label,
   value,
   color,
+  highlight,
 }: {
   label: string
   value: number
   color: string
+  highlight?: boolean
 }) {
   return (
-    <div className="bg-surface border border-border rounded-lg px-4 py-3">
+    <div className={`bg-surface rounded-lg px-4 py-3 border transition-colors ${highlight ? 'border-critical/50' : 'border-border'}`}>
       <p className="text-[11px] text-muted uppercase tracking-[0.05em] mb-1">{label}</p>
       <p className="font-mono text-2xl font-bold" style={{ color }}>
         {value}
