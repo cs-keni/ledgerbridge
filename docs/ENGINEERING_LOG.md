@@ -4,6 +4,27 @@
 
 ---
 
+## 2026-06-20 — Session 31 (Phase 8 — /design-review pass)
+
+### Changes
+
+/design-review audit of all 5 pages (login, alerts/dashboard, audit log, transfer, accounts). 8 findings, all fixed:
+
+- **FINDING-001** (`LoginPage.tsx`): Added product tagline "REAL-TIME TRANSACTION RISK MONITORING" below wordmark. Login page previously had zero product context — a recruiter landing here had no idea what LedgerBridge does.
+- **FINDING-002** (`AlertsPage.tsx`): "Try a Demo Scenario →" CTA changed from near-invisible ghost (border-border + text-muted) to amber border + amber text. This is the most important CTA for portfolio demos.
+- **FINDING-003** (`AlertDetailPanel.tsx`): Close button (×) given `min-w-[36px] min-h-[36px]` with flex centering — was 13×20px, now a proper click target.
+- **FINDING-004** (`AlertsPage.tsx`): StatChip semantic color fix — OPEN now uses neutral text (not critical red), CRITICAL uses red only when count > 0 (with red border highlight), CRITICAL=0 shows muted.
+- **FINDING-005** (`Sidebar.tsx`): Dashboard nav item hidden for DEMO_ACTOR role — was redirecting to login, making it a broken dead-end during demos.
+- **FINDING-006** (`Sidebar.tsx`): Nav items changed from `py-2` (33px) to `py-2.5 min-h-[40px]` — closer to 44px touch target minimum.
+- **FINDING-007** (`AlertDetailPanel.tsx`): Action buttons (Dismiss, Resolve, Mark Under Review) changed from `py-1.5` (32px) to `py-2.5` (~40px).
+- **FINDING-008** (`Sidebar.tsx`): Logout button given `py-1.5 px-1` — was 17px tall, now taller touch target.
+
+Design system: Inter + Geist Mono confirmed correct. AI slop check clean — no purple gradients, no 3-column icon grids, no colored left-border cards. Overall aesthetic intentionally dense/utilitarian per DESIGN.md (Datadog/PagerDuty style).
+
+**Commit hashes:** `4db3968` (001), `3566364` (002), `04a3fdf` (003+007), `a0b8024` (004), `dfa4049` (005+006+008)
+
+---
+
 ## 2026-06-16 — Session 30 (Phase 8 — /qa pass)
 
 ### Changes (qa pass)
