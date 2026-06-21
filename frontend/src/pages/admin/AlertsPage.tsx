@@ -73,7 +73,7 @@ export default function AlertsPage() {
           href="/swagger-ui.html"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm px-4 py-2 border border-border rounded text-muted hover:text-text hover:border-text/40 transition-colors"
+          className="text-sm px-4 py-2 border border-accent rounded text-accent hover:bg-accent/10 transition-colors font-medium"
         >
           Try a Demo Scenario →
         </a>
