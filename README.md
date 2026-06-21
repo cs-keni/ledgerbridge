@@ -37,6 +37,14 @@
 
 ---
 
+## Screenshots
+
+| Risk Alert Feed | Risk Score Gauge | Swagger Fraud Scenario |
+|---|---|---|
+| ![Risk alert feed showing 6 alerts with severity badges](docs/screenshots/risk-alert-feed.png) | ![Alert detail panel showing RiskGauge at 0.91 CRITICAL with rule contribution bars](docs/screenshots/risk-score-gauge.png) | ![Swagger UI open on POST /api/transactions/transfer](docs/screenshots/swagger-fraud.png) |
+
+---
+
 ## What This Is
 
 LedgerBridge is a modular-monolith banking backend with a React admin dashboard. The core feature is a **statistical fraud detection engine** — not rule thresholds, but:

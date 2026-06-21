@@ -1,9 +1,8 @@
 # TODOS.md — LedgerBridge
 
-> Deferred design decisions surfaced during `/plan-eng-review` (2026-06-05).
-> Each item must be resolved (designed + decided) before the phase listed —
-> not bolted on afterward. Check off when the design is locked, not when the
-> code lands (code completion is tracked in PHASES.md).
+> Engineering planning doc — deferred design decisions from `/plan-eng-review` (2026-06-05).
+> **Project is portfolio-complete as of 2026-06-20.** Open items below are known
+> limitations intentionally deferred for portfolio scope. See README Known Limitations.
 
 ## Before Phase 1 (seed data)
 
@@ -83,7 +82,7 @@
   chip severity badges, WCAG 2.1 AA a11y standard, demo-aware empty state with Swagger
   link, SSE reconnecting indicator, 'Try a Demo Scenario →' in-app Swagger CTA.
 
-## Before Phase 7 (frontend polish / post-Phase 6)
+## Known Limitations (intentionally deferred for portfolio scope)
 
 - [ ] **Multi-tab refresh token replay (BroadcastChannel coordination)** — Two
   React tabs silently refreshing with the same stored refresh token cause
@@ -100,9 +99,9 @@
     README. A recruiter opening the demo in two tabs simultaneously will be logged
     out of both — acceptable for portfolio scope.
 
-## Before Phase 7.5 (Railway deploy)
+## N/A — Railway-specific (deployed to Render/Supabase instead)
 
-- [ ] **Validate JVM memory flags for Railway free tier** — Confirm that
+- [x] **Validate JVM memory flags for Railway free tier** — Confirm that
   `-Xmx200m -Xms64m -XX:+UseSerialGC` is sufficient for Spring Boot + Upstash
   Kafka consumer + PostgreSQL connection pool + Flyway + Spring Actuator to start
   and handle 5 concurrent fraud-scenario requests without OOM on Railway's ~512MB

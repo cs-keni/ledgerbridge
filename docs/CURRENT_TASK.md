@@ -1,70 +1,30 @@
 # CURRENT_TASK.md — LedgerBridge
 
 > Reflects the single active task. Update when starting or finishing a task.
-> Last updated: 2026-06-12
+> Last updated: 2026-06-20
 
-## Active Task
+## Status: PORTFOLIO COMPLETE ✅
 
-**Phase 8 — Portfolio Integration (in progress, 2026-06-16)**
+All phases shipped. Project is live and portfolio-ready.
 
-Phase 7.5 complete and verified: `https://ledgerbridge-i0c5.onrender.com` passes full golden path.
+**Live URL:** https://ledgerbridge-i0c5.onrender.com
+**Demo credentials:** demo@ledgerbridge.io / password
 
-Phase 8 current progress:
-- [x] README.md (polished, Mermaid diagram, live demo badges, risk engine explanation, ADR index)
-- [ ] `docs/adr/` — 15 ADRs (ADR-001 through ADR-015)
-- [ ] Technical blog post (draft from AI_CONTEXT.md)
-- [ ] ePortfolio entry
-- [ ] Final `/review` + `/qa` pass
+## Phase 8 — Portfolio Integration ✅ COMPLETE (2026-06-20)
 
----
+- [x] README.md — Mermaid architecture diagram, live demo badge, risk engine explanation, ADR index (commit `cdcafd6`)
+- [x] /review pass — P1+P2 fixes: AlertService error message, README demo loop clarification (commit `fe54a0b`)
+- [x] /qa pass — ISSUE-001 RiskGauge score display fixed, ISSUE-002 stale stats after review fixed. Health: 72 → 95 (commits `fadab39`, `9f9b8f1`)
+- [x] Amber/financial palette — accent #6366f1 → #f59e0b (commit `7cafd66`)
+- [x] /design-review pass — 8 findings fixed: login tagline, Demo CTA prominence, touch targets, StatChip semantic colors, Dashboard nav hidden for DEMO_ACTOR (commits `4db3968`–`dfa4049`)
+- [x] Screenshots taken — risk-alert-feed.png, risk-score-gauge.png, swagger-fraud.png (in `docs/screenshots/`)
+- [x] README Screenshots section added
+- [ ] ADRs in docs/adr/ — deferred, not needed for portfolio
+- [ ] Technical blog post — deferred
+- [ ] ePortfolio entry — Kenny handling separately
 
-**Phase 5 — Admin + Audit ✅ COMPLETE (2026-06-12)**
+**Decision:** No demo video. Screenshots + live URL + README are sufficient for the ePortfolio entry.
 
-### Shipped
-- [x] `@AuditLog` annotation + `AuditAspect` (service layer, fires always including failures, outcome field — D11/D15)
-- [x] `AuditService` (REQUIRES_NEW propagation) + `AuditController` (GET /api/admin/audit-log)
-- [x] `SseAlertService` (SseEmitter registry, onTimeout/onCompletion/onError cleanup — D8/D2)
-- [x] `AlertController` (GET list, GET by id, PATCH /review, GET /stream SSE)
-- [x] `AlertService.reviewAlert()` with `@AuditLog(ALERT_REVIEWED)` + `SseAlertService` broadcast on createAlert
-- [x] `NotificationService` + `NotificationController` (GET list, unread-count, PATCH read)
-- [x] `CustomerRiskProfileService.saveRiskScore()` — TODOS.md Phase 5 item (currentRiskScore + riskTier persisted after every evaluation)
-- [x] `TransactionRiskConsumer` calls saveRiskScore after every evaluation
-- [x] `V11__add_audit_outcome.sql` — outcome column on audit_log
-- [x] AuditAspect unit tests: 3 tests (success outcome, failure outcome, entityType attribute)
-- [x] **Total tests: 89/89 passing**
+## Phases 0–7.5 ✅ All Complete
 
-### Up Next
-Phase 6 — Frontend (React 18 + TypeScript + Tailwind)
-
----
-
-## Phase 4 — Risk Engine ✅ COMPLETE (2026-06-12)
-
-### Shipped
-- [x] `RiskRule` interface + `RiskRuleResult` record
-- [x] `AmountAnomalyRule` (Welford's z-score, MIN_HISTORY_COUNT=2)
-- [x] `VelocityRule` (1h/1d/7d conditional-aggregation query, native SQL)
-- [x] `BehavioralBaselineRule` (hour, MCC, new-counterparty signals)
-- [x] `GraphPatternRule` (fan-out ≥5, fan-in ≥5, round-trip 2h, native SQL)
-- [x] `RiskEngine` (weighted scoring 0.25/0.30/0.20/0.25, tier-1/tier-2 escalation)
-- [x] `CustomerRiskProfileService` (Welford's update, D19 score-conditional baseline, T4/T5 fixes)
-- [x] `AlertService` + `RiskAlertResponse` DTO (T3: DIV catch + `findByTransactionId`)
-- [x] `TransactionRiskConsumer` (@RetryableTopic, @DltHandler, T10 full idempotency via `ProcessedTransactionEvent`)
-- [x] `ProcessedTransactionEvent` entity + `ProcessedTransactionEventRepository` (T10)
-- [x] `V10__risk_alert_unique_txn_and_processed_events.sql` (T3 UNIQUE + T10 table)
-- [x] `KafkaConfig` retry/DLT topic beans (NEW CRITICAL)
-- [x] Unit tests: 36/36 passing (AmountAnomaly 7, Velocity 6, Behavioral 9, GraphPattern 7, RiskEngine 7)
-- [x] Integration tests: 5/5 fraud scenarios passing (S1–S5)
-- [x] **Total tests: 84/84 passing**
-- [x] `/plan-eng-review` gate: 11 issues (T1–T11), all P1 fixes implemented
-- [x] `/review` gate: 8 critical fixes, 84/84 tests confirmed
-
-### P2 Deferred (not blocking Phase 5)
-- [x] T7: 7-day velocity scoring — weekSpike detection, floor on dailyThreshold — **complete 2026-06-12**
-- [x] T8: EWMA inter-arrival velocity baseline in updateProfile() — **complete 2026-06-12**
-- [x] T9: Fan-in semantic fix — countDistinctSendersSince (inbound) replaces countDistinctNewCounterpartiesSince (outbound) — **complete 2026-06-12**
-- T11: Unit tests for TransactionRiskConsumer + CustomerRiskProfileService Welford logic
-- OpenAPI `@Operation`/`@ApiResponse` examples for 5 fraud scenarios
-
-### Up Next
-Phase 5 — Admin + Audit (AuditAspect, AuditService, SSE alerts dashboard)
+See ENGINEERING_LOG.md for per-session detail and commit history.

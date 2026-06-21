@@ -115,14 +115,14 @@
 - [x] **Supabase:** create project, copy direct connection string (port 5432, NOT 6543). JDBC URL: `jdbc:postgresql://[host].supabase.co:5432/postgres?sslmode=require`. Flyway applies V1–V14 + demo seed automatically on first deploy — **complete 2026-06-12**
 - [x] **Render:** create Web Service from GitHub repo, Docker runtime, set env vars from `render.yaml`. Validate health check passes — **complete 2026-06-12**: `https://ledgerbridge-i0c5.onrender.com`
 - [x] Verify demo end-to-end: live URL → login as `demo@ledgerbridge.io` → alerts pre-loaded → submit transfer → confirm transaction — **complete 2026-06-13**: deposit TXNBD67A30802F5 confirmed COMPLETED. SSE shows "reconnecting" (Render proxy times out long-lived connections — cosmetic only).
-- [ ] Add live URL to README "Live Demo" section with demo credentials and screenshot
+- [x] Add live URL to README "Live Demo" section with demo credentials and screenshot — **complete 2026-06-16**
 
 ## Phase 8 — Testing + Portfolio Integration
 - [ ] Testcontainers integration tests: full transaction→risk flow
 - [ ] Verify test coverage on all four risk engine rules
 - [x] Write polished README with Mermaid architecture diagram, live demo URL, demo credentials, risk engine explanation, architecture decisions overview — **complete 2026-06-16**
 - [x] /design-review pass — **complete 2026-06-20**: 8 findings fixed (login tagline, Demo CTA prominence, touch targets, StatChip semantic colors, Dashboard nav hidden for DEMO_ACTOR). Commits: `4db3968`–`dfa4049`.
-- [ ] Take screenshots of key pages (risk alert feed, risk score gauge, Swagger fraud scenario — use demo seed data)
+- [x] Take screenshots of key pages (risk alert feed, risk score gauge, Swagger fraud scenario — use demo seed data) — **complete 2026-06-20**: moved to `docs/screenshots/`. README Screenshots section added.
 - [ ] Write 10-15 Architecture Decision Records in `docs/adr/` covering: UUID PKs, NUMERIC(19,4), Flyway, Kafka userId keying, @TransactionalEventListener, Welford's algorithm, @RetryableTopic, SseEmitter, pessimistic locking + fixed ordering, idempotency keys, correlation IDs, JSONB + Hypersistence, RiskRuleResult record, @AuditLog naming, composite indexes
 - [ ] Draft technical blog post (CC drafts from AI_CONTEXT.md, Kenny edits — publish to dev.to after Phase 7.5 live URL exists, share on LinkedIn with live demo URL)
 - [ ] Add project to ePortfolio (`src/data/projects.js`)

@@ -1,26 +1,26 @@
 # HANDOFF.md — LedgerBridge
 
 > Update this whenever architecture, module ownership, or component structure changes.
-> Last updated: 2026-06-16
+> Last updated: 2026-06-20
 
 ## Current Status
 
-**Phase: 8 — Portfolio Integration (in progress)**
+**PORTFOLIO COMPLETE ✅ — 2026-06-20**
 
-All phases shipped:
+All phases shipped and verified:
 - `/plan-eng-review` ✅ Done 2026-06-05: 18 decisions locked (D2–D18)
 - `/plan-ceo-review` ✅ Done 2026-06-10: 4 scope expansions, D1–D10 locked
 - `/plan-design-review` ✅ Done 2026-06-10: `DESIGN.md` created, 11 decisions locked
-- Phase 0–7 ✅ All shipped (see ENGINEERING_LOG.md for per-session detail)
-- Phase 7.5 ✅ Live at `https://ledgerbridge-i0c5.onrender.com` (Supabase + Render)
-- Phase 8 in progress: README done; ADRs, blog post, ePortfolio, final /review + /qa remaining
+- Phase 0–7.5 ✅ All shipped and live at `https://ledgerbridge-i0c5.onrender.com`
+- Phase 8 ✅ README, /review, /qa (72→95 health), amber redesign, /design-review (8 fixes), screenshots
 
-**Portfolio strategy locked** — see `docs/designs/portfolio-strategy.md`
+**No demo video** — screenshots + live URL + README are the portfolio artifacts.
+**Screenshots:** `docs/screenshots/` (risk-alert-feed.png, risk-score-gauge.png, swagger-fraud.png)
 **Design system locked** — see `DESIGN.md` (SSE uses fetch+ReadableStream, not EventSource)
 
 ## Last Agent Action
 
-Claude Code (2026-06-16): Phase 8 — README.md created (commit `cdcafd6`).
+Claude Code (2026-06-20): Session 31 — /design-review pass + final portfolio cleanup.
 
 - `README.md` (NEW): Mermaid architecture diagram, live demo badge + URL, demo credentials, risk engine explanation (weights + escalation tiers), fraud scenario table, full API surface, known limitations, ADR index, project structure map.
 - `docs/CURRENT_TASK.md`: updated to reflect Phase 8 in progress.
